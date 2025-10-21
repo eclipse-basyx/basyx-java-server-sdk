@@ -26,7 +26,6 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.discovery.integration;
 
-import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
@@ -42,7 +41,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilte
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,21 +72,14 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 			throws AasDescriptorAlreadyExistsException {
 		decorated.insertAasDescriptor(descr);
 
-		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> ids = descr.getSpecificAssetIds();
-		if (ids == null || ids.isEmpty()) {
-			log.debug("No specificAssetIds present for AAS '{}', skipping discovery integration", descr.getId());
+		List<SpecificAssetId> allAssetIds = collectAllAssetIds(descr);
+
+		if (allAssetIds.isEmpty()) {
+			log.debug("No specificAssetIds or globalAssetId present for AAS '{}', skipping discovery integration", descr.getId());
 			return;
 		}
 
-		List<SpecificAssetId> specificAssetIds = ids.stream()
-				.map(rId -> {
-					SpecificAssetId assetId = new DefaultSpecificAssetId();
-					assetId.setName(rId.getName());
-					assetId.setValue(rId.getValue());
-					return assetId;
-				}).collect(Collectors.toList());
-
-		discoveryApi.createAllAssetLinksById(descr.getId(), specificAssetIds);
+		discoveryApi.createAllAssetLinksById(descr.getId(), allAssetIds);
 	}
 
 	@Override
@@ -97,25 +88,11 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 			throws AasDescriptorNotFoundException {
 		decorated.replaceAasDescriptor(aasDescriptorId, descriptor);
 
-		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> ids = descriptor.getSpecificAssetIds();
-
-		if (ids == null || ids.isEmpty()) {
-			log.debug("No specificAssetIds present for AAS '{}', skipping discovery integration update", aasDescriptorId);
-			discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
-			return;
-		}
-
-		List<SpecificAssetId> specificAssetIds = ids.stream()
-				.map(rId -> {
-					SpecificAssetId assetId = new DefaultSpecificAssetId();
-					assetId.setName(rId.getName());
-					assetId.setValue(rId.getValue());
-					return assetId;
-				})
-				.collect(Collectors.toList());
+		List<SpecificAssetId> allAssetIds = collectAllAssetIds(descriptor);
 
 		discoveryApi.deleteAllAssetLinksById(aasDescriptorId);
-		discoveryApi.createAllAssetLinksById(aasDescriptorId, specificAssetIds);
+
+		discoveryApi.createAllAssetLinksById(aasDescriptorId, allAssetIds);
 	}
 
 	@Override
@@ -157,5 +134,42 @@ public class DiscoveryIntegrationAasRegistry implements AasRegistryStorage {
 	@Override
 	public ShellDescriptorSearchResponse searchAasDescriptors(@NonNull ShellDescriptorSearchRequest request) {
 		return decorated.searchAasDescriptors(request);
+	}
+
+	/**
+	 * Collects all asset IDs from the descriptor, including both specificAssetIds and globalAssetId.
+	 * The globalAssetId is converted to a SpecificAssetId with name "globalAssetId".
+	 *
+	 * @param descriptor the AssetAdministrationShellDescriptor
+	 * @return a list of all asset IDs
+	 */
+	private List<SpecificAssetId> collectAllAssetIds(AssetAdministrationShellDescriptor descriptor) {
+		List<SpecificAssetId> allAssetIds = new java.util.ArrayList<>();
+
+		// Add specificAssetIds
+		List<org.eclipse.digitaltwin.basyx.aasregistry.model.SpecificAssetId> ids = descriptor.getSpecificAssetIds();
+		if (ids != null && !ids.isEmpty()) {
+			List<SpecificAssetId> specificAssetIds = ids.stream()
+					.map(rId -> {
+						SpecificAssetId assetId = new DefaultSpecificAssetId();
+						assetId.setName(rId.getName());
+						assetId.setValue(rId.getValue());
+						return assetId;
+					})
+					.collect(Collectors.toList());
+			allAssetIds.addAll(specificAssetIds);
+		}
+
+		// Add globalAssetId if present
+		String globalAssetId = descriptor.getGlobalAssetId();
+		if (globalAssetId != null && !globalAssetId.isEmpty()) {
+			SpecificAssetId globalAssetIdEntry = new DefaultSpecificAssetId();
+			globalAssetIdEntry.setName("globalAssetId");
+			globalAssetIdEntry.setValue(globalAssetId);
+			allAssetIds.add(globalAssetIdEntry);
+			log.debug("Added globalAssetId '{}' to discovery service for AAS '{}'", globalAssetId, descriptor.getId());
+		}
+
+		return allAssetIds;
 	}
 }

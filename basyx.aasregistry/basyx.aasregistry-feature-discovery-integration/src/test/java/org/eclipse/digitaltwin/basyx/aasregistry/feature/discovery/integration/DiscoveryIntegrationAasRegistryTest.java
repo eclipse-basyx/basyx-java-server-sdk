@@ -232,4 +232,106 @@ class DiscoveryIntegrationAasRegistryTest {
 		submodel.setAdministration(new AdministrativeInformation());
 		return submodel;
 	}
+
+	@Test
+	void insertAasDescriptorWithGlobalAssetIdShouldPropagateToDiscovery() throws Exception {
+		log.info("Started unit test - insertAasDescriptorWithGlobalAssetIdShouldPropagateToDiscovery()");
+		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
+		descriptor.setGlobalAssetId("https://example.com/global-asset-123");
+		descriptor.setSpecificAssetIds(createRegistrySpecificAssetIds());
+
+		registry.insertAasDescriptor(descriptor);
+
+		verify(decoratedStorage).insertAasDescriptor(descriptor);
+
+		ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<List<SpecificAssetId>> assetIdsCaptor = ArgumentCaptor.forClass(List.class);
+		verify(discoveryService).createAllAssetLinksById(idCaptor.capture(), assetIdsCaptor.capture());
+
+		assertEquals(AAS_DESCRIPTOR_ID, idCaptor.getValue());
+		assertEquals(3, assetIdsCaptor.getValue().size()); // 2 specificAssetIds + 1 globalAssetId
+
+		// Verify globalAssetId was added
+		boolean hasGlobalAssetId = assetIdsCaptor.getValue().stream()
+				.anyMatch(id -> "globalAssetId".equals(id.getName()) &&
+						"https://example.com/global-asset-123".equals(id.getValue()));
+		assertTrue(hasGlobalAssetId, "globalAssetId should be present in the asset IDs sent to discovery service");
+		log.info("Successfully conducted unit test");
+	}
+
+	@Test
+	void insertAasDescriptorWithOnlyGlobalAssetIdShouldPropagateToDiscovery() throws Exception {
+		log.info("Started unit test - insertAasDescriptorWithOnlyGlobalAssetIdShouldPropagateToDiscovery()");
+		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
+		descriptor.setGlobalAssetId("https://example.com/global-asset-456");
+		descriptor.setSpecificAssetIds(Collections.emptyList());
+
+		registry.insertAasDescriptor(descriptor);
+
+		verify(decoratedStorage).insertAasDescriptor(descriptor);
+
+		ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<List<SpecificAssetId>> assetIdsCaptor = ArgumentCaptor.forClass(List.class);
+		verify(discoveryService).createAllAssetLinksById(idCaptor.capture(), assetIdsCaptor.capture());
+
+		assertEquals(AAS_DESCRIPTOR_ID, idCaptor.getValue());
+		assertEquals(1, assetIdsCaptor.getValue().size()); // Only globalAssetId
+
+		// Verify globalAssetId was added
+		SpecificAssetId capturedId = assetIdsCaptor.getValue().get(0);
+		assertEquals("globalAssetId", capturedId.getName());
+		assertEquals("https://example.com/global-asset-456", capturedId.getValue());
+		log.info("Successfully conducted unit test");
+	}
+
+	@Test
+	void replaceAasDescriptorWithGlobalAssetIdShouldPropagateToDiscovery() throws Exception {
+		log.info("Started unit test - replaceAasDescriptorWithGlobalAssetIdShouldPropagateToDiscovery()");
+		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
+		descriptor.setGlobalAssetId("https://example.com/global-asset-789");
+		descriptor.setSpecificAssetIds(createRegistrySpecificAssetIds());
+
+		registry.replaceAasDescriptor(AAS_DESCRIPTOR_ID, descriptor);
+
+		InOrder inOrder = inOrder(discoveryService);
+		verify(decoratedStorage).replaceAasDescriptor(AAS_DESCRIPTOR_ID, descriptor);
+		inOrder.verify(discoveryService).deleteAllAssetLinksById(AAS_DESCRIPTOR_ID);
+
+		ArgumentCaptor<List<SpecificAssetId>> assetIdsCaptor = ArgumentCaptor.forClass(List.class);
+		inOrder.verify(discoveryService).createAllAssetLinksById(eq(AAS_DESCRIPTOR_ID), assetIdsCaptor.capture());
+
+		assertEquals(3, assetIdsCaptor.getValue().size()); // 2 specificAssetIds + 1 globalAssetId
+
+		// Verify globalAssetId was added
+		boolean hasGlobalAssetId = assetIdsCaptor.getValue().stream()
+				.anyMatch(id -> "globalAssetId".equals(id.getName()) &&
+						"https://example.com/global-asset-789".equals(id.getValue()));
+		assertTrue(hasGlobalAssetId, "globalAssetId should be present in the asset IDs sent to discovery service");
+
+		inOrder.verifyNoMoreInteractions();
+		log.info("Successfully conducted unit test");
+	}
+
+	@Test
+	void insertAasDescriptorWithoutGlobalAssetIdShouldStillWork() throws Exception {
+		log.info("Started unit test - insertAasDescriptorWithoutGlobalAssetIdShouldStillWork()");
+		AssetAdministrationShellDescriptor descriptor = createTestDescriptor(AAS_DESCRIPTOR_ID);
+		descriptor.setSpecificAssetIds(createRegistrySpecificAssetIds());
+		// No globalAssetId set
+
+		registry.insertAasDescriptor(descriptor);
+
+		verify(decoratedStorage).insertAasDescriptor(descriptor);
+
+		ArgumentCaptor<List<SpecificAssetId>> assetIdsCaptor = ArgumentCaptor.forClass(List.class);
+		verify(discoveryService).createAllAssetLinksById(eq(AAS_DESCRIPTOR_ID), assetIdsCaptor.capture());
+
+		assertEquals(2, assetIdsCaptor.getValue().size()); // Only 2 specificAssetIds
+
+		// Verify no globalAssetId was added
+		boolean hasGlobalAssetId = assetIdsCaptor.getValue().stream()
+				.anyMatch(id -> "globalAssetId".equals(id.getName()));
+		assertFalse(hasGlobalAssetId, "globalAssetId should not be present when not set in descriptor");
+		log.info("Successfully conducted unit test");
+	}
 }
