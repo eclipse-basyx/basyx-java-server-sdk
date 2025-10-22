@@ -79,7 +79,13 @@
 		<dependency>
 			<groupId>co.elastic.clients</groupId>
 			<artifactId>elasticsearch-java</artifactId>
-			<version>9.1.4</version>
+			<version>9.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>aasregistry-feature-discovery-integration</artifactId>
+			<scope>test</scope>
+			<version>${revision}</version>
 		</dependency>
 	</dependencies>
 </project>

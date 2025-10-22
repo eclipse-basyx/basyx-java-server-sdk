@@ -59,6 +59,8 @@ jobs:
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
         - name: submodel-registry-log-mongodb
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
+        - name: digitaltwinregistry
+          path: basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component
 
     steps:
       - name: Checkout Code
@@ -92,7 +94,7 @@ jobs:
       # For registry modules, we activate the dockerbuild profile and specify the module with --pl
       - name: Build BaSyx
         run: |
-          if [[ "${{ matrix.name }}" == *"registry"* ]]; then
+          if [[ "${{ matrix.name }}" == *"registry"* && "${{ matrix.name }}" != "digitaltwinregistry" ]]; then
             # Derive the module's artifactId from the path
             module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
             artifact_id=$(basename "$module_root")
@@ -103,7 +105,7 @@ jobs:
           fi
 
       - name: Prepare Registry JAR for Docker
-        if: contains(matrix.name, 'registry')
+        if: contains(matrix.name, 'registry') && matrix.name != 'digitaltwinregistry'
         run: |
           # Go three levels up from src/main/docker to get the module root
           module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
@@ -124,8 +126,8 @@ jobs:
           echo "FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
 
       - name: No-Op for Non-Registry Modules
-        if: "!contains(matrix.name, 'registry')"
-        run: echo echo "FINAL_NAME=" >> $GITHUB_ENV
+        if: ${{ !contains(matrix.name, 'registry') || matrix.name == 'digitaltwinregistry' }}
+        run: echo "FINAL_NAME=" >> $GITHUB_ENV
 
       - name: Set short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV

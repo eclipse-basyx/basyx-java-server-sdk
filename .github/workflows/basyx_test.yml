@@ -736,6 +736,39 @@ jobs:
             exit 1;
           fi
 
+  test-basyx-aasdigitaltwinregistry:
+    runs-on: ubuntu-latest
+    name: AAS Digital Twin Registry Service Test
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Test AAS Digital Twin Registry Service
+        run: mvn test -f "basyx.aasdigitaltwinregistry/pom.xml"
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Stop environment
         if: always()
         run: docker compose --project-directory ./ci down

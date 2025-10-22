@@ -43,6 +43,8 @@ jobs:
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
         - name: submodel-registry-log-mongodb
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
+        - name: digitaltwinregistry
+          path: basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component
 
     steps:
       - name: Checkout Code
@@ -81,7 +83,7 @@ jobs:
       # Process registry modules
       - name: Process Registry Module
         id: registry_module
-        if: contains(matrix.name, 'registry')
+        if: contains(matrix.name, 'registry') && matrix.name != 'digitaltwinregistry'
         run: |
           # Get the module path without /src/main/docker
           MODULE_PATH=$(echo ${{ matrix.path }} | sed 's|/src/main/docker||')
@@ -126,7 +128,7 @@ jobs:
       # Process non-registry modules
       - name: Process Non-Registry Module
         id: non_registry_module
-        if: "!contains(matrix.name, 'registry')"
+        if: ${{ !contains(matrix.name, 'registry') || matrix.name == 'digitaltwinregistry' }}
         run: |
           echo "Processing non-registry module"
           echo "FINAL_NAME=" >> $GITHUB_ENV

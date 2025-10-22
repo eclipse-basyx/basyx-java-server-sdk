@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -24,6 +25,7 @@
 		<module>basyx.conceptdescriptionrepository</module>
 		<module>basyx.aasxfileserver</module>
 		<module>basyx.aasdiscoveryservice</module>
+		<module>basyx.aasdigitaltwinregistry</module>
 	</modules>
 	<name>BaSyx Parent</name>
 	<description>Parent POM for Eclipse BaSyx</description>
@@ -67,7 +69,7 @@
 		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
 		<docker.host.port>8081</docker.host.port>
 		<docker.container.port>8081</docker.container.port>
-		<aas4j-version>1.0.5</aas4j-version>
+		<aas4j-version>2.0.0</aas4j-version>
 		<querydsl-version>5.1.0</querydsl-version>
 		<jakarta-version>3.2.0</jakarta-version>
 	</properties>
@@ -82,7 +84,7 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -1562,7 +1564,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.14.0</version>
+						<version>3.14.1</version>
 						<configuration>
 							<source>${java.version}</source>
 							<target>${java.version}</target>

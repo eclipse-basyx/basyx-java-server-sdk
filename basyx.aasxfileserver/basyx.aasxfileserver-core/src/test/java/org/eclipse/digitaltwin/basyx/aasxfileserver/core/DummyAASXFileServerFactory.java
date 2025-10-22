@@ -78,7 +78,7 @@ public class DummyAASXFileServerFactory {
 	public static PackageDescription createDummyPackageDescription(String packageId, List<String> shellIds) {
 		PackageDescription expectedDescription1 = new DefaultPackageDescription();
 		expectedDescription1.setPackageId(packageId);
-		expectedDescription1.setItems(shellIds);
+		expectedDescription1.setAasIds(shellIds);
 
 		return expectedDescription1;
 	}

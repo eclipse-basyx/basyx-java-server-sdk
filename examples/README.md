@@ -45,3 +45,7 @@ See the separate [Node-RED example](BaSyxNodeRED) for a comprehensive setup leve
 ## BaSyx AAS Query Language Example
 
 See the separate [AAS Query Language Example](BaSyxQueryLanguage) for a comprehensive setup leveraging the AAS Query Language.
+
+## BaSyx Example for integrating CAD Files
+
+See the separate [CAD File Example](BaSyxCADFiles) for a comprehensive setup showcasing how to integrate CAD files into an AAS.

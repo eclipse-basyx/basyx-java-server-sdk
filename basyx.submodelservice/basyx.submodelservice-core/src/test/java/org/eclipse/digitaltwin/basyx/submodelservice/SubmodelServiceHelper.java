@@ -324,6 +324,7 @@ public class SubmodelServiceHelper {
 				.build())
 				.idShort(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_ID_SHORT)
 				.category(SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_LIST_CATEGORY)
+				.orderRelevant(true)
 				.value(Lists.newArrayList(createRangeSubmodelElement(), createPropertySubmodelElement()))
 				.build();
 	}
