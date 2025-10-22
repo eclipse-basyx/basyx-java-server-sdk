@@ -22,9 +22,11 @@
 		<module>basyx.aasrepository-feature-mqtt</module>
 		<module>basyx.aasrepository-feature-kafka</module>
 		<module>basyx.aasrepository-feature-registry-integration</module>
+		<module>basyx.aasrepository-feature-discovery-integration</module>
 		<module>basyx.aasrepository-feature-authorization</module>
 		<module>basyx.aasrepository-tck</module>
 		<module>basyx.aasrepository.component</module>
 		<module>basyx.aasrepository-client</module>
-	</modules>
+        <module>basyx.aasrepository-feature-search</module>
+    </modules>
 </project>

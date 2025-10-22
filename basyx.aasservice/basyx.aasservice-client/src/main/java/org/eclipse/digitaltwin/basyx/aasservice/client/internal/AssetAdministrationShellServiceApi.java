@@ -76,7 +76,6 @@ public class AssetAdministrationShellServiceApi {
   private final String memberVarBaseUri;
   private final Consumer<HttpRequest.Builder> memberVarInterceptor;
   private final Duration memberVarReadTimeout;
-  private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
   private TokenManager tokenManager;
 
   @Autowired
@@ -116,14 +115,19 @@ public class AssetAdministrationShellServiceApi {
     memberVarBaseUri = apiClient.getBaseUri();
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
-    memberVarResponseInterceptor = apiClient.getResponseInterceptor();
   }
 
-  protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-    String body = response.body() == null ? null : new String(response.body().readAllBytes());
-    String message = formatExceptionMessage(operationId, response.statusCode(), body);
-    return new ApiException(response.statusCode(), message, response.headers(), body);
+	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+		String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
+		return new ApiException(response.statusCode(), message, response.headers(), response.body());
   }
+
+	protected ApiException getApiExceptionInputStream(String operationId, HttpResponse<InputStream> response)
+			throws IOException {
+		String body = response.body() == null ? null : new String(response.body().readAllBytes());
+		String message = formatExceptionMessage(operationId, response.statusCode(), body);
+		return new ApiException(response.statusCode(), message, response.headers(), body);
+	}
 
   private String formatExceptionMessage(String operationId, int statusCode, String body) {
     if (body == null || body.isEmpty()) {
@@ -175,21 +179,14 @@ public class AssetAdministrationShellServiceApi {
 	public ApiResponse<Void> deleteSubmodelReferenceByIdWithHttpInfoNoUrlEncoding(String submodelIdentifier) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = deleteSubmodelReferenceByIdRequestBuilder(submodelIdentifier);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("deleteSubmodelReferenceById", localVarResponse);
 				}
 				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} finally {
-				// Drain the InputStream
-				while (localVarResponse.body().read() != -1) {
-					// Ignore
-				}
-				localVarResponse.body().close();
 			}
 		} catch (IOException e) {
 			throw new ApiException(e);
@@ -257,12 +254,10 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<Void> deleteThumbnailWithHttpInfoNoUrlEncoding() throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = deleteThumbnailRequestBuilder();
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
+
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("deleteThumbnail", localVarResponse);
@@ -273,11 +268,6 @@ public class AssetAdministrationShellServiceApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -331,10 +321,8 @@ public class AssetAdministrationShellServiceApi {
 	private ApiResponse<Base64UrlEncodedCursorResult<List<Reference>>> getAllSubmodelReferencesApiResponse(Integer limit, String cursor) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllSubmodelReferencesRequestBuilder(limit, cursor);
     try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-      }
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+				HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllSubmodelReferences", localVarResponse);
@@ -422,12 +410,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<AssetAdministrationShell> getAssetAdministrationShellWithHttpInfoNoUrlEncoding() throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetAdministrationShellRequestBuilder();
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetAdministrationShell", localVarResponse);
@@ -500,12 +485,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<Reference> getAssetAdministrationShellReferenceWithHttpInfoNoUrlEncoding() throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetAdministrationShellReferenceRequestBuilder();
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetAdministrationShellReference", localVarResponse);
@@ -580,12 +562,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<AssetInformation> getAssetInformationWithHttpInfoNoUrlEncoding() throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getAssetInformationRequestBuilder();
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getAssetInformation", localVarResponse);
@@ -660,12 +639,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<ServiceDescription> getDescriptionWithHttpInfoNoUrlEncoding() throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = getDescriptionRequestBuilder();
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("getDescription", localVarResponse);
@@ -738,12 +714,10 @@ public class AssetAdministrationShellServiceApi {
 	public ApiResponse<File> getThumbnailWithHttpInfoNoUrlEncoding() throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getThumbnailRequestBuilder();
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofInputStream());
 			if (localVarResponse.statusCode() / 100 != 2) {
-				throw getApiException("getThumbnail", localVarResponse);
+				throw getApiExceptionInputStream("getThumbnail", localVarResponse);
 			}
 			if (localVarResponse.body() == null) {
 				return new ApiResponse<File>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
@@ -821,12 +795,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<Reference> postSubmodelReferenceWithHttpInfoNoUrlEncoding(Reference reference) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = postSubmodelReferenceRequestBuilder(reference);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("postSubmodelReference", localVarResponse);
@@ -912,12 +883,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<Void> putAssetAdministrationShellWithHttpInfoNoUrlEncoding(AssetAdministrationShell assetAdministrationShell) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = putAssetAdministrationShellRequestBuilder(assetAdministrationShell);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("putAssetAdministrationShell", localVarResponse);
@@ -928,11 +896,6 @@ public class AssetAdministrationShellServiceApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -1008,12 +971,9 @@ public class AssetAdministrationShellServiceApi {
   public ApiResponse<Void> putAssetInformationWithHttpInfoNoUrlEncoding(AssetInformation assetInformation) throws ApiException {
     HttpRequest.Builder localVarRequestBuilder = putAssetInformationRequestBuilder(assetInformation);
     try {
-      HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(
+		HttpResponse<String> localVarResponse = memberVarHttpClient.send(
           localVarRequestBuilder.build(),
-          HttpResponse.BodyHandlers.ofInputStream());
-      if (memberVarResponseInterceptor != null) {
-        memberVarResponseInterceptor.accept(localVarResponse);
-      }
+				HttpResponse.BodyHandlers.ofString());
       try {
         if (localVarResponse.statusCode()/ 100 != 2) {
           throw getApiException("putAssetInformation", localVarResponse);
@@ -1024,11 +984,6 @@ public class AssetAdministrationShellServiceApi {
           null
         );
       } finally {
-        // Drain the InputStream
-        while (localVarResponse.body().read() != -1) {
-            // Ignore
-        }
-        localVarResponse.body().close();
       }
     } catch (IOException e) {
       throw new ApiException(e);
@@ -1092,17 +1047,14 @@ public class AssetAdministrationShellServiceApi {
 	private ApiResponse<Void> putThumbnailWithHttpInfoNoUrlEncoding(String fileName, ContentType contentType, InputStream inputStream) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = putThumbnailRequestBuilder(fileName, contentType, inputStream);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("putThumbnail", localVarResponse);
 				}
 				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} finally {
-				localVarResponse.body().close();
 			}
 		} catch (IOException e) {
 			throw new ApiException(e);

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2023 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
@@ -43,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * Configuration class providing all relevant beans for HTTP payload
  * (de-)serialization
- * 
+ *
  * @author schnicke
  *
  */
@@ -54,7 +54,7 @@ public class BaSyxHTTPConfiguration {
 	/**
 	 * Returns a Jackson2ObjectMapperBuilder that is configured using the passed
 	 * list of {@link SerializationExtension}
-	 * 
+	 *
 	 * @param serializationExtensions
 	 * @return
 	 */
@@ -65,58 +65,58 @@ public class BaSyxHTTPConfiguration {
 		for (SerializationExtension serializationExtension : serializationExtensions) {
 			serializationExtension.extend(builder);
 		}
-		
+
 		return builder;
 	}
 
-	/**
-	 * Collects a list of {@link CorsPathPatternProvider} and uses them to configure
-	 * CORS for the passed pathPatterns
-	 * 
-	 * @param configurationUrlProviders
-	 * @param allowedOrigins
-	 * @param allowedMethods
-	 * @return
-	 */
-	@Bean
-	public WebMvcConfigurer corsConfigurer(List<CorsPathPatternProvider> configurationUrlProviders,
-										   @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins,
-										   @Value("${basyx.cors.allowed-methods:}") String[] allowedMethods,
-										   @Value("${basyx.cors.allowed-headers:}") String[] allowedHeaders) {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				if (allowedOrigins.length == 0 && allowedMethods.length == 0)
-					return;
-
-				logger.info("---- Configuring CORS ----");
-
-				for (CorsPathPatternProvider provider : configurationUrlProviders) {
-					configureOrigins(
-							allowedOrigins,
-							allowedMethods,
-							allowedHeaders,
-							registry,
-							provider.getPathPattern()
-					);
-				}
-			}
-
-			private void configureOrigins(
-					String[] allowedOrigins,
-					String[] allowedMethods,
-					String[] allowedHeaders,
-					CorsRegistry registry,
-					String pathPattern
-			) {
-				logger.info(pathPattern + " configured with allowedOriginPatterns " + Arrays.toString(allowedOrigins));
-				logger.info(allowedMethods.length == 0 ? "No allowed methods configured" : pathPattern + " configured with allowedMethods " + Arrays.toString(allowedMethods));
-
-				registry.addMapping(pathPattern)
-						.allowedOriginPatterns(allowedOrigins)
-						.allowedMethods(allowedMethods)
-						.allowedHeaders(allowedHeaders);
-			}
-		};
-	}
+//	/**
+//	 * Collects a list of {@link CorsPathPatternProvider} and uses them to configure
+//	 * CORS for the passed pathPatterns
+//	 *
+//	 * @param configurationUrlProviders
+//	 * @param allowedOrigins
+//	 * @param allowedMethods
+//	 * @return
+//	 */
+//	@Bean
+//	public WebMvcConfigurer corsConfigurer(List<CorsPathPatternProvider> configurationUrlProviders,
+//										   @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins,
+//										   @Value("${basyx.cors.allowed-methods:}") String[] allowedMethods,
+//										   @Value("${basyx.cors.allowed-headers:}") String[] allowedHeaders) {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//				if (allowedOrigins.length == 0 && allowedMethods.length == 0)
+//					return;
+//
+//				logger.info("---- Configuring CORS ----");
+//
+//				for (CorsPathPatternProvider provider : configurationUrlProviders) {
+//					configureOrigins(
+//							allowedOrigins,
+//							allowedMethods,
+//							allowedHeaders,
+//							registry,
+//							provider.getPathPattern()
+//					);
+//				}
+//			}
+//
+//			private void configureOrigins(
+//					String[] allowedOrigins,
+//					String[] allowedMethods,
+//					String[] allowedHeaders,
+//					CorsRegistry registry,
+//					String pathPattern
+//			) {
+//				logger.info(pathPattern + " configured with allowedOriginPatterns " + Arrays.toString(allowedOrigins));
+//				logger.info(allowedMethods.length == 0 ? "No allowed methods configured" : pathPattern + " configured with allowedMethods " + Arrays.toString(allowedMethods));
+//
+//				registry.addMapping(pathPattern)
+//						.allowedOriginPatterns(allowedOrigins)
+//						.allowedMethods(allowedMethods)
+//						.allowedHeaders(allowedHeaders);
+//			}
+//		};
+//	}
 }

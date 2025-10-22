@@ -25,23 +25,24 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
-import java.util.concurrent.TimeUnit;
-
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.KafkaAasRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.TestApplication;
-import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.AasEventKafkaListener;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEvent;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.AasEventType;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +65,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka" })
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = { "basyx.feature.kafka.enabled=true",
-		"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
-		KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
-		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=" + TestApplication.KAFKA_AAS_TOPIC })
+@TestPropertySource(properties = { "basyx.feature.kafka.enabled=true", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
+		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=aas-events" })
 public class KafkaFeatureEnabledSmokeTest {
 
+	private static KafkaAdapter<AasEvent> adapter = KafkaAdapters.getAdapter(TestApplication.KAFKA_AAS_TOPIC, AasEvent.class);
+
+	
 	@LocalServerPort
 	private int port;
 
@@ -80,32 +82,36 @@ public class KafkaFeatureEnabledSmokeTest {
 	private JsonSerializer serializer;
 
 	@Autowired
-	private AasEventKafkaListener listener;
-
-	@Autowired
 	private AasRepository aasRepo;
+
+	
 	
 	@Before
-	public void provideAas() throws InterruptedException {
-		listener.awaitTopicAssignment();
+	public void init() {
+		adapter.skipMessages();
 		cleanup();
+
 	}
 	
 	@After
-	public void cleanup() throws InterruptedException {	
-		for (AssetAdministrationShell aas : aasRepo.getAllAas(new PaginationInfo(null, null)).getResult()) {
+	public void dispose() {
+		cleanup();
+	}
+
+	public void cleanup() {
+		for (AssetAdministrationShell aas : aasRepo.getAllAas(null, null, new PaginationInfo(null, null)).getResult()) {
 			aasRepo.deleteAas(aas.getId());
+			adapter.next();
 		}
-		while(listener.next(100, TimeUnit.MICROSECONDS) != null);
+		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
-	public void testAasCreatedEvent() throws InterruptedException, SerializationException {
-		AssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id("http://aas.id/1")
-				.idShort("1").build();
+	public void testAasCreatedEvent() throws SerializationException {
+		AssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id("http://aas.id/1").idShort("1").build();
 		HttpEntity<String> entity = createHttpEntity(shell);
 		restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, String.class);
-		AasEvent event = listener.next();
+		AasEvent event = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, event.getType());
 		Assert.assertEquals(shell.getId(), event.getId());
 		Assert.assertEquals(shell, event.getAas());

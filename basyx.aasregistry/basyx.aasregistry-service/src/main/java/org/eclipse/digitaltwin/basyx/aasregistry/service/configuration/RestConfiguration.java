@@ -35,27 +35,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
-@EnableWebMvc
 public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcConfigurer {
 
 	@Bean
 	public LocationBuilder locationBuilder() {
 		return new DefaultLocationBuilder();
-	}
-
-	@Bean
-	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
-		builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return new MappingJackson2HttpMessageConverter(builder.build());
 	}
 
 	@Bean
@@ -69,8 +58,18 @@ public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcC
 	}
 
 	@Bean
+	public CorsPathPatternProvider getAasRegistryServiceQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
+
+	@Bean
 	public SerializationExtension getExtension() {
 		return new Aas4JHTTPSerializationExtension();
+	}
+	
+	@Bean
+	public SerializationExtension getDisableExtension() {
+		return builder -> builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
 	@Override

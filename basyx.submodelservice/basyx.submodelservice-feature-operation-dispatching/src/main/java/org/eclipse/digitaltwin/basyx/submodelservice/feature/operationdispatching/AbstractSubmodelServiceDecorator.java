@@ -116,9 +116,9 @@ public class AbstractSubmodelServiceDecorator implements SubmodelService {
 	}
 
 	@Override
-	public void setFileValue(String idShortPath, String fileName, InputStream inputStream)
+	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream)
 			throws ElementDoesNotExistException, ElementNotAFileException {
-		decorated.setFileValue(idShortPath, fileName, inputStream);
+		decorated.setFileValue(idShortPath, fileName, contentType, inputStream);
 	}
 
 	@Override

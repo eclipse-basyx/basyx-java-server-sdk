@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "aas-registry.fullname" . }}-config
-  labels:
-    {{- include "aas-registry.labels" . | nindent 4 }}
-data:
-  application.yaml: |-
-    {{ .Values.config | nindent 4 }}

@@ -27,13 +27,17 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Blob;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultBlob;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
+import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceFactory;
@@ -42,8 +46,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,17 +71,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka" })
 @ActiveProfiles("test-submodel")
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {SubmodelServiceTestComponent.class})
-@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
-		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=" + SubmodelEventKafkaListener.TOPIC_NAME
-})
-@Import(SubmodelEventKafkaListener.class)
+@ContextConfiguration(classes = { SubmodelServiceTestComponent.class })
+@TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE", KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
+		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events" })
+
 public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
-	@Autowired
-	private SubmodelEventKafkaListener listener;
+	private static KafkaAdapter<SubmodelEvent> adapter = KafkaAdapters.getAdapter("submodel-events", SubmodelEvent.class);
+
 
 	@Autowired
 	private KafkaSubmodelServiceFeature feature;
@@ -84,39 +87,44 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	private Submodel submodel;
 
 	private SubmodelService service;
-	
 
 	@Before
-	public void awaitAssignment() throws InterruptedException {
-		listener.awaitTopicAssignment();
-		
+	public void startPolling() throws InterruptedException {
+
 		FileRepository repository = new InMemoryFileRepository();
 		SubmodelBackend backend = new InMemorySubmodelBackend();
-		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend ,repository);
+		SubmodelServiceFactory smFactory = new CrudSubmodelServiceFactory(backend, repository);
 		service = feature.decorate(smFactory).create(submodel);
 	}
-	
+
+	@After
+	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
+		
+		adapter.assertNoAdditionalMessages();
+		
+	}
+
 	@Test
-	public void testToplevelSubmodelElementAdded() throws InterruptedException, SerializationException {
+	public void testToplevelSubmodelElementAdded() {
 		Assert.assertTrue(feature.isEnabled());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
 	}
-	
+
 	@Test
-	public void testElementAddedUnderCollection() throws InterruptedException {		
+	public void testElementAddedUnderCollection() {
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "55");
 		service.createSubmodelElement(TestSubmodels.IDSHORT_COLL, elem);
 
-		SubmodelEvent evt = listener.next();
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(submodel.getId(), evt.getId());
 		String expected = TestSubmodels.path(TestSubmodels.IDSHORT_COLL, TestSubmodels.IDSHORT_PROP_1);
@@ -124,14 +132,14 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		Assert.assertNull(evt.getSubmodel());
 		Assert.assertEquals(elem, evt.getSmElement());
 	}
-	
+
 	@Test
-	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() throws InterruptedException {
+	public void testSubmodelElementAddedAndBlobValueNotPartOfTheEvent() {
 		String idShortBlob = "blob";
-		Blob blob = new DefaultBlob.Builder().idShort(idShortBlob).value(new byte[] {1,2,3,4,5}).build();
+		Blob blob = new DefaultBlob.Builder().idShort(idShortBlob).value(new byte[] { 1, 2, 3, 4, 5 }).build();
 		service.createSubmodelElement(blob);
-		
-		SubmodelEvent evt = listener.next();
+
+		SubmodelEvent evt = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
 		Assert.assertEquals(TestSubmodels.ID_SM, evt.getId());
 		Assert.assertEquals(idShortBlob, evt.getSmElementPath());
@@ -142,11 +150,11 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementUpdated() throws InterruptedException {
+	public void testSubmodelElementUpdated() {
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_0, "99");
 		service.updateSubmodelElement(TestSubmodels.IDSHORT_PROP_0, elem);
 
-		SubmodelEvent evtUpdated = listener.next();
+		SubmodelEvent evtUpdated = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SME_UPDATED, evtUpdated.getType());
 		Assert.assertEquals(TestSubmodels.ID_SM, evtUpdated.getId());
 		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_0, evtUpdated.getSmElementPath());
@@ -155,15 +163,15 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 	}
 
 	@Test
-	public void testSubmodelElementDeleted() throws InterruptedException {
+	public void testSubmodelElementDeleted() {
 		service.deleteSubmodelElement(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED);
 
-		SubmodelEvent evtUpdated = listener.next();
-		Assert.assertEquals(SubmodelEventType.SME_DELETED, evtUpdated.getType());
-		Assert.assertEquals(TestSubmodels.ID_SM, evtUpdated.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED, evtUpdated.getSmElementPath());
-		Assert.assertNull(evtUpdated.getSubmodel());
-		Assert.assertNull(evtUpdated.getSmElement());
+		SubmodelEvent evtDeleted = adapter.next();
+		Assert.assertEquals(SubmodelEventType.SME_DELETED, evtDeleted.getType());
+		Assert.assertEquals(TestSubmodels.ID_SM, evtDeleted.getId());
+		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED, evtDeleted.getSmElementPath());
+		Assert.assertNull(evtDeleted.getSubmodel());
+		Assert.assertNull(evtDeleted.getSmElement());
 	}
 
 }

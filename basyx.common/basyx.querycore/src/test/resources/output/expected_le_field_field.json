@@ -1,0 +1,1 @@
+{"bool":{"must":[{"exists":{"field":"administration.revision.keyword"}},{"exists":{"field":"administration.version.keyword"}},{"script":{"script":{"source":"doc['administration.revision.keyword'].value <= doc['administration.version.keyword'].value","lang":"painless"}}}]}}

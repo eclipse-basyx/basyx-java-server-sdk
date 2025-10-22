@@ -21,5 +21,6 @@
 		<module>basyx.aasdiscoveryservice.component</module>
 		<module>basyx.aasdiscoveryservice-feature-authorization</module>
         <module>basyx.aasdiscoveryservice-backend</module>
+        <module>basyx.aasdiscoveryservice-client</module>
     </modules>
 </project>

@@ -53,7 +53,7 @@ public class PreconfigurationLoaderTextualResourceTest extends AasEnvironmentLoa
 	@Test
 	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
 		loadRepositories(List.of());
-		Assert.assertTrue(aasRepository.getAllAas(PaginationInfo.NO_LIMIT).getResult().isEmpty());
+		Assert.assertTrue(aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().isEmpty());
 		Assert.assertTrue(submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().isEmpty());
 		Assert.assertTrue(conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().isEmpty());
 

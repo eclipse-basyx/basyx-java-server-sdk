@@ -1,0 +1,18 @@
+basyx:
+  cors:
+    allowed-origins: '*'
+    allowed-methods: GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD
+  submodelregistry:
+    feature:
+      experimental:
+        search:
+          enabled: true
+          indexname: smdesc-index
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
+  elasticsearch:
+    uris: http://elasticsearch:9200
+    username: elastic
+    password: vtzJFt1b

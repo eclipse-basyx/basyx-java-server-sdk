@@ -100,6 +100,8 @@ public class MongoDBFileRepository implements FileRepository {
 	@Override
 	public boolean exists(String fileName) {
 
+		if(fileName == null) return false;
+
 		if (fileName.isBlank())
 			return false;
 

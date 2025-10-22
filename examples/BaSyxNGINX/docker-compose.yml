@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   # nginx
   nginx:
@@ -29,6 +27,8 @@ services:
     volumes:
       - ./basyx/aas-env.properties:/application/application.properties
       - ./aas:/application/aas
+    environment:
+      - SERVER_SERVLET_CONTEXT_PATH=/aas-env
     ports:
       - 8081:8081
     restart: always
@@ -72,6 +72,8 @@ services:
       - 8084:8081
     volumes:
       - ./basyx/aas-discovery.properties:/application/application.properties
+    environment:
+      - SERVER_SERVLET_CONTEXT_PATH=/aas-discovery
     restart: always
   
   # AAS Web UI

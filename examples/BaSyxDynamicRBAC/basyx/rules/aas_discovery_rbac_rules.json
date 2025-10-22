@@ -1,5 +1,14 @@
 [
   {
+    "role": "admin",
+    "action": ["CREATE", "READ", "UPDATE", "DELETE"],
+    "targetInformation": {
+      "@type": "aas-discovery-service",
+      "aasIds": "*",
+      "assetIds": []
+    }
+  },
+  {
     "role": "basyx-assetid-creator",
     "action": "CREATE",
     "targetInformation": {

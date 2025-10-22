@@ -1,0 +1,1 @@
+{"bool":{"must":[{"query_string":{"fields":["*submodelElements.Documents[*].DocumentClassification.Class.value.keyword"],"query":"03\\-01"}},{"query_string":{"fields":["*submodelElements.Documents[*].DocumentVersion.SMLLanguages[*].language.keyword"],"query":"nl"}}]}}

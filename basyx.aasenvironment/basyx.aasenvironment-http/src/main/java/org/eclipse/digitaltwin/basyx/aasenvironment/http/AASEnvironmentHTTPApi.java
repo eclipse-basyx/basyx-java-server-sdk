@@ -25,8 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.http;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.Result;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -80,5 +83,5 @@ public interface AASEnvironmentHTTPApi {
 			@Parameter(description = "An environment file (XML, JSON, AASX)") @Valid @RequestParam("file") MultipartFile envFile,
 			@Parameter(description = "Flag to indicate if already existing Ids should be ignored when reuploading an environment (default: false)", schema = @Schema(defaultValue = "false"))
 			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates
-	);
+	) throws IOException, InvalidFormatException, DeserializationException;
 }

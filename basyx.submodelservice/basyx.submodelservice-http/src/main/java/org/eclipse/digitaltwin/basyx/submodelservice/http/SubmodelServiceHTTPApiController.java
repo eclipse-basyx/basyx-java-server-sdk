@@ -268,9 +268,9 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		InputStream fileInputstream = null;
 		try {
 			fileInputstream = file.getInputStream();
-			service.setFileValue(idShortPath, fileName, fileInputstream);
+			service.setFileValue(idShortPath, fileName, file.getContentType(), fileInputstream);
 			closeInputStream(fileInputstream);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (ElementDoesNotExistException e) {
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

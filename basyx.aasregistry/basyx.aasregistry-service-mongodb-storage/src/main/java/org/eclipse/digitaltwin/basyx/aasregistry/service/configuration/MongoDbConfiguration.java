@@ -32,6 +32,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStor
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.CursorEncodingRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.MongoDbAasRegistryStorage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,12 +52,15 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class MongoDbConfiguration {
 
+	@Value("${basyx.aasregistry.mongodb.collectionName:submodeldescriptors}")
+	private String collectionName;
+	
 	@Bean
 	public AasRegistryStorage createStorage(MongoTemplate template, List<AasRegistryStorageFeature> features) {
 		log.info("Creating mongodb storage");
 		log.info("Creating mongodb indices");
 		initializeIndices(template);
-		AasRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template));
+		AasRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template, collectionName));
 		return applyFeatures(storage, features);
 
 	}
@@ -70,7 +74,7 @@ public class MongoDbConfiguration {
 	}
 
 	private void initializeIndices(MongoTemplate template) {
-		IndexOperations ops = template.indexOps(AssetAdministrationShellDescriptor.class);
+		IndexOperations ops = template.indexOps(collectionName);
 		initializeGetShellDescriptorsIndices(ops);
 		initializeExtensionIndices(ops);
 	}

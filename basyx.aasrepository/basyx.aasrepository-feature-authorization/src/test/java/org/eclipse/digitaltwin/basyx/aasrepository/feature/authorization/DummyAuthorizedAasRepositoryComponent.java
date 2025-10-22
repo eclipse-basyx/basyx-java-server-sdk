@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasrepository.feature.authorization;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.actuate.autoconfigure.elasticsearch.ElasticsearchRestHealthContributorAutoConfiguration;
 
 /**
  * Spring application configured for tests.
@@ -35,7 +36,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx")
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
+                      exclude = {ElasticsearchRestHealthContributorAutoConfiguration.class})
 public class DummyAuthorizedAasRepositoryComponent {
 	
 	public static void main(String[] args) {

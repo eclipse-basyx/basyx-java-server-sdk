@@ -34,10 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetKind;
 import org.eclipse.digitaltwin.aas4j.v3.model.KeyTypes;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultKey;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultReference;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
 
 public class DummyAasFactory {
 	public static final String AASWITHSUBMODELREF_ID = "aas1/s";
@@ -52,6 +49,7 @@ public class DummyAasFactory {
 	public static AssetAdministrationShell createAasWithSubmodelReference() {
 		return new DefaultAssetAdministrationShell.Builder()
 				.id(AASWITHSUBMODELREF_ID)
+				.idShort("aasSubmodelRefs")
 				.submodels(createDummyReference(DUMMY_SUBMODEL_ID))
 				.build();
 	}
@@ -59,6 +57,7 @@ public class DummyAasFactory {
 	public static AssetAdministrationShell createAasWithAssetInformation() {
 		return new DefaultAssetAdministrationShell.Builder()
 				.id(AASWITHASSETINFORMATION_ID)
+				.idShort("aasAssetInfo")
 				.assetInformation(createDummyAssetInformation())
 				.build();
 	}
@@ -75,6 +74,8 @@ public class DummyAasFactory {
 		return new DefaultAssetInformation.Builder()
 				.assetKind(AssetKind.INSTANCE)
 				.globalAssetId("assetIDTestKey")
+				.specificAssetIds(new DefaultSpecificAssetId.Builder().name("testSpecificAssetId")
+						.value("testValue").build())
 				.build();
 	}
 

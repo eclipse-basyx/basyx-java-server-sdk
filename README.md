@@ -1,3 +1,108 @@
+# Building the maven artifacts
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+cd ${PROJECT_ROOT}
+mvn clean install -DskipTests
+```
+Will produce the following component images:
+- AAS Environment: `basyx.aasenvironment/basyx.aasenvironment.component/target/basyx.aasenvironment.component-VERSION.jar`
+- AAS Registry: `basyx.aasregistry/basyx.aasregistry-service-release-log-mem/target/basyx.aasregistry-service-release-log-mem-VERSION.jar`
+- Submodel Registry: `basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component/target/basyx.aasdiscoveryservice.component-VERSION.jar`
+- AAS Discovery: `basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/target/basyx.submodelregistry-service-release-log-mem-VERSION.jar`
+
+
+# Building and pushing/running the docker images
+
+## AAS Environment
+### Push
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_ENVIRONMENT=0.3.8
+cd ${PROJECT_ROOT}/basyx.aasenvironment/basyx.aasenvironment.component
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT} .
+docker tag docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT} docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT}
+docker push docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT}
+```
+### Run locally
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_ENVIRONMENT=0.3.8
+cd ${PROJECT_ROOT}/basyx.aasenvironment/basyx.aasenvironment.component
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT} --load .
+docker run -p 8080:8080 docker-twinmap.letsdev.de/aas-env-oauth:${AAS_ENVIRONMENT}
+```
+
+## AAS Discovery
+### Push
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_DISCOVERY_VERSION=0.3.9
+cd ${PROJECT_ROOT}/basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION} .
+docker tag docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION} docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION}
+docker push docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION}
+```
+### Run locally
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_DISCOVERY_VERSION=0.3.9
+cd ${PROJECT_ROOT}/basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION} --load .
+docker run -p 8080:8080 docker-twinmap.letsdev.de/aas-discovery-oauth:${AAS_DISCOVERY_VERSION}
+```
+
+## AAS Registry
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_REGISTRY=0.3.13
+FINAL_NAME=basyx.aasregistry-service-release-log-mem-2.0.1-SNAPSHOT
+cp ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/target/${FINAL_NAME}.jar ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar 
+cd ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY} --build-arg FINAL_NAME=${FINAL_NAME} .
+docker tag docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY} docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY}
+docker push docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY}
+rm ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar
+```
+### Run locally
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+AAS_REGISTRY=0.3.13
+FINAL_NAME=basyx.aasregistry-service-release-log-mem-2.0.1-SNAPSHOT
+cp ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/target/${FINAL_NAME}.jar ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar 
+cd ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY} --build-arg FINAL_NAME=${FINAL_NAME} --load .
+docker run -p 8081:8081 docker-twinmap.letsdev.de/aas-registry-log-mem-oauth:${AAS_REGISTRY}
+rm ${PROJECT_ROOT}/basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar
+```
+
+## Submodel Registry
+### Push
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+SM_REGISTRY_VERSION=0.3.12
+FINAL_NAME=basyx.submodelregistry-service-release-log-mem-2.0.1-SNAPSHOT
+cp ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/target/${FINAL_NAME}.jar ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar 
+cd ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION} .
+docker tag docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION} docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION}
+docker push docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION}
+rm ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar
+```
+### Run locally
+```shell
+PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
+SM_REGISTRY_VERSION=0.3.12
+FINAL_NAME=basyx.submodelregistry-service-release-log-mem-2.0.1-SNAPSHOT
+cp ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/target/${FINAL_NAME}.jar ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar 
+cd ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION} --load .
+docker run -p 8080:8080 docker-twinmap.letsdev.de/aas-submodel-registry-log-mem-oauth:${SM_REGISTRY_VERSION}
+rm ${PROJECT_ROOT}/basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker/${FINAL_NAME}.jar
+```
+
+# See README of original repository below.
+# ----------------------------------------
+
 # Eclipse BaSyx Java V2 SDK [![Docker Pulls](https://img.shields.io/docker/pulls/eclipsebasyx/aas-server?style=plastic)](https://hub.docker.com/search?q=eclipsebasyx)
 [![BaSyx Logo](https://www.eclipse.org/basyx/img/basyxlogo.png)](https://www.eclipse.org/basyx/)
  
@@ -46,17 +151,19 @@ The future roadmap of BaSyx is described [here](https://github.com/eclipse-basyx
 We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For using the snapshots from Maven Central, add the following part to your project's POM:
 
 ```
-<repository>
-	<id>sonatype.snapshots</id>
-	<name>Sonatype Snapshot Repository</name>
-	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	<releases>
-		<enabled>false</enabled>
-	</releases>
-	<snapshots>
-		<enabled>true</enabled>
-	</snapshots>
-</repository>
+<repositories>
+  <repository>
+    <name>Central Portal Snapshots</name>
+    <id>central-portal-snapshots</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
 ```
 
 ## Getting Involved & Contributing

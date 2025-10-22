@@ -19,6 +19,7 @@
 		<module>basyx.mqttcore</module>
 		<module>basyx.mongocore</module>
 		<module>basyx.authorization</module>
+		<module>basyx.kafka</module>
 		<module>basyx.hierarchy</module>
 		<module>basyx.client</module>
 		<module>basyx.backend.inmemory.core</module>
@@ -27,5 +28,6 @@
 		<module>basyx.filerepository-backend-mongodb</module>
 		<module>basyx.authorization.rules.rbac.backend.inmemory</module>
 		<module>basyx.authorization.rules.rbac.backend.submodel</module>
-	</modules>
+        <module>basyx.querycore</module>
+    </modules>
 </project>

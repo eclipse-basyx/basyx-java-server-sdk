@@ -92,6 +92,7 @@ public class InMemoryFileRepository implements FileRepository {
 
 	@Override
 	public boolean exists(String fileId) {
+		if(fileId == null) return false;
 
 		if (fileId.isBlank() || !isFilePathValid(fileId))
 			return false;

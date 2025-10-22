@@ -106,6 +106,8 @@ public abstract class AuthorizedAasRegistryTestSuite {
 
     @Test
     public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
+    	
+    	
         String expectedHealthEndpointOutput = getStringFromFile("authorization/HealthOutput.json");
 
         String healthEndpointUrl = BASE_URL + "/actuator/health";

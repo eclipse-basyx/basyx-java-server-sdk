@@ -47,4 +47,9 @@ public class ConceptDescriptionRepoConfiguration {
 	public CorsPathPatternProvider getConceptDescriptionRepoDescriptionCorsUrlProvider() {
 		return new CorsPathPatternProvider("/description");
 	}
+
+	@Bean
+	public CorsPathPatternProvider getConceptDescriptionRepoQueryCorsUrlProvider() {
+		return new CorsPathPatternProvider("/query/**");
+	}
 }

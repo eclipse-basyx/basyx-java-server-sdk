@@ -43,6 +43,7 @@ import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -148,17 +149,47 @@ public abstract class AasRepositoryHTTPSuite {
 
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
-	
+
 	@Test
 	public void getAllPaginatedAas() throws IOException, ParseException {
 		createMultipleAasOnServer();
-		
+
 		CloseableHttpResponse retrievalResponse = getAllAas();
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
-		
+
 		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
-		
+
 		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAasJSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
+	}
+
+	@Test
+	public void getAllAasWithAssetIds() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		CloseableHttpResponse retrievalResponse = getAllAasAssetIdsParam();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
+	}
+
+	@Test
+	public void getAllAasWithGlobalAssetIds() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		CloseableHttpResponse retrievalResponse = getAllAasGlobalAssetIdsParam();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
+	}
+
+	@Test
+	public void getAllAasWithIdShort() throws IOException, ParseException {
+		createMultipleAasOnServer();
+		CloseableHttpResponse retrievalResponse = getAllAasIdShortParam();
+		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
+
+		String actualJsonFromServer = BaSyxHttpTestUtils.getResponseAsString(retrievalResponse);
+		BaSyxHttpTestUtils.assertSameJSONContent(getPaginatedAas1JSONString(), getJSONWithoutCursorInfo(actualJsonFromServer));
 	}
 
 	@Test
@@ -448,6 +479,18 @@ public abstract class AasRepositoryHTTPSuite {
 
 	protected CloseableHttpResponse getAllAas() throws IOException {
 		return BaSyxHttpTestUtils.executeGetOnURL(getURL());
+	}
+
+	protected CloseableHttpResponse getAllAasAssetIdsParam() throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL()+"?assetIds=ew0KIm5hbWUiOiJ0ZXN0SWQiLA0KInZhbHVlIjoidGVzdFZhbHVlIg0KfQ");
+	}
+
+	protected CloseableHttpResponse getAllAasGlobalAssetIdsParam() throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL()+"?assetIds=ew0KIm5hbWUiOiJnbG9iYWxBc3NldElkIiwNCiJ2YWx1ZSI6Imdsb2JhbEFzc2V0SWQiDQp9");
+	}
+
+	protected CloseableHttpResponse getAllAasIdShortParam() throws IOException {
+		return BaSyxHttpTestUtils.executeGetOnURL(getURL()+"?idShort=ExampleMotor");
 	}
 
 	private CloseableHttpResponse getSpecificAas(String aasId) throws IOException {

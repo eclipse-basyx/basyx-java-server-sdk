@@ -27,23 +27,51 @@ jobs:
     runs-on: ubuntu-latest
     name: BaSyx Core Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
-
       - name: Test BaSyx Common
         run: mvn test -f "basyx.common/pom.xml"
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -53,26 +81,65 @@ jobs:
     runs-on: ubuntu-latest
     name: AASX FileServer Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AASX FileServer
         run: mvn test -f "basyx.aasxfileserver/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi        
+
       - name: Test AASX FileServer IT
         run: mvn verify -f "basyx.aasxfileserver/basyx.aasxfileserver.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -82,26 +149,65 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Environment Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Environment
         run: mvn test -f "basyx.aasenvironment/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Environment IT
         run: mvn verify -f "basyx.aasenvironment/basyx.aasenvironment.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -111,26 +217,65 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Repository Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Repository
         run: mvn test -f "basyx.aasrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Repository IT
         run: mvn verify -f "basyx.aasrepository/basyx.aasrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -140,23 +285,55 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Service Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Service
         run: mvn test -f "basyx.aasservice/pom.xml"
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -166,26 +343,65 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Repository Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Repository
         run: mvn test -f "basyx.submodelrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Submodel Repository IT
         run: mvn verify -f "basyx.submodelrepository/basyx.submodelrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -195,23 +411,58 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Service Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Service
         run: mvn test -f "basyx.submodelservice/pom.xml"
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
+      - name: Test Submodel Service IT
+        run: mvn verify -f "basyx.submodelservice" -Ddocker.namespace=test -DskipSurefire=true
 
       - name: Stop environment
         if: always()
@@ -221,26 +472,65 @@ jobs:
     runs-on: ubuntu-latest
     name: Concept Description Repository Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Concept Description Repository
         run: mvn test -f "basyx.conceptdescriptionrepository/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Concept Description Repository IT
         run: mvn verify -f "basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -250,26 +540,65 @@ jobs:
     runs-on: ubuntu-latest
     name: Submodel Registry Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test Submodel Registry
         run: mvn test -f "basyx.submodelregistry/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test Submodel Registry IT
         run: mvn verify -f "basyx.submodelregistry" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -279,26 +608,65 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Registry Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Registry
         run: mvn test -f "basyx.aasregistry/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Registry IT
         run: mvn verify -f "basyx.aasregistry" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()
@@ -308,26 +676,65 @@ jobs:
     runs-on: ubuntu-latest
     name: AAS Discovery Service Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+          
+         
+      - name: Build BaSyx
+        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+        
+      - name: Build Discovery Service
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasdiscoveryservice.component"
+
+      - name: Build Submodel Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelrepository.component"
+
+      - name: Build AAS Repository
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasrepository.component"
+
+      - name: Build AAS Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mem"
+
+      - name: Build Submodel Registry Log Mem
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mem"
+
+      - name: Build AAS Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.aasregistry-service-release-log-mongodb"
+
+      - name: Build Submodel Registry Log MongoDB
+        run: mvn package -DskipTests -Ddocker.namespace=eclipsebasyx --pl "org.eclipse.digitaltwin.basyx:basyx.submodelregistry-service-release-log-mongodb"
 
       - name: Start environment
         run: docker compose --project-directory ./ci up -d --wait
 
-      - name: Build BaSyx
-        run: mvn clean install ${MVN_ARGS_BUILD_BASYX}
+      - name: Test BaSyx Common
+        run: mvn test -f "basyx.common/pom.xml"
 
       - name: Test AAS Discovery Service
         run: mvn test -f "basyx.aasdiscoveryservice/pom.xml" -DskipITs
 
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
+
       - name: Test AAS Discovery Service IT
         run: mvn verify -f "basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component" -Ddocker.namespace=test -DskipSurefire=true
+
+      - name: Fail if no Surefire/Failsafe reports found
+        run: |
+          if ! find . -type f \( -path "*/target/surefire-reports/*.xml" -o -path "*/target/failsafe-reports/*.xml" \) | grep -q .; then
+            echo "No Surefire or Failsafe test reports found. Failing CI.";
+            exit 1;
+          fi
 
       - name: Stop environment
         if: always()

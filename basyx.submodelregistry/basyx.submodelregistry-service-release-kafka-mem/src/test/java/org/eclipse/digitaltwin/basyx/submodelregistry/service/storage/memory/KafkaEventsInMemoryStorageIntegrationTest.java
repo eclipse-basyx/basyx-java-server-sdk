@@ -24,23 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.memory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.kafka.common.TopicPartition;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.BaseIntegrationTest;
-import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.integration.EventQueue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaHandler;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.listener.ConsumerSeekAware;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @TestPropertySource(
@@ -48,54 +33,4 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 				"spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092"})
 public class KafkaEventsInMemoryStorageIntegrationTest extends BaseIntegrationTest {
 
-
-	@Autowired
-	private RegistrationEventKafkaListener listener;
-
-	@Override
-	public void setUp() throws ApiException, InterruptedException {
-		listener.awaitTopicAssignment();
-		super.setUp();
-	}
-	
-	
-	@Override
-	public EventQueue queue() {
-		return listener.queue;
-	}
-	
-	@KafkaListener(topics = "submodel-registry", batch = "false", groupId = "kafka-test", autoStartup = "true" )
-	@Component
-	private static class RegistrationEventKafkaListener implements ConsumerSeekAware {
-		
-		private final EventQueue queue;
-		private final CountDownLatch latch = new CountDownLatch(1);
-		
-		
-		@SuppressWarnings("unused")
-		public RegistrationEventKafkaListener(ObjectMapper mapper) {
-			this.queue = new EventQueue(mapper);
-		}
-		
-		@KafkaHandler
-		public void receiveMessage(String content) {
-			queue.offer(content);
-		}
-
-		@Override
-		public void onPartitionsAssigned(Map<TopicPartition, Long> assignments,
-					ConsumerSeekCallback callback) {
-			for (TopicPartition eachPartition : assignments.keySet()) {
-				if ("submodel-registry".equals(eachPartition.topic())) {
-					latch.countDown();
-				}
-			}		
-		}
-		
-		public void awaitTopicAssignment() throws InterruptedException {
-			if (!latch.await(5, TimeUnit.MINUTES)) {
-				throw new RuntimeException("Timeout occured while waiting for partition assignment. Is kafka running?");
-			}
-		}
-	}
 }

@@ -37,6 +37,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
@@ -72,8 +73,58 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 		PaginationInfo pInfo = new PaginationInfo(2, null);
-		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(pInfo).getResult();
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null,null,pInfo).getResult();
 		assertEquals(expected, coll);
+	}
+
+	@Test
+	public void allAasRetrievalWithIdShort() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(null, "aasAssetInfo", pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
+	}
+
+	@Test
+	public void allAasRetrievalWithGlobalAssetId() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(Collections.singletonList(new DefaultSpecificAssetId.Builder().name("globalAssetId").value("assetIDTestKey").build()), null,pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
+	}
+
+	@Test
+	public void allAasRetrievalWithSpecificAssetId() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(Collections.singletonList(new DefaultSpecificAssetId.Builder().name("testSpecificAssetId").value("testValue").build()), null,pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
+	}
+
+	@Test
+	public void allAasRetrievalWithGlobalAndSpecificAssetId() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(Arrays.asList(new DefaultSpecificAssetId.Builder().name("testSpecificAssetId").value("testValue").build(),new DefaultSpecificAssetId.Builder().name("globalAssetId").value("assetIDTestKey").build()), null,pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
+	}
+
+	@Test
+	public void allAasRetrievalWithGlobalAndSpecificAssetIdAndIdShort() throws Exception {
+		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
+		AasRepository aasRepo = getAasRepository(expected);
+		PaginationInfo pInfo = new PaginationInfo(2, null);
+		Collection<AssetAdministrationShell> coll = aasRepo.getAllAas(Arrays.asList(new DefaultSpecificAssetId.Builder().name("testSpecificAssetId").value("testValue").build(),new DefaultSpecificAssetId.Builder().name("globalAssetId").value("assetIDTestKey").build()), "aasAssetInfo",pInfo).getResult();
+		assertEquals(1, coll.size());
+		assertEquals(coll.toArray()[0], expected.get(1));
 	}
 
 	@Test
@@ -222,7 +273,7 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		List<AssetAdministrationShell> expected = DummyAasFactory.createShells();
 		AasRepository aasRepo = getAasRepository(expected);
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(null,null,new PaginationInfo(1, null));
 		List<AssetAdministrationShell> resultList = result.getResult();
 		assertEquals(1, resultList.size());
 		assertEquals(DummyAasFactory.AASWITHSUBMODELREF_ID, resultList.stream().findFirst().get().getId());
@@ -234,11 +285,11 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		AasRepository aasRepo = getAasRepository(expected);
 		List<AssetAdministrationShell> retrieved = new ArrayList<>();
 
-		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(new PaginationInfo(1, null));
+		CursorResult<List<AssetAdministrationShell>> result = aasRepo.getAllAas(null,null,new PaginationInfo(1, null));
 		retrieved.addAll(result.getResult());
 
 		String cursor = result.getCursor();
-		result = aasRepo.getAllAas(new PaginationInfo(1, cursor));
+		result = aasRepo.getAllAas(null,null, new PaginationInfo(1, cursor));
 		retrieved.addAll(result.getResult());
 
 		assertEquals(expected, retrieved);

@@ -28,6 +28,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.backend;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -42,6 +43,16 @@ import java.util.List;
  * @author mateusmolina
  */
 public interface AasOperations {
+
+    /**
+     * Retrieves all Asset Administration Shells
+     *
+     * @param assetIds  List of specific asset IDs to filter AASs
+     * @param idShort   idShort to filter AASs
+     * @param pInfo     the pagination information
+     * @return          a {@code CursorResult} containing a list of Asset Administration Shells
+     */
+    CursorResult<List<AssetAdministrationShell>> getShells(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo);
 
     /**
      * Retrieves all Submodel References for the given AAS.
@@ -96,4 +107,12 @@ public interface AasOperations {
      */
     AssetInformation getAssetInformation(String aasId) throws ElementDoesNotExistException;
 
+    /**
+     * Retrieves all AASs that match the given asset IDs and idShort.
+     *
+     * @param assetIds the list of specific asset IDs to filter AASs
+     * @param idShort  the idShort to filter AASs
+     * @return an iterable collection of AssetAdministrationShells that match the criteria
+     */
+    Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort);
 }
