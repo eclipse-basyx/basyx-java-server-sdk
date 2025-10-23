@@ -30,4 +30,16 @@ spring:
   jackson:
     date-format: org.eclipse.digitaltwin.basyx.submodelregistry.service.RFC3339DateFormat
     serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false         
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+
+ld-sso:
+  base-url: https://sso.twinmap.de
+  audience: aas_twinmap_qa
+  debug-enabled: false
+  whitelisted-ips: []
+basyx:
+  cors:
+    allowed-origins: '*'
+    allowed-methods: 'GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD'
+    allowed-headers: '*'
