@@ -5,7 +5,7 @@
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasenvironment/basyx.aasenvironment.component
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -15,14 +15,14 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-env-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
 
 cd ${PROJECT_ROOT}/${MODULE}
 
-docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker tag docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```
@@ -30,7 +30,7 @@ docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasenvironment/basyx.aasenvironment.component
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -40,14 +40,14 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-env-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
 
 cd ${PROJECT_ROOT}/${MODULE}
 
-docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker run -p 8081:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```
 
@@ -56,24 +56,24 @@ docker run -p 8081:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
 mvn clean
 mvn -DskipTests install 
 
-mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
+mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdocker -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-discovery-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
 
 cd ${PROJECT_ROOT}/${MODULE}
 
-docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker tag docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```
@@ -81,24 +81,24 @@ docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
 mvn clean
 mvn -DskipTests install 
 
-mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
+mvn -f "$MODULE/pom.xml" clean package -DskipTests 
 
 IMAGE_NAME=aas-discovery-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
 
 cd ${PROJECT_ROOT}/${MODULE}
 
-docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker run -p 8082:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```
 
@@ -107,7 +107,7 @@ docker run -p 8082:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasregistry/basyx.aasregistry-service-release-log-mem
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -117,7 +117,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-registry-log-mem-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -126,7 +126,7 @@ mkdir ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 cp ${PROJECT_ROOT}/${MODULE}/target/${JAR_NAME_WITH_EXT} ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven/${JAR_NAME_WITH_EXT} 
 cd ${PROJECT_ROOT}/${MODULE}/src/main/docker
 
-docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker tag docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 
@@ -136,7 +136,7 @@ rm -rf ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.aasregistry/basyx.aasregistry-service-release-log-mem
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -146,7 +146,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-registry-log-mem-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -155,8 +155,8 @@ mkdir ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 cp ${PROJECT_ROOT}/${MODULE}/target/${JAR_NAME_WITH_EXT} ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven/${JAR_NAME_WITH_EXT} 
 cd ${PROJECT_ROOT}/${MODULE}/src/main/docker
 
-docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
-docker run -p 8080:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
+docker run -p 8080:8080 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 
 rm -rf ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 ```
@@ -166,7 +166,7 @@ rm -rf ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -176,7 +176,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-submodel-registry-log-mem-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -185,7 +185,7 @@ mkdir ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 cp ${PROJECT_ROOT}/${MODULE}/target/${JAR_NAME_WITH_EXT} ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven/${JAR_NAME_WITH_EXT} 
 cd ${PROJECT_ROOT}/${MODULE}/src/main/docker
 
-docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/amd64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker tag docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 docker push docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 
@@ -195,7 +195,7 @@ rm -rf ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 ```shell
 PROJECT_ROOT=~/workspace/twinmap/letsdev-basyx-java-server-sdk
 MODULE=basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem
-ARTIFACT_VERSION=2.0.1
+ARTIFACT_VERSION=2.0.0
 
 cd ${PROJECT_ROOT}
 
@@ -205,7 +205,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-submodel-registry-log-mem-oauth
-IMAGE_VERSION=0.4.0
+IMAGE_VERSION=0.3.21
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -214,7 +214,7 @@ mkdir ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
 cp ${PROJECT_ROOT}/${MODULE}/target/${JAR_NAME_WITH_EXT} ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven/${JAR_NAME_WITH_EXT} 
 cd ${PROJECT_ROOT}/${MODULE}/src/main/docker
 
-docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} --load .
+docker build --platform linux/arm64 -t docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION} --build-arg FINAL_NAME=${JAR_NAME} .
 docker run -p 8083:8081 docker-twinmap.letsdev.de/${IMAGE_NAME}:${IMAGE_VERSION}
 
 rm -rf ${PROJECT_ROOT}/${MODULE}/src/main/docker/maven
