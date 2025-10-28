@@ -52,7 +52,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class MongoDbConfiguration {
 
-	@Value("${basyx.aasregistry.mongodb.collectionName:submodeldescriptors}")
+	@Value("${basyx.aasregistry.mongodb.collectionName:aasdescriptors}")
 	private String collectionName;
 	
 	@Bean
