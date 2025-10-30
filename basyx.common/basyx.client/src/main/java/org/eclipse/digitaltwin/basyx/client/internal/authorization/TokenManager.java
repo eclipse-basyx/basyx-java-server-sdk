@@ -57,8 +57,11 @@ public class TokenManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TokenManager.class);
 
-	@Value("${ld-sso.api-token}")
 	private String apiToken;
+
+	public TokenManager(String apiToken) {
+		this.apiToken = apiToken;
+	}
 
 	public TokenManager(String tokenEndpoint, AccessTokenProvider accessTokenProvider) {
 	}
@@ -71,6 +74,10 @@ public class TokenManager {
 	 *             if an error occurs while retrieving the token
 	 */
 	public String getAccessToken() throws IOException {
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("Returning access token: " + apiToken.substring(apiToken.length() - 10));
+		}
+
 		return apiToken;
 	}
 }

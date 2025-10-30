@@ -15,7 +15,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-env-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -40,7 +40,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-env-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -66,7 +66,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdocker -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-discovery-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -91,7 +91,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests 
 
 IMAGE_NAME=aas-discovery-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -117,7 +117,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-registry-log-mem-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -146,7 +146,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-registry-log-mem-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -176,7 +176,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-submodel-registry-log-mem-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar
@@ -205,7 +205,7 @@ mvn -DskipTests install
 mvn -f "$MODULE/pom.xml" clean package -DskipTests -Pdockerbuild -Ddocker.namespace=letsdev -Ddocker.image.tag="$ARTIFACT_VERSION"
 
 IMAGE_NAME=aas-submodel-registry-log-mem-oauth
-IMAGE_VERSION=0.3.22
+IMAGE_VERSION=0.3.28
 JAR="$(find "$MODULE/target" -name '*.jar' ! -name '*sources*' ! -name '*javadoc*' ! -name '*-tests.jar' | head -n1)"
 JAR_NAME="$(basename "$JAR" .jar)"
 JAR_NAME_WITH_EXT=${JAR_NAME}.jar

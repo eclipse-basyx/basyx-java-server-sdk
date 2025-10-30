@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.NoSuchFileException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 
@@ -127,7 +128,14 @@ public class AasEnvironmentPreconfigurationLoader {
 
 
 	private List<File> extractFilesToLoadFromEnvironmentDirectory(String directoryToLoad) throws IllegalArgumentException, IOException {
-		File rootDirectory = getFile(directoryToLoad);
+		File rootDirectory;
+
+		try {
+			rootDirectory = getFile(directoryToLoad);
+		} catch (NoSuchFileException e) {
+			return new ArrayList<>();
+		}
+
 		RecursiveDirectoryScanner directoryScanner = new RecursiveDirectoryScanner();
 
 		List<File> potentialEnvironments = directoryScanner.listFiles(rootDirectory);

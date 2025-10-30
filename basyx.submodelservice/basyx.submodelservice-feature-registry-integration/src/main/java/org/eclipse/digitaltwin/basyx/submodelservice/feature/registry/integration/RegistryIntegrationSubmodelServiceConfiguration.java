@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2025 DFKI GmbH (https://www.dfki.de/en/web)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,9 +19,9 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
- * 
+ *
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integration;
 
@@ -46,13 +46,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Configuration for integrating {@link SubmodelService} with SubmodelRegistry
- * 
+ *
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */
 @Configuration
 @ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${basyx.submodelservice.feature.registryintegration:}') && !T(org.springframework.util.StringUtils).isEmpty('${basyx.externalurl:}')")
 public class RegistryIntegrationSubmodelServiceConfiguration {
-	
+
 	@Value("${basyx.submodelservice.feature.registryintegration:#{null}}")
 	private String registryBasePath;
 
@@ -82,23 +82,23 @@ public class RegistryIntegrationSubmodelServiceConfiguration {
 
 	@Value("${basyx.submodelservice.feature.registryintegration.authorization.scopes:#{null}}")
 	private Collection<String> scopes;
-	
+
 	@Bean
 	@ConditionalOnMissingBean
 	public SubmodelServiceRegistryLink getSubmodelServiceRegistryLink() {
-		if (!isAuthorizationEnabledOnRegistry) {
-			return new SubmodelServiceRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURLs);
-		}
+//		if (!isAuthorizationEnabledOnRegistry) {
+//			return new SubmodelServiceRegistryLink(new SubmodelRegistryApi(registryBasePath), submodelRepositoryBaseURLs);
+//		}
 		TokenManager tokenManager = new TokenManager(authenticationServerTokenEndpoint, createAccessTokenProvider());
 		return new SubmodelServiceRegistryLink(new AuthorizedConnectedSubmodelRegistry(registryBasePath, tokenManager), submodelRepositoryBaseURLs);
 	}
-	
+
 	@Bean
 	@ConditionalOnMissingBean
-	public AttributeMapper getSubmodelAttributeMapper(ObjectMapper objectMapper) {		
+	public AttributeMapper getSubmodelAttributeMapper(ObjectMapper objectMapper) {
 		return new AttributeMapper(objectMapper);
 	}
-	
+
 	private AccessTokenProvider createAccessTokenProvider() {
 		AccessTokenProviderFactory factory = new AccessTokenProviderFactory(GrantType.valueOf(grantType), scopes);
 		factory.setClientCredentials(clientId, clientSecret);
