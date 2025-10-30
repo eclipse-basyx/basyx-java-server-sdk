@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -670,6 +671,17 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
 
+	@Test
+	public void postSubmodelElementListAndGetWithSameOrder() {
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements("2", "1");
+		SubmodelElementList smeList = new DefaultSubmodelElementList.Builder().idShort("test").value(submodelElements).build();
+		Submodel submodel = buildDummySubmodelWithSmElement(ID, Collections.singletonList(smeList));
+		SubmodelService submodelService = getSubmodelService(submodel);
+		SubmodelElementList actual = (DefaultSubmodelElementList) submodelService.getSubmodelElement(smeList.getIdShort());
+		assertEquals(smeList.getValue().get(0),actual.getValue().get(0));
+		assertEquals(smeList.getValue().get(1),actual.getValue().get(1));
+	}
+
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(submodelElements).build();
 	}
@@ -681,6 +693,13 @@ public abstract class SubmodelServiceSuite {
 	protected List<SubmodelElement> buildDummySubmodelElements() {
 		Property prop = new DefaultProperty.Builder().idShort("propId").value("propValue").build();
 		File file = new DefaultFile.Builder().idShort("fileId").contentType("contentTypeValue").value("fileValue").build();
+
+		return Arrays.asList(prop, file);
+	}
+
+	protected List<SubmodelElement> buildDummySubmodelElements(String idShortA, String idShortB) {
+		Property prop = new DefaultProperty.Builder().idShort(idShortA).value("propValue").build();
+		File file = new DefaultFile.Builder().idShort(idShortB).contentType("contentTypeValue").value("fileValue").build();
 
 		return Arrays.asList(prop, file);
 	}
