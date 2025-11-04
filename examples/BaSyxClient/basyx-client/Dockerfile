@@ -1,4 +1,4 @@
-njdk:17FROM maven:3.8.1-openjdk-17 AS build
+FROM maven:3.8.1-openjdk-17 AS build
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 WORKDIR /app
