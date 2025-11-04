@@ -6,7 +6,7 @@ COPY pom.xml .
 COPY src src
 RUN mvn clean package -DskipTests
 
-FROM openjdk:17
+FROM eclipse-temurin:17
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 WORKDIR /app
