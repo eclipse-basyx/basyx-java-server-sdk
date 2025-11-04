@@ -684,8 +684,8 @@ public abstract class SubmodelServiceSuite {
 		submodelService.setSubmodelElementValue(smeList.getIdShort(), smeListValueToPatch);
 
 		actual = (DefaultSubmodelElementList) submodelService.getSubmodelElement(smeList.getIdShort());
-		assertEquals(smeList.getValue().get(0),actual.getValue().get(0));
-		assertEquals(smeList.getValue().get(1),actual.getValue().get(1));
+		assertEquals(((Property)smeList.getValue().get(0)).getValue(),propIdShort1.getValue());
+		assertEquals(((Property)smeList.getValue().get(1)).getValue(),propIdShort2.getValue());
 	}
 
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
