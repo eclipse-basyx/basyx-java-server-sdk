@@ -66,10 +66,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
-import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.*;
 import org.junit.Test;
 
 /**
@@ -673,11 +670,20 @@ public abstract class SubmodelServiceSuite {
 
 	@Test
 	public void postSubmodelElementListAndGetWithSameOrder() {
-		List<SubmodelElement> submodelElements = buildDummySubmodelElements("2", "1");
+		List<SubmodelElement> submodelElements = buildDummySubmodelElements("1", "2");
 		SubmodelElementList smeList = new DefaultSubmodelElementList.Builder().idShort("test").value(submodelElements).build();
 		Submodel submodel = buildDummySubmodelWithSmElement(ID, Collections.singletonList(smeList));
 		SubmodelService submodelService = getSubmodelService(submodel);
 		SubmodelElementList actual = (DefaultSubmodelElementList) submodelService.getSubmodelElement(smeList.getIdShort());
+		assertEquals(smeList.getValue().get(0),actual.getValue().get(0));
+		assertEquals(smeList.getValue().get(1),actual.getValue().get(1));
+
+		PropertyValue propIdShort1 = new PropertyValue("2");
+		PropertyValue propIdShort2 = new PropertyValue("1");
+		SubmodelElementListValue smeListValueToPatch = new SubmodelElementListValue(Arrays.asList(propIdShort1, propIdShort2));
+		submodelService.setSubmodelElementValue(smeList.getIdShort(), smeListValueToPatch);
+
+		actual = (DefaultSubmodelElementList) submodelService.getSubmodelElement(smeList.getIdShort());
 		assertEquals(smeList.getValue().get(0),actual.getValue().get(0));
 		assertEquals(smeList.getValue().get(1),actual.getValue().get(1));
 	}
@@ -698,10 +704,10 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	protected List<SubmodelElement> buildDummySubmodelElements(String idShortA, String idShortB) {
-		Property prop = new DefaultProperty.Builder().idShort(idShortA).value("propValue").build();
-		File file = new DefaultFile.Builder().idShort(idShortB).contentType("contentTypeValue").value("fileValue").build();
+		Property propA = new DefaultProperty.Builder().idShort(idShortA).value("1").build();
+		Property propB = new DefaultProperty.Builder().idShort(idShortB).value("2").build();
 
-		return Arrays.asList(prop, file);
+		return Arrays.asList(propA, propB);
 	}
 
 	protected List<SubmodelElement> buildDummySubmodelElementsToPatch() {
