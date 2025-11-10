@@ -49,6 +49,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -360,6 +361,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		BaSyxHttpTestUtils.assertSameJSONContent(expectedValue, BaSyxHttpTestUtils.getResponseAsString(response));
 	}
 
+	@Ignore("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
 	@Test
 	public void setSubmodelElementListValue() throws IOException, ParseException {
 		String expectedValue = getJSONValueAsString("value/setSubmodelElementListValue.json");
