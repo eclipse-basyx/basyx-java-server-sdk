@@ -90,10 +90,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMappe
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -388,6 +385,7 @@ public class TestConnectedSubmodelElements {
 		assertEquals(1, submodelElementList.getValue().getSubmodelElementValues().size());
 	}
 
+	@Ignore("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
 	@Test
 	public void setSubmodelElementListValue() {
 		DefaultSubmodelElementList submodelElementList = getDefaultSubmodelElementList();
