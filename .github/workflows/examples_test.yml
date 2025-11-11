@@ -114,9 +114,9 @@ jobs:
       - name: Stop BaSyx Minimal Example
         run: docker compose -f examples/BaSyxMinimal/docker-compose.yml down
 
-  test-basyx-nginx:
+  test-basyx-reverse-proxy:
     runs-on: ubuntu-latest
-    name: Test BaSyx NGINX Example
+    name: Test BaSyx Reverse Proxy Example
     steps:
       - uses: actions/checkout@v5
 
@@ -127,11 +127,11 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Start BaSyx NGINX Example
-        run: docker compose -f examples/BaSyxNGINX/docker-compose.yml up -d
+      - name: Start BaSyx Reverse Proxy Example
+        run: docker compose -f examples/BaSyxReverseProxy/docker-compose.yml up -d
 
-      - name: Stop BaSyx NGINX Example
-        run: docker compose -f examples/BaSyxNGINX/docker-compose.yml down
+      - name: Stop BaSyx Reverse Proxy Example
+        run: docker compose -f examples/BaSyxReverseProxy/docker-compose.yml down
 
   test-basyx-operation-delegation:
     runs-on: ubuntu-latest

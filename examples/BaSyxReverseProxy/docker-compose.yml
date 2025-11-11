@@ -1,12 +1,12 @@
 services:
-  # nginx
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
+  # apache
+  apache:
+    image: httpd:alpine
+    container_name: apache
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
     restart: always
     depends_on:
       aas-env:
