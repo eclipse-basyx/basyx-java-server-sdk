@@ -47,7 +47,7 @@ import java.util.List;
 public class MongoDbConfiguration {
 
 
-	@Value("${basyx.submodelregistry.mongodb.collectionName:submodeldescriptors}")
+	@Value("${basyx.submodelregistry.mongodb.collectionName:submodelDescriptor}")
 	public String collectionName;
 	
 	@Bean
