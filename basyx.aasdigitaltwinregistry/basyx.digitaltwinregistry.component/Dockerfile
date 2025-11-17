@@ -6,9 +6,9 @@ ENV JAVA_OPTS=$JAVA_OPTS
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} basyxExecutable.jar
 
-COPY src/main/resources/application.yml application.yml
-COPY src/main/resources/application-MongoDB.yml application-MongoDB.yml
-COPY src/main/resources/application-InMemory.yml application-InMemory.yml
+COPY src/main/resources/application.properties application.properties
+COPY src/main/resources/application-MongoDB.properties application-MongoDB.properties
+COPY src/main/resources/application-InMemory.properties application-InMemory.properties
 
 ARG PORT=8081
 ENV SERVER_PORT=${PORT}
