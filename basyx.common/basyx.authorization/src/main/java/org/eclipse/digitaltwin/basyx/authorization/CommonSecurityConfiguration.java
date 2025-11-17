@@ -52,7 +52,7 @@ public class CommonSecurityConfiguration {
 						.requestMatchers("/swagger-ui/**").permitAll()
 						.requestMatchers("/v3/**").permitAll()
 						.requestMatchers("/api-docs/**").permitAll()
-						.requestMatchers("api-docs/swagger-config/**").permitAll()
+						.requestMatchers("/api-docs/swagger-config/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/description").permitAll()
 						.anyRequest().authenticated()
 				)
