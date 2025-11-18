@@ -98,7 +98,15 @@ import org.springframework.context.annotation.FilterType;
 				@ComponentScan.Filter(
 						type = FilterType.ASSIGNABLE_TYPE,
 						value = org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http.documentation.AasDiscoveryServiceApiDocumentationConfiguration.class
-				)
+				),
+				@ComponentScan.Filter(
+						type = FilterType.ASSIGNABLE_TYPE,
+						value = org.eclipse.digitaltwin.basyx.authorization.rbac.KeycloakRoleProvider.class
+				),
+				@ComponentScan.Filter(
+						type = FilterType.ASSIGNABLE_TYPE,
+						value = org.eclipse.digitaltwin.basyx.authorization.KeycloakSubjectInformationProvider.class
+				),
 		}
 )
 public class DigitalTwinRegistry {
