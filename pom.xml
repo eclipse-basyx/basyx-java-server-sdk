@@ -160,17 +160,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.12.0</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<docencoding>UTF-8</docencoding>
-					<charset>UTF-8</charset>
-					<source>17</source>
-					<doclint>none</doclint>
-					<quiet>true</quiet>
-					<additionalJOptions>
-						<additionalJOption>-J-Dfile.encoding=UTF-8</additionalJOption>
-					</additionalJOptions>
-				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -291,12 +280,6 @@
 						<encoding>UTF-8</encoding>
 						<docencoding>UTF-8</docencoding>
 						<charset>UTF-8</charset>
-						<source>17</source>
-						<doclint>none</doclint>
-						<quiet>true</quiet>
-						<additionalJOptions>
-							<additionalJOption>-J-Dfile.encoding=UTF-8</additionalJOption>
-						</additionalJOptions>
 					</configuration>
 				</plugin>
 				<plugin>
