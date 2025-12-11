@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,13 +46,13 @@ import org.mockito.Mockito;
 public class PreconfigurationLoaderTextualResourceTest extends AasEnvironmentLoaderTest {
 
 	@Override
-	protected void loadRepositories(List<String> pathsToLoad) throws IOException, InvalidFormatException, DeserializationException {
+	protected void loadRepositories(List<String> pathsToLoad) throws IOException, InvalidFormatException, DeserializationException, ZipBombException {
 		AasEnvironmentPreconfigurationLoader envLoader = new AasEnvironmentPreconfigurationLoader(rLoader, pathsToLoad);
 		envLoader.loadPreconfiguredEnvironments(new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository));
 	}
 
 	@Test
-	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
+	public void testWithEmptyResource_NoElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of());
 		Assert.assertTrue(aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().isEmpty());
 		Assert.assertTrue(submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().isEmpty());

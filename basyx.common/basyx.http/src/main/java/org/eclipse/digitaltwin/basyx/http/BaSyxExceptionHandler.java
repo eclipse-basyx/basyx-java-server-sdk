@@ -169,4 +169,9 @@ public class BaSyxExceptionHandler {
 		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 
+	@ExceptionHandler(ZipBombException.class)
+	public ResponseEntity<Object> handleZipBombException(ZipBombException exception) {
+		return buildResponse("Zip bomb detected! The file would exceed the max. ratio of compressed file size to the size of the expanded data.\\nThis may indicate that the file is used to inflate memory usage and thus could pose a security risk.\\nYou can adjust this limit via basyx.aasenvironment.minInflateRatio in the AAS Environment configuration if you need to work with files which exceed this limit.", HttpStatus.BAD_REQUEST, exception);
+	}
+
 }

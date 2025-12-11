@@ -30,6 +30,7 @@ import java.io.IOException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,7 +61,7 @@ public class PreconfigurationLoaderInitializer implements InitializingBean {
 		loadPreconfiguredEnvironment();
 	}
 
-	private void loadPreconfiguredEnvironment() throws IOException, InvalidFormatException, DeserializationException {
+	private void loadPreconfiguredEnvironment() throws IOException, InvalidFormatException, DeserializationException, ZipBombException {
 		if (!preconfigurationLoader.shouldLoadPreconfiguredEnvironment()) {
 			return;
 		}

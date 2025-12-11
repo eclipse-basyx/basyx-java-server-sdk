@@ -36,6 +36,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -104,7 +105,7 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	@Override
 	public ResponseEntity<Boolean> uploadEnvironment(
 			@RequestParam(value = "file") MultipartFile envFile,
-			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates) throws IOException, InvalidFormatException, DeserializationException {
+			@RequestParam(value = "ignore-duplicates", required = false, defaultValue = "false") boolean ignoreDuplicates) throws IOException, InvalidFormatException, DeserializationException, ZipBombException {
 		EnvironmentType envType = EnvironmentType.getFromMimeType(envFile.getContentType());
 
 		if (envType == null)

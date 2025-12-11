@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministratio
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration.AasRepositoryRegistryLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.RepositoryRegistryLinkException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelRepositoryRegistryLink;
@@ -95,7 +96,7 @@ public class TestEnvironmentWithRegistryIntegration {
     }
 
     @Test
-    public void whenUploadDescriptorToRegistryFails_thenNoAasOrSmAreAddedToRepository() throws InvalidFormatException, DeserializationException, IOException, ApiException {
+    public void whenUploadDescriptorToRegistryFails_thenNoAasOrSmAreAddedToRepository() throws InvalidFormatException, DeserializationException, IOException, ApiException, ZipBombException {
         // simulate descriptor already being in registry
         aasRepositoryRegistryLink.getRegistryApi().postAssetAdministrationShellDescriptor(buildTestAasDescriptor());
 

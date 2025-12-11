@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenPr
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,7 +105,7 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
 
     @Override
     public void loadPreconfiguredEnvironments(AasEnvironment aasEnvironment)
-            throws IOException, InvalidFormatException, DeserializationException {
+            throws IOException, InvalidFormatException, DeserializationException, ZipBombException {
         if (isEnvironmentSet()) {
             setUpTokenProvider();
             configureSecurityContext();
