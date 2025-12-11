@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.xml.XmlDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 
 /**
  * Represents an environment and its relatedFiles
@@ -92,11 +93,11 @@ public class CompleteEnvironment {
 		return relatedFiles;
 	}
 
-	public static CompleteEnvironment fromFile(File file) throws DeserializationException, InvalidFormatException, IOException {
+	public static CompleteEnvironment fromFile(File file) throws DeserializationException, InvalidFormatException, IOException, ZipBombException {
 		return fromInputStream(new FileInputStream(file), EnvironmentType.getFromFilePath(file.getPath()));
 	}
 
-	public static CompleteEnvironment fromInputStream(InputStream inputStream, EnvironmentType envType) throws DeserializationException, InvalidFormatException, IOException {
+	public static CompleteEnvironment fromInputStream(InputStream inputStream, EnvironmentType envType) throws DeserializationException, InvalidFormatException, IOException, ZipBombException {
 		Environment environment = null;
 		List<InMemoryFile> relatedFiles = null;
 
@@ -109,9 +110,17 @@ public class CompleteEnvironment {
 			environment = deserializer.read(inputStream);
 		}
 		if(envType == EnvironmentType.AASX) {
-			AASXDeserializer deserializer = new AASXDeserializer(inputStream);
-			relatedFiles = deserializer.getRelatedFiles();
-			environment = deserializer.read();
+			try {
+				AASXDeserializer deserializer = new AASXDeserializer(inputStream);
+				relatedFiles = deserializer.getRelatedFiles();
+				environment = deserializer.read();
+			} catch (NullPointerException e) {
+				throw e;
+			} catch (Exception e) {
+				if (e.getMessage().startsWith("Zip bomb")) {
+					throw new ZipBombException(e);
+				}
+			}
 		}
 
 		return new CompleteEnvironment(environment, relatedFiles);

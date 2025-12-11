@@ -42,6 +42,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class AasEnvironmentPreconfigurationLoader {
 	}
 
 	public void loadPreconfiguredEnvironments(AasEnvironment aasEnvironment)
-			throws IOException, DeserializationException, InvalidFormatException {
+            throws IOException, DeserializationException, InvalidFormatException, ZipBombException {
 		List<File> files = scanForEnvironments(pathsToLoad);
 
 		if (files.isEmpty())

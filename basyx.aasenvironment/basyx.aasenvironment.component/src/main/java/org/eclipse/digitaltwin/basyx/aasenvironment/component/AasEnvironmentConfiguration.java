@@ -27,11 +27,13 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
 import java.util.List;
 
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.AasEnvironmentFeature;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.DecoratedAasEnvironmentFactory;
 import org.eclipse.digitaltwin.basyx.aasenvironment.preconfiguration.AasEnvironmentPreconfigurationLoader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +50,8 @@ public class AasEnvironmentConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features) {
+	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features, @Value("${basyx.aasenvironment.minInflateRatio:1.0}") double minInflateRatio) {
+		ZipSecureFile.setMinInflateRatio(minInflateRatio);
 		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
 
