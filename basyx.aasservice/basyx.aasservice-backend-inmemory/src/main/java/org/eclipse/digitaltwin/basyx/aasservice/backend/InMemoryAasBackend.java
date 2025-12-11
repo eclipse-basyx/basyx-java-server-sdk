@@ -133,12 +133,11 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 			boolean matchesGlobalAssetId = globalAssetIds.isEmpty();
 			for (SpecificAssetId globalAssetId : globalAssetIds){
 				String id = globalAssetId.getValue();
-				if (aas.getAssetInformation().getGlobalAssetId().equals(id)){
-					matchesGlobalAssetId = true;
-				} else {
+				if (aas.getAssetInformation() == null || aas.getAssetInformation().getGlobalAssetId() == null || !aas.getAssetInformation().getGlobalAssetId().equals(id)) {
 					matchesGlobalAssetId = false;
 					break;
 				}
+				matchesGlobalAssetId = true;
 			}
 			if (matchesAssetIds && matchesIdShort && matchesGlobalAssetId) {
 				filteredAas.add(aas);
