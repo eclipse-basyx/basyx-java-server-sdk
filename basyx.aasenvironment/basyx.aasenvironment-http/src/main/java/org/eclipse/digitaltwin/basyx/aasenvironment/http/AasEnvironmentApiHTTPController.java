@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
@@ -38,6 +39,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEn
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -60,6 +62,9 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	private static final String ACCEPT_XML = "application/xml";
 	private static final String ACCEPT_AASX = "application/asset-administration-shell-package+xml";
 
+	@Value("${basyx.aasenvironment.minInflateRatio:1.0}")
+	public double minInflateRatio;
+
 	private final HttpServletRequest request;
 
 	private final AasEnvironment aasEnvironment;
@@ -68,6 +73,7 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 	public AasEnvironmentApiHTTPController(HttpServletRequest request, AasEnvironment aasEnvironment) {
 		this.request = request;
 		this.aasEnvironment = aasEnvironment;
+		ZipSecureFile.setMinInflateRatio(minInflateRatio);
 	}
 
 	@Override
