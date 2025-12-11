@@ -114,12 +114,11 @@ public class CompleteEnvironment {
 				AASXDeserializer deserializer = new AASXDeserializer(inputStream);
 				relatedFiles = deserializer.getRelatedFiles();
 				environment = deserializer.read();
-			} catch (NullPointerException e) {
-				throw e;
 			} catch (Exception e) {
 				if (e.getMessage().startsWith("Zip bomb")) {
 					throw new ZipBombException(e);
 				}
+				throw e;
 			}
 		}
 
