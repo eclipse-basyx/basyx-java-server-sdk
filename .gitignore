@@ -90,3 +90,5 @@ local.properties
 /.env
 
 **.iml
+
+.DS_Store

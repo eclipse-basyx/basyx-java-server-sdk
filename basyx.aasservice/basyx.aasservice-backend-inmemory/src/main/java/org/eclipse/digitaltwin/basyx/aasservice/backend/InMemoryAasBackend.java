@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -115,9 +116,9 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 	public Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort) {
 		Iterable<AssetAdministrationShell> allAas = findAll();
 		List<AssetAdministrationShell> filteredAas = new java.util.ArrayList<>();
-		String globalAssetId = null;
+		List<SpecificAssetId> globalAssetIds = new ArrayList<>();
 		try {
-			globalAssetId = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).findFirst().get().getValue();
+			globalAssetIds = assetIds.stream().filter(assetId -> assetId.getName().equals("globalAssetId")).toList();
 			assetIds = assetIds.stream().filter(assetId -> !assetId.getName().equals("globalAssetId")).collect(Collectors.toList());
 		} catch (Exception e) {}
 		for (AssetAdministrationShell aas : allAas){
@@ -129,7 +130,15 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 				matchesAssetIds = false;
 			}
 			boolean matchesIdShort = (idShort == null || aas.getIdShort().equals(idShort));
-			boolean matchesGlobalAssetId = (globalAssetId == null || (aas.getAssetInformation() != null && aas.getAssetInformation().getGlobalAssetId() != null && aas.getAssetInformation().getGlobalAssetId().equals(globalAssetId)));
+			boolean matchesGlobalAssetId = globalAssetIds.isEmpty();
+			for (SpecificAssetId globalAssetId : globalAssetIds){
+				String id = globalAssetId.getValue();
+				if (aas.getAssetInformation() == null || aas.getAssetInformation().getGlobalAssetId() == null || !aas.getAssetInformation().getGlobalAssetId().equals(id)) {
+					matchesGlobalAssetId = false;
+					break;
+				}
+				matchesGlobalAssetId = true;
+			}
 			if (matchesAssetIds && matchesIdShort && matchesGlobalAssetId) {
 				filteredAas.add(aas);
 			}

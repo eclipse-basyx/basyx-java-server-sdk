@@ -240,13 +240,11 @@ public class MongoDBAasOperations implements AasOperations {
         List<Criteria> criteriaList = new ArrayList<>();
 
         // Extract globalAssetId from assetIds
-        String globalAssetId = null;
+        List<SpecificAssetId> globalAssetIds = new ArrayList<>();
         try {
-            globalAssetId = assetIds.stream()
+            globalAssetIds = assetIds.stream()
                     .filter(assetId -> "globalAssetId".equals(assetId.getName()))
-                    .findFirst()
-                    .map(SpecificAssetId::getValue)
-                    .orElse(null);
+                    .toList();
 
             assetIds = assetIds.stream()
                     .filter(assetId -> !"globalAssetId".equals(assetId.getName()))
@@ -267,8 +265,8 @@ public class MongoDBAasOperations implements AasOperations {
         }
 
         // Match globalAssetId if present
-        if (globalAssetId != null && !globalAssetId.isEmpty()) {
-            criteriaList.add(Criteria.where("assetInformation.globalAssetId").is(globalAssetId));
+        for (SpecificAssetId globalAssetId : globalAssetIds) {
+            criteriaList.add(Criteria.where("assetInformation.globalAssetId").is(globalAssetId.getValue()));
         }
 
         return criteriaList;
