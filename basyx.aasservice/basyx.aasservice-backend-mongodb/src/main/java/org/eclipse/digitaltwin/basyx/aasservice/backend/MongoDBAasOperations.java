@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceE
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -65,6 +66,42 @@ public class MongoDBAasOperations implements AasOperations {
     public MongoDBAasOperations(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
         collectionName = mongoOperations.getCollectionName(AssetAdministrationShell.class);
+    }
+
+    @Override
+    public CursorResult<List<AssetAdministrationShell>> getShells(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
+        List<AggregationOperation> ops = new ArrayList<>();
+
+        List<Criteria> criteriaList = buildAasFilterCriteria(assetIds, idShort);
+        if (!criteriaList.isEmpty()) {
+            ops.add(Aggregation.match(new Criteria().andOperator(criteriaList.toArray(new Criteria[0]))));
+        }
+
+        // Apply cursor (_id > cursor)
+        if (hasCursor(pInfo)) {
+            ops.add(Aggregation.match(Criteria.where("_id").gt(pInfo.getCursor())));
+        }
+
+        // Sort for stable pagination
+        ops.add(Aggregation.sort(Sort.by(Sort.Direction.ASC, "_id")));
+
+        // Apply limit
+        if (hasLimit(pInfo)) {
+            ops.add(Aggregation.limit(pInfo.getLimit()));
+        }
+
+        // Run aggregation
+        Aggregation aggregation = Aggregation.newAggregation(ops);
+        AggregationResults<AssetAdministrationShell> results =
+                mongoOperations.aggregate(aggregation, collectionName, AssetAdministrationShell.class);
+
+        List<AssetAdministrationShell> shells = results.getMappedResults();
+
+        String nextCursor = shells.isEmpty()
+                ? null
+                : shells.get(shells.size() - 1).getId();
+
+        return new CursorResult<>(nextCursor, shells);
     }
 
 
@@ -174,27 +211,10 @@ public class MongoDBAasOperations implements AasOperations {
     @Override
     public Iterable<AssetAdministrationShell> getAllAas(List<SpecificAssetId> assetIds, String idShort) {
         Query query = new Query();
-        Criteria criteria = new Criteria();
+        List<Criteria> criteriaList = buildAasFilterCriteria(assetIds, idShort);
 
-        List<String> globalAssetId = assetIds.stream()
-                .filter(assetId -> "globalAssetId".equals(assetId.getName()))
-                .map(SpecificAssetId::getValue)
-                .collect(Collectors.toList());
-        if (assetIds != null && !assetIds.isEmpty()) {
-            List<Criteria> assetIdCriteria = new ArrayList<>();
-            for (SpecificAssetId assetId : assetIds) {
-                assetIdCriteria.add(Criteria.where("assetInformation.specificAssetIds.name").is(assetId.getName()));
-                assetIdCriteria.add(Criteria.where("assetInformation.specificAssetIds.value").is(assetId.getValue()));
-            }
-            criteria.andOperator(assetIdCriteria);
-        }
-        if (idShort != null && !idShort.isEmpty()) {
-            criteria.and("idShort").is(idShort);
-        }
-        query.addCriteria(criteria);
-
-        for (String id : globalAssetId) {
-            query.addCriteria(Criteria.where("assetInformation.globalAssetId").is(id));
+        if (!criteriaList.isEmpty()) {
+            query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
         }
 
         return mongoOperations.find(query, AssetAdministrationShell.class, collectionName);
@@ -215,4 +235,51 @@ public class MongoDBAasOperations implements AasOperations {
 
         return "";
     }
+
+    private List<Criteria> buildAasFilterCriteria(List<SpecificAssetId> assetIds, String idShort) {
+        List<Criteria> criteriaList = new ArrayList<>();
+
+        // Extract globalAssetId from assetIds
+        String globalAssetId = null;
+        try {
+            globalAssetId = assetIds.stream()
+                    .filter(assetId -> "globalAssetId".equals(assetId.getName()))
+                    .findFirst()
+                    .map(SpecificAssetId::getValue)
+                    .orElse(null);
+
+            assetIds = assetIds.stream()
+                    .filter(assetId -> !"globalAssetId".equals(assetId.getName()))
+                    .collect(Collectors.toList());
+        } catch (Exception ignored) {}
+
+        // Match specific assetIds (name + value pair inside array)
+        if (assetIds != null && !assetIds.isEmpty()) {
+            for (SpecificAssetId assetId : assetIds) {
+                criteriaList.add(Criteria.where("assetInformation.specificAssetIds.name").is(assetId.getName()));
+                criteriaList.add(Criteria.where("assetInformation.specificAssetIds.value").is(assetId.getValue()));
+            }
+        }
+
+        // Match idShort if present
+        if (idShort != null && !idShort.isEmpty()) {
+            criteriaList.add(Criteria.where("idShort").is(idShort));
+        }
+
+        // Match globalAssetId if present
+        if (globalAssetId != null && !globalAssetId.isEmpty()) {
+            criteriaList.add(Criteria.where("assetInformation.globalAssetId").is(globalAssetId));
+        }
+
+        return criteriaList;
+    }
+
+    private static boolean hasLimit(PaginationInfo pInfo) {
+        return pInfo.getLimit() != null && pInfo.getLimit() > 0;
+    }
+
+    private static boolean hasCursor(PaginationInfo pInfo) {
+        return pInfo.getCursor() != null && !pInfo.getCursor().isEmpty();
+    }
+
 }

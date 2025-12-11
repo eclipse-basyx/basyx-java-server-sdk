@@ -12,7 +12,7 @@ COPY src src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime Stage
-FROM openjdk:17
+FROM eclipse-temurin:17
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 WORKDIR /app

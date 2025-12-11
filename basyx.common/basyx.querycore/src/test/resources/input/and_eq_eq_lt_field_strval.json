@@ -1,0 +1,43 @@
+{
+  "$condition": {
+    "$and": [
+      { "$match": [
+        { "$eq": [
+          { "$field": "$sm#idShort" },
+          { "$strVal": "TechnicalData" }
+        ]
+        },
+        { "$eq": [
+          {
+            "$field":
+            "$sme.ProductClassifications[].ProductClassId#value"
+          },
+          { "$strVal": "27-37-09-05" }
+        ]
+        }
+      ]
+      },
+      { "$match": [
+        {
+          "$eq": [
+            { "$field": "$sm#idShort" },
+            { "$strVal": "TechnicalData" }
+          ]
+        },
+        {
+          "$eq": [
+            { "$field": "$sme#semanticId" },
+            { "$strVal": "0173-1#02-BAF016#006" }
+          ]
+        },
+        {
+          "$lt": [
+            { "$field": "$sme#value" },
+            { "$numVal": 100 }
+          ]
+        }
+      ]
+      }
+    ]
+  }
+}

@@ -1,7 +1,4 @@
 ---
-- op: add
-  path: /components/schemas/AssetAdministrationShellDescriptor/x-class-extra-annotation
-  value: '@org.springframework.data.mongodb.core.mapping.Document(collection = "aasdescriptors")'
 - op: add 
   path: /components/schemas/AssetAdministrationShellDescriptor/allOf/1/properties/id/x-field-extra-annotation
   value: '@org.springframework.data.annotation.Id'

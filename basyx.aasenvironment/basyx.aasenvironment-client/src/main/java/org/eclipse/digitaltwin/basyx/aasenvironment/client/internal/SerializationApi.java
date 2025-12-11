@@ -44,10 +44,8 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-12-02T23:26:18.943744+01:00[Europe/Berlin]")
@@ -103,10 +101,10 @@ public class SerializationApi {
     memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
   }
 
-  protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-    String body = response.body() == null ? null : new String(response.body().readAllBytes());
-    String message = formatExceptionMessage(operationId, response.statusCode(), body);
-    return new ApiException(response.statusCode(), message, response.headers(), body);
+	protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
+		String body = response.body() == null ? null : new String(response.body().readAllBytes());
+		String message = formatExceptionMessage(operationId, response.statusCode(), body);
+		return new ApiException(response.statusCode(), message, response.headers(), body);
   }
 
   private String formatExceptionMessage(String operationId, int statusCode, String body) {

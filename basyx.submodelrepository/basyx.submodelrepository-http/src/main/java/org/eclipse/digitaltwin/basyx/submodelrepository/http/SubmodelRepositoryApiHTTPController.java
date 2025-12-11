@@ -55,6 +55,7 @@ import org.eclipse.digitaltwin.basyx.operation.Invokable;
 import org.eclipse.digitaltwin.basyx.pagination.GetSubmodelElementsResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.pagination.GetSubmodelsResult;
+import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,7 +244,7 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 		InputStream fileInputstream = null;
 		try {
 			fileInputstream = file.getInputStream();
-			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, fileInputstream);
+			repository.setFileValue(submodelIdentifier.getIdentifier(), idShortPath, fileName, file.getContentType(), fileInputstream);
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch (ElementDoesNotExistException e) {
@@ -277,6 +278,9 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	}
 
 	private ResponseEntity<Void> handleSubmodelElementValueSetRequest(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath, SubmodelElementValue body) {
+		if(body instanceof SubmodelElementListValue){
+			return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+		}
 		repository.setSubmodelElementValue(submodelIdentifier.getIdentifier(), idShortPath, body);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}

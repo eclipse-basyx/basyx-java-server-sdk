@@ -41,7 +41,7 @@ public class TestConfiguration extends AbstractMongoClientConfiguration {
 
 	@Bean
 	public AasRegistryStorage storage(MongoTemplate template) {
-		return new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template));
+		return new CursorEncodingRegistryStorage(new MongoDbAasRegistryStorage(template, "aasdescriptors"));
 	}
 
 	@Bean

@@ -43,10 +43,12 @@ jobs:
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
         - name: submodel-registry-log-mongodb
           path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
+        - name: digitaltwinregistry
+          path: basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -63,64 +65,75 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
 
+      # Set the project version from the release tag
+      - name: Set project version from tag
+        run: |
+          echo "Setting project version from release tag: ${{ github.event.release.tag_name }}"
+          mvn --batch-mode versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+
       - name: Build all modules first
         run: mvn clean install -DskipTests
 
-      - name: Extract Release Tag
-        id: extract_tag
+      # Process registry modules
+      - name: Process Registry Module
+        id: registry_module
+        if: contains(matrix.name, 'registry') && matrix.name != 'digitaltwinregistry'
         run: |
-          # Extract the release tag from the GitHub context
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
-
-      # Build the project
-      # For registry modules, we activate the dockerbuild profile and specify the module with --pl
-      - name: Build BaSyx
-        run: |
-          if [[ "${{ matrix.name }}" == *"registry"* ]]; then
-            # Derive the module's artifactId from the path
-            module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
-            artifact_id=$(basename "$module_root")
-            # Run with dockerbuild profile and namespace
-            mvn clean install -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" --pl "org.eclipse.digitaltwin.basyx:${artifact_id}"
-          else
-            echo "Non-registry module - already built in the previous step."
-          fi
-
-      - name: Prepare Registry JAR for Docker
-        if: contains(matrix.name, 'registry')
-        run: |
-          # Go three levels up from src/main/docker to get the module root
-          module_root=$(dirname "$(dirname "$(dirname "${{ matrix.path }}")")")
-
-          # Adjust the path to where the dockerbuild profile places the JAR
-          JAR_FILE=$(ls "$module_root/target/docker/${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}/${{ env.TAG_NAME }}/build/maven/"*.jar | head -n 1)
+          # Get the module path without /src/main/docker
+          MODULE_PATH=$(echo ${{ matrix.path }} | sed 's|/src/main/docker||')
+          echo "Building registry module at: ${MODULE_PATH}"
+          
+          # Build with dockerbuild profile
+          mvn clean package -DskipTests -Pdockerbuild "-Ddocker.namespace=${{ env.DOCKER_NAMESPACE }}" "-Ddocker.image.tag=${{ github.event.release.tag_name }}" -f ${MODULE_PATH}/pom.xml
+          
+          # Create maven directory for Docker
+          mkdir -p "${{ matrix.path }}/maven"
+          
+          # Find the JAR file using multiple search patterns
+          echo "Looking for JAR files in standard target directory..."
+          JAR_FILE=$(find "${MODULE_PATH}/target" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" -not -name "*-tests.jar" | head -n 1)
+          
           if [ -z "$JAR_FILE" ]; then
-            echo "No repackaged JAR found in $module_root/target/docker/${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}/${{ env.TAG_NAME }}/build/maven. Check your build."
+            echo "Not found in standard location, trying docker build location..."
+            JAR_FILE=$(find "${MODULE_PATH}" -path "*/docker/*/${{ env.DOCKER_NAMESPACE }}/*/${{ github.event.release.tag_name }}/build/maven/*[!tests].jar" | head -n 1)
+          fi
+          
+          # If still not found, try a more aggressive search
+          if [ -z "$JAR_FILE" ]; then
+            echo "Still not found, trying broader search..."
+            JAR_FILE=$(find "${MODULE_PATH}" -name "*.jar" -not -name "*sources*" -not -name "*javadoc*" -not -name "*-tests.jar" | head -n 1)
+          fi
+          
+          if [ -z "$JAR_FILE" ]; then
+            echo "No JAR file found! Listing directory structure:"
+            find "${MODULE_PATH}" -type d | sort
+            echo "Listing all JAR files:"
+            find "${MODULE_PATH}" -name "*.jar" | sort
             exit 1
           fi
+          
+          echo "Found JAR: ${JAR_FILE}"
+          cp "${JAR_FILE}" "${{ matrix.path }}/maven/"
+          
+          # Save the JAR name for Docker
+          JAR_BASENAME=$(basename "${JAR_FILE}" .jar)
+          echo "FINAL_NAME=${JAR_BASENAME}" >> $GITHUB_ENV
 
-          # Create the maven directory inside the Docker context and copy the JAR there
-          mkdir -p "${{ matrix.path }}/maven"
-          cp "$JAR_FILE" "${{ matrix.path }}/maven/"
+      # Process non-registry modules
+      - name: Process Non-Registry Module
+        id: non_registry_module
+        if: ${{ !contains(matrix.name, 'registry') || matrix.name == 'digitaltwinregistry' }}
+        run: |
+          echo "Processing non-registry module"
+          echo "FINAL_NAME=" >> $GITHUB_ENV
 
-          # Extract the final name without .jar extension
-          FINAL_NAME=$(basename "$JAR_FILE" .jar)
-          echo "FINAL_NAME=${FINAL_NAME}" >> $GITHUB_ENV
-
-      - name: No-Op for Non-Registry Modules
-        if: "!contains(matrix.name, 'registry')"
-        run: echo "FINAL_NAME=" >> $GITHUB_ENV
-
-      - name: Set short SHA
-        run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
-
+      # Build and push Docker image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
@@ -129,9 +142,11 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
-            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:${{ env.TAG_NAME }}
-          build-args: FINAL_NAME=${{ env.FINAL_NAME }}
+            ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:${{ github.event.release.tag_name }}
+          build-args: |
+            FINAL_NAME=${{ env.FINAL_NAME }}
 
       - name: Verify Docker Image
         run: |
-          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:${{ env.TAG_NAME }}
+          echo "Verifying Docker image: ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:${{ github.event.release.tag_name }}"
+          docker pull ${{ env.DOCKER_NAMESPACE }}/${{ matrix.name }}:${{ github.event.release.tag_name }}

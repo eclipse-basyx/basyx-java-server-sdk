@@ -1,0 +1,36 @@
+{
+  "$condition": {
+    "$match": [
+      {
+        "$contains": [
+          {
+            "$field": "$smdesc#endpoints[].protocolInformation.href"
+          },
+          {
+            "$strVal": "localhost"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$field": "$smdesc#administration.revision"
+          },
+          {
+            "$numVal": 9
+          }
+        ]
+      },
+      {
+        "$ne": [
+          {
+            "$field": "$smdesc#idShort"
+          },
+          {
+            "$field": "$smdesc#semanticId.keys[]"
+          }
+        ]
+      }
+    ]
+  }
+}

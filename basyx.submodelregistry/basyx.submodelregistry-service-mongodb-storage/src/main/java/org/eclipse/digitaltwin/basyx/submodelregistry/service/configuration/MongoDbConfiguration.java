@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.CursorEnco
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorageFeature;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.mongodb.MongoDbSubmodelRegistryStorage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,11 +46,15 @@ import java.util.List;
 @Log4j2
 public class MongoDbConfiguration {
 
+
+	@Value("${basyx.submodelregistry.mongodb.collectionName:submodelDescriptor}")
+	public String collectionName;
+	
 	@Bean
 	public SubmodelRegistryStorage createSubmodelRegistryStorage(MongoTemplate template, List<SubmodelRegistryStorageFeature> features) {
 		log.info("Creating mongodb storage");
 
-		SubmodelRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template));
+		SubmodelRegistryStorage storage = new CursorEncodingRegistryStorage(new MongoDbSubmodelRegistryStorage(template, collectionName));
 
 		return applyFeatures(storage, features);
 	}

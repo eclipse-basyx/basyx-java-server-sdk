@@ -1,0 +1,8 @@
+{
+  "$condition": {
+    "$eq": [
+      { "$field": "$aas#idShort" },
+      { "$strVal": "aasIdShortTest" }
+    ]
+  }
+}

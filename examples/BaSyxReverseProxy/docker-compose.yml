@@ -1,0 +1,97 @@
+services:
+  # apache
+  apache:
+    image: httpd:alpine
+    container_name: apache
+    ports:
+      - "80:80"
+    volumes:
+      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_started
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+      aas-discovery:
+        condition: service_started
+      aas-web-ui:
+        condition: service_started
+
+  # AAS Environment
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    volumes:
+      - ./basyx/aas-env.properties:/application/application.properties
+      - ./aas:/application/aas
+    environment:
+      - SERVER_SERVLET_CONTEXT_PATH=/aas-env
+    ports:
+      - 8081:8081
+    restart: always
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+
+  # AAS Registry
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    ports:
+      - 8082:8080
+    environment:
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /aas-registry
+      BASYX_CORS_ALLOWED_ORIGIN: "*"
+      BASYX_CORS_ALLOWED_METHODS: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    restart: always
+
+  # Submodel Registry
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mem:2.0.0-SNAPSHOT
+    container_name: sm-registry
+    ports:
+      - 8083:8080
+    environment:
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /sm-registry
+      BASYX_CORS_ALLOWED_ORIGIN: "*"
+      BASYX_CORS_ALLOWED_METHODS: "GET,POST,PATCH,DELETE,PUT,OPTIONS,HEAD"
+    restart: always
+
+  # AAS Discovery
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    container_name: aas-discovery
+    ports:
+      - 8084:8081
+    volumes:
+      - ./basyx/aas-discovery.properties:/application/application.properties
+    environment:
+      - SERVER_SERVLET_CONTEXT_PATH=/aas-discovery
+    restart: always
+  
+  # AAS Web UI
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:SNAPSHOT
+    container_name: aas-ui
+    ports:
+      - "3000:3000"
+    user: 1001:1001
+    environment:
+      AAS_DISCOVERY_PATH: "http://localhost/aas-discovery/lookup/shells"
+      AAS_REGISTRY_PATH: "http://localhost/aas-registry/shell-descriptors"
+      SUBMODEL_REGISTRY_PATH: "http://localhost/sm-registry/submodel-descriptors"
+      AAS_REPO_PATH: "http://localhost/aas-env/shells"
+      SUBMODEL_REPO_PATH: "http://localhost/aas-env/submodels"
+      CD_REPO_PATH: "http://localhost/aas-env/concept-descriptions"
+      BASE_PATH: "/aas-ui" # without trailing slash
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_started

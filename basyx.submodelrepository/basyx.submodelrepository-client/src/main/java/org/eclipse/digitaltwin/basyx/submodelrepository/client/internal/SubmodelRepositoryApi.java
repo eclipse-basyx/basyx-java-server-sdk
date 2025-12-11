@@ -25,14 +25,12 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.client.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -62,8 +60,6 @@ public class SubmodelRepositoryApi {
 	private final String memberVarBaseUri;
 	private final Consumer<HttpRequest.Builder> memberVarInterceptor;
 	private final Duration memberVarReadTimeout;
-	private final Consumer<HttpResponse<InputStream>> memberVarResponseInterceptor;
-	private final Consumer<HttpResponse<String>> memberVarAsyncResponseInterceptor;
 	private TokenManager tokenManager;
 	
 	public SubmodelRepositoryApi() {
@@ -99,14 +95,11 @@ public class SubmodelRepositoryApi {
 		memberVarBaseUri = apiClient.getBaseUri();
 		memberVarInterceptor = apiClient.getRequestInterceptor();
 		memberVarReadTimeout = apiClient.getReadTimeout();
-		memberVarResponseInterceptor = apiClient.getResponseInterceptor();
-		memberVarAsyncResponseInterceptor = apiClient.getAsyncResponseInterceptor();
 	}
 
-	protected ApiException getApiException(String operationId, HttpResponse<InputStream> response) throws IOException {
-		String body = response.body() == null ? null : new String(response.body().readAllBytes());
-		String message = formatExceptionMessage(operationId, response.statusCode(), body);
-		return new ApiException(response.statusCode(), message, response.headers(), body);
+	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
+		String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
+		return new ApiException(response.statusCode(), message, response.headers(), response.body());
 	}
 
 	private String formatExceptionMessage(String operationId, int statusCode, String body) {
@@ -174,10 +167,8 @@ public class SubmodelRepositoryApi {
 	public ApiResponse<Submodel> getSubmodelByIdWithHttpInfoNoUrlEncoding(String submodelIdentifier, String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getSubmodelByIdRequestBuilder(submodelIdentifier, level, extent);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodelById", localVarResponse);
@@ -290,10 +281,8 @@ public class SubmodelRepositoryApi {
 	public ApiResponse<Submodel> getSubmodelByIdMetadataWithHttpInfoNoUrlEncoding(String submodelIdentifier, String level) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getSubmodelByIdMetadataRequestBuilder(submodelIdentifier, level);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getSubmodelByIdMetadata", localVarResponse);
@@ -301,8 +290,9 @@ public class SubmodelRepositoryApi {
 				Submodel deserializedSubmodel = localVarResponse.body() == null ? null : memberVarObjectMapper.readValue(localVarResponse.body(), new TypeReference<Submodel>() {
 				});
 
-				if (deserializedSubmodel != null && deserializedSubmodel.getSubmodelElements() != null && deserializedSubmodel.getSubmodelElements().isEmpty())
+				if (deserializedSubmodel != null && deserializedSubmodel.getSubmodelElements() != null && deserializedSubmodel.getSubmodelElements().isEmpty()) {
 					deserializedSubmodel.setSubmodelElements(null);
+				}
 
 				return new ApiResponse<>(localVarResponse.statusCode(), localVarResponse.headers().map(), deserializedSubmodel);
 			} finally {
@@ -397,10 +387,8 @@ public class SubmodelRepositoryApi {
 	public ApiResponse<Submodel> postSubmodelWithHttpInfoNoUrlEncoding(Submodel submodel) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = postSubmodelRequestBuilder(submodel);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("postSubmodel", localVarResponse);
@@ -497,21 +485,14 @@ public class SubmodelRepositoryApi {
 	public ApiResponse<Void> putSubmodelByIdWithHttpInfoNoUrlEncoding(String submodelIdentifier, Submodel submodel) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = putSubmodelByIdRequestBuilder(submodelIdentifier, submodel);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("putSubmodelById", localVarResponse);
 				}
 				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} finally {
-				// Drain the InputStream
-				while (localVarResponse.body().read() != -1) {
-					// Ignore
-				}
-				localVarResponse.body().close();
 			}
 		} catch (IOException e) {
 			throw new ApiException(e);
@@ -597,21 +578,14 @@ public class SubmodelRepositoryApi {
 	public ApiResponse<Void> deleteSubmodelByIdWithHttpInfoNoUrlEncoding(String submodelIdentifier) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = deleteSubmodelByIdRequestBuilder(submodelIdentifier);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("deleteSubmodelById", localVarResponse);
 				}
 				return new ApiResponse<Void>(localVarResponse.statusCode(), localVarResponse.headers().map(), null);
 			} finally {
-				// Drain the InputStream
-				while (localVarResponse.body().read() != -1) {
-					// Ignore
-				}
-				localVarResponse.body().close();
 			}
 		} catch (IOException e) {
 			throw new ApiException(e);
@@ -680,10 +654,8 @@ public class SubmodelRepositoryApi {
 	private ApiResponse<Base64UrlEncodedCursorResult<List<Submodel>>> getAllSubmodelsApiResponse(String semanticId, String idShort, Integer limit, String cursor, String level, String extent) throws ApiException {
 		HttpRequest.Builder localVarRequestBuilder = getAllSubmodelsRequestBuilder(semanticId, idShort, limit, cursor, level, extent);
 		try {
-			HttpResponse<InputStream> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-			if (memberVarResponseInterceptor != null) {
-				memberVarResponseInterceptor.accept(localVarResponse);
-			}
+			HttpResponse<String> localVarResponse = memberVarHttpClient.send(localVarRequestBuilder.build(),
+					HttpResponse.BodyHandlers.ofString());
 			try {
 				if (localVarResponse.statusCode() / 100 != 2) {
 					throw getApiException("getAllSubmodels", localVarResponse);

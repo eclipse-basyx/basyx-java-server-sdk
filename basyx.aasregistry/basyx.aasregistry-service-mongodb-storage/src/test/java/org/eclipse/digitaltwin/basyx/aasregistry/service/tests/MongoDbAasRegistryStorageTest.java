@@ -112,7 +112,7 @@ public class MongoDbAasRegistryStorageTest extends AasRegistryStorageTest {
 	}
 
 	private void testIndexFilter(AssetKind kind, String type) {
-		MongoDbAasRegistryStorage storage = new MongoDbAasRegistryStorage(template);
+		MongoDbAasRegistryStorage storage = new MongoDbAasRegistryStorage(template, "aasdescriptors");
 		Optional<Criteria> criteriaOpt = storage.createFilterCriteria(new DescriptorFilter(kind, type));
 		assertThat(criteriaOpt).isNotEmpty();
 		Criteria criteria = criteriaOpt.get();

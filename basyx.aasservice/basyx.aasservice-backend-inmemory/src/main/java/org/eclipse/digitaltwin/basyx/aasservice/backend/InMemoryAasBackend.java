@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Implements the AasService as in-memory variant
@@ -53,6 +54,18 @@ public class InMemoryAasBackend extends InMemoryCrudRepository<AssetAdministrati
 
 	public InMemoryAasBackend() {
 		super(AssetAdministrationShell::getId);
+	}
+
+	@Override
+	public CursorResult<List<AssetAdministrationShell>> getShells(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
+		Iterable<AssetAdministrationShell> iterable = getAllAas(assetIds, idShort);
+		List<AssetAdministrationShell> allAas = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+
+		TreeMap<String, AssetAdministrationShell> aasMap = allAas.stream().collect(Collectors.toMap(AssetAdministrationShell::getId, aas -> aas, (a, b) -> a, TreeMap::new));
+
+		PaginationSupport<AssetAdministrationShell> paginationSupport = new PaginationSupport<>(aasMap, AssetAdministrationShell::getId);
+
+		return paginationSupport.getPaged(pInfo);
 	}
 
 	@Override

@@ -1,0 +1,36 @@
+{
+  "$condition": {
+    "$match": [
+      {
+        "$contains": [
+          {
+            "$field": "$aasdesc#endpoints[].protocolInformation.href"
+          },
+          {
+            "$strVal": "localhost"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$field": "$aasdesc#assetKind"
+          },
+          {
+            "$strVal": "Instance"
+          }
+        ]
+      },
+      {
+        "$ends-with": [
+          {
+            "$field": "$aasdesc#idShort"
+          },
+          {
+            "$strVal": "Mandatory"
+          }
+        ]
+      }
+    ]
+  }
+}
