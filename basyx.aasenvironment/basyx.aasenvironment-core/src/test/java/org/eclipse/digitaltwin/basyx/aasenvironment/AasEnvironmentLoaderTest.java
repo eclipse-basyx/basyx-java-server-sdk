@@ -90,7 +90,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException {
+	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 
 		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
@@ -99,7 +99,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceNoVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException {
+	public void testDeployedTwiceNoVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 
@@ -115,7 +115,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceWithSameVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException {
+	public void testDeployedTwiceWithSameVersion_AllDeployedButNotOverriden() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 
@@ -131,7 +131,7 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	@Test
-	public void testDeployedTwiceNewRevision_ElementsAreOverriden() throws InvalidFormatException, IOException, DeserializationException {
+	public void testDeployedTwiceNewRevision_ElementsAreOverriden() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_ON_SECOND_JSON));
 		loadRepositories(List.of(TEST_ENVIRONMENT_VERSION_AND_REVISION_ON_SECOND_JSON));
 
@@ -160,7 +160,7 @@ public class AasEnvironmentLoaderTest {
 	}
 	
 	@Test
-	public void testWithResourceFile_NoExceptionsWhenReuploadAfterElementsAreRemoved() throws InvalidFormatException, IOException, DeserializationException {
+	public void testWithResourceFile_NoExceptionsWhenReuploadAfterElementsAreRemoved() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		AasEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 		
 		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
@@ -179,7 +179,7 @@ public class AasEnvironmentLoaderTest {
 	}
 	
 	@Test
-	public void testWithResourceFile_ExceptionIsThrownWhenReuploadWithExistingElements() throws InvalidFormatException, IOException, DeserializationException {
+	public void testWithResourceFile_ExceptionIsThrownWhenReuploadWithExistingElements() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		AasEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
 		
 		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
@@ -192,7 +192,7 @@ public class AasEnvironmentLoaderTest {
 		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader));
 	}
 	
-	private void loadRepositoriesWithEnvironment(List<String> pathsToLoad, AasEnvironment aasEnvironment) throws IOException, DeserializationException, InvalidFormatException {
+	private void loadRepositoriesWithEnvironment(List<String> pathsToLoad, AasEnvironment aasEnvironment) throws IOException, DeserializationException, InvalidFormatException, ZipBombException {
 		
 		for (String path: pathsToLoad) {
 			File file = rLoader.getResource(path).getFile();
