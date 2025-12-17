@@ -23,4 +23,3 @@ ENV SERVER_SERVLET_CONTEXT_PATH=${CONTEXT_PATH}
 EXPOSE ${SERVER_PORT}
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=15s CMD curl --fail http://localhost:${SERVER_PORT}${SERVER_SERVLET_CONTEXT_PATH%/}/actuator/health || exit 1
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/.urandom", "org.springframework.boot.loader.launch.JarLauncher"]
-
