@@ -1,10 +1,9 @@
 FROM eclipse-temurin:17
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
+USER root
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 USER nobody
-RUN apt-get update && \
-    apt-get install -y ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
 COPY ${JAR_FILE} basyxExecutable.jar

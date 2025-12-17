@@ -24,10 +24,9 @@ RUN mkdir -p /application/classes /application/libs && \
 
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
+USER root
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 USER nobody
-RUN apt-get update && \
-    apt-get install -y ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
 
 COPY target/*-exec.jar basyxExecutable.jar
 COPY --from=maven-downloader /download/aas4j-model-${AAS4J_VERSION}.jar libs/
