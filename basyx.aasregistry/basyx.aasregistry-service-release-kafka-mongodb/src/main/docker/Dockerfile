@@ -8,7 +8,6 @@ RUN java -Djarmode=layertools -jar ${FINAL_NAME}.jar extract
 FROM eclipse-temurin:17
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
-USER root
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN mkdir /workspace
 WORKDIR /workspace
