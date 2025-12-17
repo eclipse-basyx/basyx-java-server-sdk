@@ -1,5 +1,7 @@
 # Stage 1: Download the AAS4J dependency
 FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-17 AS maven-downloader
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 ARG AAS4J_VERSION=1.0.4
 WORKDIR /download
 RUN mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get \
@@ -20,7 +22,12 @@ WORKDIR /application
 RUN mkdir -p /application/classes /application/libs && \
     chmod -R a+rwx /application
 
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 USER nobody
+RUN apt-get update && \
+    apt-get install -y ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY target/*-exec.jar basyxExecutable.jar
 COPY --from=maven-downloader /download/aas4j-model-${AAS4J_VERSION}.jar libs/

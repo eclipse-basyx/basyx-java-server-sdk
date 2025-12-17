@@ -1,5 +1,10 @@
 FROM eclipse-temurin:17
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
 USER nobody
+RUN apt-get update && \
+    apt-get install -y ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /application
 ARG JAVA_OPTS
 ENV JAVA_OPTS=$JAVA_OPTS
