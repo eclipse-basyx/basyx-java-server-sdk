@@ -1,7 +1,6 @@
 FROM eclipse-temurin:17
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 USER nobody
 WORKDIR /application
 ARG JAR_FILE=target/*-exec.jar
