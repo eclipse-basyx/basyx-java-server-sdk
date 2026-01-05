@@ -1,6 +1,6 @@
 # BaSyx V2 Apache Example
 
-This folder contains an example configuration for setting up the BaSyx V2 infrastructure with nginx.
+This folder contains an example configuration for setting up the BaSyx V2 infrastructure with Apache.
 
 After executing 
 
