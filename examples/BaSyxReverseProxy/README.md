@@ -1,6 +1,6 @@
-# BaSyx V2 NGINX Example
+# BaSyx V2 Apache Example
 
-This folder contains an example configuration for setting up the BaSyx V2 infrastructure with nginx.
+This folder contains an example configuration for setting up the BaSyx V2 infrastructure with Apache.
 
 After executing 
 
@@ -17,10 +17,10 @@ the following components are started:
 
 ## Configuration
 
-### NGINX
+### Apache
 
-The NGINX configuration is located in the `nginx` folder.
-You can change the the path to the BaSyx V2 components by modifying the `nginx/nginx.conf` file.
+The Apache configuration is located in the `apache` folder.
+You can change the the path to the BaSyx V2 components by modifying the `apache/httpd.conf` file.
 
 ### BaSyx V2 components
 
