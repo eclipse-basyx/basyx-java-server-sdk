@@ -67,6 +67,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceType
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ServiceDescription.ProfilesEnum;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.submodelregistry.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;
@@ -153,8 +154,8 @@ public abstract class BaseIntegrationTest {
 		ApiResponse<ServiceDescription> entity = api.getDescriptionWithHttpInfo();
 		assertThat(entity.getStatusCode()).isEqualTo(OK);
 		List<ProfilesEnum> profiles = entity.getData().getProfiles();
-		assertThat(profiles).asList().hasSize(1);
-		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.SUBMODELREGISTRYSERVICESPECIFICATION_SSP_001);
+		assertThat(profiles).asList().hasSize(2);
+		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.SUBMODELREGISTRYSERVICESPECIFICATION_SSP_001, ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001);
 	}
 
 	@Test

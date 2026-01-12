@@ -81,6 +81,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SortingPath;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.EventType;
@@ -170,8 +171,8 @@ public abstract class BaseIntegrationTest {
 		ApiResponse<ServiceDescription> entity = api.getDescriptionWithHttpInfo();
 		assertThat(entity.getStatusCode()).isEqualTo(OK);
 		List<ProfilesEnum> profiles = entity.getData().getProfiles();
-		assertThat(profiles).asList().hasSize(1);
-		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.ASSETADMINISTRATIONSHELLREGISTRYSERVICESPECIFICATION_SSP_001);
+		assertThat(profiles).asList().hasSize(2);
+		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.ASSETADMINISTRATIONSHELLREGISTRYSERVICESPECIFICATION_SSP_001, ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001);
 	}
 
 	@Test
