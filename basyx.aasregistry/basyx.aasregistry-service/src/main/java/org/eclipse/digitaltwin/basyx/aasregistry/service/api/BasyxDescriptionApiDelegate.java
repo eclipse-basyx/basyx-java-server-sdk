@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ServiceDescription.ProfilesEnum;
-import org.eclipse.digitaltwin.basyx.http.description.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
