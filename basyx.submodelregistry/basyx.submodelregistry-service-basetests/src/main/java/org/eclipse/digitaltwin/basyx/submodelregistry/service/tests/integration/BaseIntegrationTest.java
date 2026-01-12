@@ -67,7 +67,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ReferenceType
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ServiceDescription.ProfilesEnum;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.submodelregistry.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;

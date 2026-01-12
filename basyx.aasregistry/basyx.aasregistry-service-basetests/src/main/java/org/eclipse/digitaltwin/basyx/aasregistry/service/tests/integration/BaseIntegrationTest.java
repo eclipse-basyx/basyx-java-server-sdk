@@ -81,7 +81,6 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SortingPath;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.EventType;
