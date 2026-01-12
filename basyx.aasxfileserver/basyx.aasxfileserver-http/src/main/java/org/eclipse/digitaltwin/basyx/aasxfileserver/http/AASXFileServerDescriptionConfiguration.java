@@ -12,6 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class AASXFileServerDescriptionConfiguration {
     @Bean
     public ProfileDeclaration aasxFileServerProfiles() {
-        return () -> new TreeSet<>(List.of(Profile.AASXFILESERVERSERVICESPECIFICATION_SSP_001));
+        return () -> new TreeSet<>(List.of(Profile.AASXFILESERVERSERVICESPECIFICATION_SSP_001, Profile.BASYXSERVICESPECIFICATION_SSP_001));
     }
 }

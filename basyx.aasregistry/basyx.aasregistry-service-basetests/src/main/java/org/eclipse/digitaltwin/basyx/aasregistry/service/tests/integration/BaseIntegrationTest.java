@@ -170,8 +170,8 @@ public abstract class BaseIntegrationTest {
 		ApiResponse<ServiceDescription> entity = api.getDescriptionWithHttpInfo();
 		assertThat(entity.getStatusCode()).isEqualTo(OK);
 		List<ProfilesEnum> profiles = entity.getData().getProfiles();
-		assertThat(profiles).asList().hasSize(1);
-		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.ASSETADMINISTRATIONSHELLREGISTRYSERVICESPECIFICATION_SSP_001);
+		assertThat(profiles).asList().hasSize(2);
+		assertThat(profiles).asList().containsExactlyInAnyOrder(ProfilesEnum.ASSETADMINISTRATIONSHELLREGISTRYSERVICESPECIFICATION_SSP_001, ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001);
 	}
 
 	@Test

@@ -13,6 +13,6 @@ public class AasRepositoryServiceDescriptionConfiguration {
   @Bean
   public ProfileDeclaration aasRepositoryProfiles() {
     return () -> new TreeSet<>(List.of(Profile.ASSETADMINISTRATIONSHELLREPOSITORYSERVICESPECIFICATION_SSP_001,
-        Profile.ASSETADMINISTRATIONSHELLREPOSITORYSERVICESPECIFICATION_SSP_002));
+        Profile.ASSETADMINISTRATIONSHELLREPOSITORYSERVICESPECIFICATION_SSP_002, Profile.BASYXSERVICESPECIFICATION_SSP_001));
   }
 }

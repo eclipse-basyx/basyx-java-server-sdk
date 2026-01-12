@@ -12,6 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class AasDiscoveryServiceDescriptionConfiguration {
     @Bean
     public ProfileDeclaration aasDiscoveryProfiles() {
-        return () -> new TreeSet<>(List.of(Profile.DISCOVERYSERVICESPECIFICATION_SSP_001));
+        return () -> new TreeSet<>(List.of(Profile.DISCOVERYSERVICESPECIFICATION_SSP_001, Profile.BASYXSERVICESPECIFICATION_SSP_001));
     }
 }
