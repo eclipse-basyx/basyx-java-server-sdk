@@ -12,6 +12,6 @@ import java.util.TreeSet;
 public class ConceptDescriptionRepositoryServiceDescriptionConfiguration {
   @Bean
   public ProfileDeclaration cdRepositoryProfiles() {
-    return () -> new TreeSet<>(List.of(Profile.CONCEPTDESCRIPTIONSERVICESPECIFICATION_SSP_001));
+    return () -> new TreeSet<>(List.of(Profile.CONCEPTDESCRIPTIONSERVICESPECIFICATION_SSP_001, Profile.BASYXSERVICESPECIFICATION_SSP_001));
   }
 }

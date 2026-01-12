@@ -56,7 +56,11 @@ public enum Profile implements StandardizedLiteralEnum {
       "https://admin-shell.io/aas/API/3/0/SubmodelRepositoryServiceSpecification/SSP-004"),
 
   CONCEPTDESCRIPTIONSERVICESPECIFICATION_SSP_001(
-      "https://admin-shell.io/aas/API/3/0/ConceptDescriptionServiceSpecification/SSP-001");
+      "https://admin-shell.io/aas/API/3/0/ConceptDescriptionServiceSpecification/SSP-001"),
+
+  BASYXSERVICESPECIFICATION_SSP_001(
+          "https://basyx.org/aas/API/3/0/BaSyxServiceSpecification/SSP-001"
+  );
 
   private String value;
 
