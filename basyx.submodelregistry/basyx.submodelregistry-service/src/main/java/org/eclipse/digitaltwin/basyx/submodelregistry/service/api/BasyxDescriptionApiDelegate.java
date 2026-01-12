@@ -48,7 +48,9 @@ public class BasyxDescriptionApiDelegate implements DescriptionApiDelegate {
 			ProfilesEnum value = getProfile(eachProfile);
 			profilesList.add(value);
 		}
-		profilesList.add(ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001);
+		if (!profilesList.contains(ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001)) {
+			profilesList.add(ProfilesEnum.BASYXSERVICESPECIFICATION_SSP_001);
+		}
 		description.setProfiles(profilesList);
 	}
 
