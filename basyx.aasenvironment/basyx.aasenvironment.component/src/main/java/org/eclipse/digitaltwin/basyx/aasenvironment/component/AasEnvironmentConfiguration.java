@@ -50,7 +50,7 @@ public class AasEnvironmentConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features, @Value("${basyx.aasenvironment.minInflateRatio:0.001}") double minInflateRatio) {
+	public static AasEnvironment getAasEnvironment(AasEnvironmentFactory aasEnvironmentFactory, List<AasEnvironmentFeature> features, @Value("${basyx.aasenvironment.mininflateratio:0.001}") double minInflateRatio) {
 		ZipSecureFile.setMinInflateRatio(minInflateRatio);
 		return new DecoratedAasEnvironmentFactory(aasEnvironmentFactory, features).create();
 	}
