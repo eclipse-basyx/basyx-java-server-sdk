@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:5.0.10
+    image: mongo:8
     # Provide mongo config
     restart: always
     environment:
@@ -8,10 +8,11 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
     # Set health checks to wait until mongo has started
     healthcheck:
-      test: mongo
+      test: ["CMD-SHELL", "mongosh --quiet --username \"$MONGO_INITDB_ROOT_USERNAME\" --password \"$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval \"db.adminCommand({ ping: 1 })\" || exit 1"]
       interval: 10s
-      start_period: 5s
-      retries: 5
+      timeout: 5s
+      start_period: 20s
+      retries: 10
     # Maps tcp port to host
     ports:
       - 27017:27017

@@ -24,7 +24,7 @@ services:
       - basyx
 
   mongodb:
-    image: mongo:5.0.10
+    image: mongo:8
     container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
