@@ -33,6 +33,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * Common configurations for security
@@ -43,9 +44,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @ConditionalOnExpression("#{${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false}}")
 public class CommonSecurityConfiguration {
 
+	private final CorsConfigurationSource corsConfigurationSource;
+
+	public CommonSecurityConfiguration(CorsConfigurationSource corsConfigurationSource) {
+		this.corsConfigurationSource = corsConfigurationSource;
+	}
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
+				.cors(cors -> cors.configurationSource(corsConfigurationSource))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/actuator/health/**").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
