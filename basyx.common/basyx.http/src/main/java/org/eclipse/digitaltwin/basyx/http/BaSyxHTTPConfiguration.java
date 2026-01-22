@@ -35,6 +35,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -102,5 +105,46 @@ public class BaSyxHTTPConfiguration {
 				registry.addMapping(pathPattern).allowedOriginPatterns(allowedOrigins).allowedMethods(allowedMethods);
 			}
 		};
+	}
+
+	/**
+	 * Creates a {@link CorsConfigurationSource} that can be used by Spring Security
+	 * to apply CORS headers even on error responses (e.g., 401, 403).
+	 * This ensures consistent CORS behavior between Spring MVC and Spring Security.
+	 *
+	 * @param configurationUrlProviders
+	 * @param allowedOrigins
+	 * @param allowedMethods
+	 * @return
+	 */
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource(List<CorsPathPatternProvider> configurationUrlProviders,
+															 @Value("${basyx.cors.allowed-origins:}") String[] allowedOrigins,
+															 @Value("${basyx.cors.allowed-methods:}") String[] allowedMethods) {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		if (allowedOrigins.length == 0 && allowedMethods.length == 0) {
+			return source;
+		}
+
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		if (allowedOrigins.length > 0) {
+			configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
+		}
+
+		if (allowedMethods.length > 0) {
+			configuration.setAllowedMethods(Arrays.asList(allowedMethods));
+		}
+
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowCredentials(true);
+
+		for (CorsPathPatternProvider provider : configurationUrlProviders) {
+			logger.info("Registering CORS configuration for path pattern: " + provider.getPathPattern());
+			source.registerCorsConfiguration(provider.getPathPattern(), configuration);
+		}
+
+		return source;
 	}
 }
