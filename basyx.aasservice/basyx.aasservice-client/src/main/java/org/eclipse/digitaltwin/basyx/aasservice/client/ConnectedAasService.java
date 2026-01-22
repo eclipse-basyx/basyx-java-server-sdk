@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApi;
+import org.eclipse.digitaltwin.basyx.aasservice.client.internal.AssetAdministrationShellServiceApiFactory;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
@@ -56,7 +57,7 @@ public class ConnectedAasService implements AasService {
 	private AssetAdministrationShellServiceApi serviceApi;
 
 	public ConnectedAasService(String aasServiceUrl) {
-		this.serviceApi = new AssetAdministrationShellServiceApi(aasServiceUrl);
+		this.serviceApi = AssetAdministrationShellServiceApiFactory.create(aasServiceUrl);
 	}
 	
 	public ConnectedAasService(AssetAdministrationShellServiceApi assetAdministrationShellServiceApi) {

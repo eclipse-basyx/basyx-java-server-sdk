@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
+import org.eclipse.digitaltwin.basyx.client.internal.ApiClientPool;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiResponse;
 import org.eclipse.digitaltwin.basyx.client.internal.Pair;
@@ -98,6 +99,10 @@ public class AssetAdministrationShellRepositoryApi {
     memberVarBaseUri = apiClient.getBaseUri();
     memberVarInterceptor = apiClient.getRequestInterceptor();
     memberVarReadTimeout = apiClient.getReadTimeout();
+  }
+
+  public void setTokenManager(TokenManager tokenManager) {
+    this.tokenManager = tokenManager;
   }
 
 	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {

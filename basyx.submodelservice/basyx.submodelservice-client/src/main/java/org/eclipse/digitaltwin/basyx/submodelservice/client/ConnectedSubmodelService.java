@@ -48,6 +48,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApiFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.factory.SubmodelElementValueMapperFactory;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class ConnectedSubmodelService implements SubmodelService {
 	 *            submodels the "/submodel" part has to be included
 	 */
 	public ConnectedSubmodelService(String submodelServiceUrl) {
-		this.serviceApi = new SubmodelServiceApi(submodelServiceUrl);
+		this.serviceApi = SubmodelServiceApiFactory.create(submodelServiceUrl);
 		this.submodelElementValueMapperFactory = new SubmodelElementValueMapperFactory();
 	}
 	
