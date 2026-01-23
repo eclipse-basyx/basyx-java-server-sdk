@@ -69,7 +69,11 @@ public class ApiClientPool {
    * @return cached or new ApiClient for AAS operations
    */
   public ApiClient getOrCreateAasRepoApiClient(String baseUri, ObjectMapper mapper) {
-    return aasRepoApiClients.computeIfAbsent(baseUri, uri -> {
+    return aasRepoApiClients.compute(baseUri, (uri, existingApiClient) -> {
+      if (existingApiClient != null) {
+        existingApiClient.setObjectMapper(mapper);
+        return existingApiClient;
+      }
       return new ApiClient(HttpClient.newBuilder(), mapper, uri);
     });
   }
@@ -82,7 +86,11 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateAasServiceApiClient(String serviceUrl, ObjectMapper mapper) {
-    return aasServiceApiClients.computeIfAbsent(serviceUrl, uri -> {
+    return aasServiceApiClients.compute(serviceUrl, (uri, existingApiClient) -> {
+      if (existingApiClient != null) {
+        existingApiClient.setObjectMapper(mapper);
+        return existingApiClient;
+      }
       return new ApiClient(HttpClient.newBuilder(), mapper, uri);
     });
   }
@@ -95,7 +103,11 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateSubmodelRepoApiClient(String baseUri, ObjectMapper mapper) {
-    return submodelRepoApiClients.computeIfAbsent(baseUri, uri -> {
+    return submodelRepoApiClients.compute(baseUri, (uri, existingApiClient) -> {
+      if (existingApiClient != null) {
+        existingApiClient.setObjectMapper(mapper);
+        return existingApiClient;
+      }
       return new ApiClient(HttpClient.newBuilder(), mapper, uri);
     });
   }
@@ -108,7 +120,11 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateSubmodelServiceApiClient(String serviceUrl, ObjectMapper mapper) {
-    return submodelServiceApiClients.computeIfAbsent(serviceUrl, uri -> {
+    return submodelServiceApiClients.compute(serviceUrl, (uri, existingApiClient) -> {
+      if (existingApiClient != null) {
+        existingApiClient.setObjectMapper(mapper);
+        return existingApiClient;
+      }
       return new ApiClient(HttpClient.newBuilder(), mapper, uri);
     });
   }
