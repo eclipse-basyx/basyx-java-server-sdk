@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApi;
+import org.eclipse.digitaltwin.basyx.submodelservice.client.internal.SubmodelServiceApiFactory;
 
 /**
  * Provides access to an authorized Submodel Service on a remote server - regardless if it
@@ -43,7 +43,7 @@ public class AuthorizedConnectedSubmodelService extends ConnectedSubmodelService
 	 * @param tokenManager
 	 */
 	public AuthorizedConnectedSubmodelService(String repoUrl, TokenManager tokenManager) {
-		super(new SubmodelServiceApi(repoUrl, tokenManager));
+		super(SubmodelServiceApiFactory.create(repoUrl, tokenManager));
 	}
 
 }

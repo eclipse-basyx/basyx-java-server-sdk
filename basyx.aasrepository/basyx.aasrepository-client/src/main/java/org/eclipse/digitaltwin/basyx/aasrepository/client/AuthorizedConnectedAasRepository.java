@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
-import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApi;
+import org.eclipse.digitaltwin.basyx.aasrepository.client.internal.AssetAdministrationShellRepositoryApiFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.client.ConnectedAasService;
 import org.eclipse.digitaltwin.basyx.aasservice.client.AuthorizedConnectedAasService;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
@@ -41,7 +41,7 @@ public class AuthorizedConnectedAasRepository extends ConnectedAasRepository {
 	private TokenManager tokenManager;
 
 	public AuthorizedConnectedAasRepository(String repoUrl, TokenManager tokenManager) {
-		super(repoUrl, new AssetAdministrationShellRepositoryApi(repoUrl, tokenManager));
+		super(repoUrl, AssetAdministrationShellRepositoryApiFactory.create(repoUrl, tokenManager));
 		this.tokenManager = tokenManager;
 	}
 	

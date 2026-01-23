@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
+import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApiFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.AuthorizedConnectedSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 
@@ -41,7 +41,7 @@ public class AuthorizedConnectedSubmodelRepository extends ConnectedSubmodelRepo
 	private TokenManager tokenManager;
 
 	public AuthorizedConnectedSubmodelRepository(String repoUrl, TokenManager tokenManager) {
-		super(repoUrl, new SubmodelRepositoryApi(repoUrl, tokenManager));
+		super(repoUrl, SubmodelRepositoryApiFactory.create(repoUrl, tokenManager));
 		this.tokenManager = tokenManager;
 	}
 	
