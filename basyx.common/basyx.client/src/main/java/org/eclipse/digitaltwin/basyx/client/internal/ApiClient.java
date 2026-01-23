@@ -83,6 +83,7 @@ public class ApiClient {
   private Consumer<HttpResponse<String>> asyncResponseInterceptor;
   private Duration readTimeout;
   private Duration connectTimeout;
+  private HttpClient httpClient;
 
   private static String valueToString(Object value) {
     if (value == null) {
@@ -190,6 +191,7 @@ public class ApiClient {
     connectTimeout = null;
     responseInterceptor = null;
     asyncResponseInterceptor = null;
+    this.httpClient = this.builder.build();
   }
 
   /**
@@ -208,6 +210,7 @@ public class ApiClient {
     connectTimeout = null;
     responseInterceptor = null;
     asyncResponseInterceptor = null;
+    this.httpClient = this.builder.build();
   }
 
   protected ObjectMapper createDefaultObjectMapper() {
@@ -249,6 +252,7 @@ public class ApiClient {
    */
   public ApiClient setHttpClientBuilder(HttpClient.Builder builder) {
     this.builder = builder;
+    this.httpClient = null;
     return this;
   }
 
@@ -260,7 +264,10 @@ public class ApiClient {
    * @return The HTTP client.
    */
   public HttpClient getHttpClient() {
-    return builder.build();
+    if (httpClient == null) {
+      httpClient = builder.build();
+    }
+    return httpClient;
   }
 
   /**

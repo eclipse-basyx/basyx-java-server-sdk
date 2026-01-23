@@ -97,6 +97,10 @@ public class SubmodelRepositoryApi {
 		memberVarReadTimeout = apiClient.getReadTimeout();
 	}
 
+	public void setTokenManager(TokenManager tokenManager) {
+    this.tokenManager = tokenManager;
+  }
+
 	protected ApiException getApiException(String operationId, HttpResponse<String> response) throws IOException {
 		String message = formatExceptionMessage(operationId, response.statusCode(), response.body());
 		return new ApiException(response.statusCode(), message, response.headers(), response.body());

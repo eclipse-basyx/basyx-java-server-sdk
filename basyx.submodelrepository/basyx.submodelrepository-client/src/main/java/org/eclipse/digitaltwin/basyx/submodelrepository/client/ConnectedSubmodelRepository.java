@@ -46,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApi;
+import org.eclipse.digitaltwin.basyx.submodelrepository.client.internal.SubmodelRepositoryApiFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
@@ -68,7 +69,7 @@ public class ConnectedSubmodelRepository implements SubmodelRepository {
 	 *            the Url of the Submodel Repository without the "/submodels" part
 	 */
 	public ConnectedSubmodelRepository(String submodelRepoUrl) {
-		this.repoApi = new SubmodelRepositoryApi(submodelRepoUrl);
+		this.repoApi = SubmodelRepositoryApiFactory.create(submodelRepoUrl);
 		this.submodelRepoUrl = submodelRepoUrl;
 	}
 	
