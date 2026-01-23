@@ -85,7 +85,7 @@ public class SubmodelServiceApiFactory {
    * @return a new SubmodelServiceApi instance
    */
   public static SubmodelServiceApi create(String submodelServiceUrl, ObjectMapper objectMapper, TokenManager tokenManager) {
-    ObjectMapper mapper = objectMapper != null ? objectMapper : new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create());
+    ObjectMapper mapper = objectMapper != null ? objectMapper : new SubmodelSpecificJsonMapperFactory().create();
 
     ApiClient apiClient = ApiClientPool.getInstance().getOrCreateSubmodelServiceApiClient(submodelServiceUrl, mapper);
 
