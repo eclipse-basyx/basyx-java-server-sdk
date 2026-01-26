@@ -21,7 +21,7 @@ on:
       - 'NOTICE'
 
 env:
-  DOCKER_NAMESPACE: eclipsebasyx
+  DOCKER_NAMESPACE: friedjannik
 
 jobs:
   build-and-push-prerelease:

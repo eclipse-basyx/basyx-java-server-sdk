@@ -94,6 +94,11 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations),  collectionName, AssetAdministrationShellDescriptor.class);
 		List<AssetAdministrationShellDescriptor> foundDescriptors = results.getMappedResults();
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
+		foundDescriptors.forEach(desc -> {
+			desc.getSpecificAssetIds().forEach(sId -> {
+				sId.setExternalSubjectId(null);
+			});
+		});
 		return new CursorResult<>(cursor, foundDescriptors);
 	}
 
@@ -152,6 +157,9 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		if (descriptor == null) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
+		descriptor.getSpecificAssetIds().forEach(sId -> {
+			sId.setExternalSubjectId(null);
+		});
 		return descriptor;
 	}
 
