@@ -92,7 +92,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
 		foundDescriptors.forEach(desc -> {
 			List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
-			if (!desc.getSpecificAssetIds().isEmpty()) {
+			if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
 				desc.getSpecificAssetIds().forEach(sId -> {
 					SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
 					if (!sId.getSupplementalSemanticIds().isEmpty()){
@@ -165,7 +165,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
 		List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
-		if (!descriptor.getSpecificAssetIds().isEmpty()) {
+		if (descriptor.getSpecificAssetIds() != null || !descriptor.getSpecificAssetIds().isEmpty()) {
 			descriptor.getSpecificAssetIds().forEach(sId -> {
 				SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
 				if (!sId.getSupplementalSemanticIds().isEmpty()) {
