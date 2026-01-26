@@ -90,22 +90,24 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations),  collectionName, AssetAdministrationShellDescriptor.class);
 		List<AssetAdministrationShellDescriptor> foundDescriptors = results.getMappedResults();
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
-		foundDescriptors.forEach(desc -> {
-			List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
-			if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
-				desc.getSpecificAssetIds().forEach(sId -> {
-					SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
-					if (!sId.getSupplementalSemanticIds().isEmpty()){
-						newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
-					}
-					if (sId.getSemanticId() != null) {
-						newId.setSemanticId(sId.getSemanticId());
-					}
-					newIdsWithoutExternalSubjectID.add(newId);
-				});
-				desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
-			}
-		});
+		try {
+			foundDescriptors.forEach(desc -> {
+				List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+				if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
+					desc.getSpecificAssetIds().forEach(sId -> {
+						SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
+						if (!sId.getSupplementalSemanticIds().isEmpty()) {
+							newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
+						}
+						if (sId.getSemanticId() != null) {
+							newId.setSemanticId(sId.getSemanticId());
+						}
+						newIdsWithoutExternalSubjectID.add(newId);
+					});
+					desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+				}
+			});
+		} catch (Exception ignored){}
 		return new CursorResult<>(cursor, foundDescriptors);
 	}
 
@@ -164,6 +166,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		if (descriptor == null) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
+		try{
 		List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
 		if (descriptor.getSpecificAssetIds() != null || !descriptor.getSpecificAssetIds().isEmpty()) {
 			descriptor.getSpecificAssetIds().forEach(sId -> {
@@ -178,6 +181,8 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 			});
 			descriptor.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
 		}
+		} catch (Exception ignored){}
+
 		return descriptor;
 	}
 
