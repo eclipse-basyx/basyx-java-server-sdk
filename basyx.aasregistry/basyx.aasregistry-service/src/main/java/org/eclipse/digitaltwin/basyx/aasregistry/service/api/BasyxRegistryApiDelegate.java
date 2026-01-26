@@ -26,13 +26,10 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.api;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.GetAssetAdministrationShellDescriptorsResult;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.GetSubmodelDescriptorsResult;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.PagedResultPagingMetadata;
-import org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor;
+
+import org.eclipse.digitaltwin.basyx.aasregistry.model.*;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilter;
@@ -76,7 +73,23 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 		GetAssetAdministrationShellDescriptorsResult result = new GetAssetAdministrationShellDescriptorsResult();
 		result.setPagingMetadata(resolvePagingMeta(allDescriptors));
 		result.setResult(allDescriptors.getResult());
-
+		for(int i = 0; i<allDescriptors.getResult().size(); i++) {
+			AssetAdministrationShellDescriptor desc = allDescriptors.getResult().get(i);
+			if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
+				List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+				for(SpecificAssetId sId : desc.getSpecificAssetIds()) {
+					SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
+					if (sId.getSupplementalSemanticIds() != null) {
+						newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
+					}
+					if (sId.getSemanticId() != null) {
+						newId.setSemanticId(sId.getSemanticId());
+					}
+					newIdsWithoutExternalSubjectID.add(newId);
+				}
+				desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+			}
+		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -94,8 +107,23 @@ public class BasyxRegistryApiDelegate implements ShellDescriptorsApiDelegate {
 
 	@Override
 	public ResponseEntity<AssetAdministrationShellDescriptor> getAssetAdministrationShellDescriptorById(String aasIdentifier) {
-		AssetAdministrationShellDescriptor result = storage.getAasDescriptor(aasIdentifier);
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		AssetAdministrationShellDescriptor desc = storage.getAasDescriptor(aasIdentifier);
+
+		if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
+			List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+			for(SpecificAssetId sId : desc.getSpecificAssetIds()) {
+				SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
+				if (sId.getSupplementalSemanticIds() != null) {
+					newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
+				}
+				if (sId.getSemanticId() != null) {
+					newId.setSemanticId(sId.getSemanticId());
+				}
+				newIdsWithoutExternalSubjectID.add(newId);
+			}
+			desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+		}
+		return new ResponseEntity<>(desc, HttpStatus.OK);
 	}
 
 	@Override
