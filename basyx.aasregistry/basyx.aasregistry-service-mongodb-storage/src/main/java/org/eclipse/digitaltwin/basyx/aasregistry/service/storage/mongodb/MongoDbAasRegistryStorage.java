@@ -90,24 +90,24 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations),  collectionName, AssetAdministrationShellDescriptor.class);
 		List<AssetAdministrationShellDescriptor> foundDescriptors = results.getMappedResults();
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
-		try {
-			foundDescriptors.forEach(desc -> {
-				List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+
+		for(int i = 0; i<foundDescriptors.size(); i++) {
+			AssetAdministrationShellDescriptor desc = foundDescriptors.get(i);
 				if (desc.getSpecificAssetIds() != null || !desc.getSpecificAssetIds().isEmpty()) {
-					desc.getSpecificAssetIds().forEach(sId -> {
+					List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+					for(SpecificAssetId sId : desc.getSpecificAssetIds()) {
 						SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
-						if (!sId.getSupplementalSemanticIds().isEmpty()) {
+						if (sId.getSupplementalSemanticIds() != null) {
 							newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
 						}
 						if (sId.getSemanticId() != null) {
 							newId.setSemanticId(sId.getSemanticId());
 						}
 						newIdsWithoutExternalSubjectID.add(newId);
-					});
+					}
 					desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
 				}
-			});
-		} catch (Exception ignored){}
+		}
 		return new CursorResult<>(cursor, foundDescriptors);
 	}
 
@@ -166,22 +166,21 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		if (descriptor == null) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
-		try{
-		List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
 		if (descriptor.getSpecificAssetIds() != null || !descriptor.getSpecificAssetIds().isEmpty()) {
-			descriptor.getSpecificAssetIds().forEach(sId -> {
+			List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
+			for(SpecificAssetId sId : descriptor.getSpecificAssetIds()) {
 				SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
-				if (!sId.getSupplementalSemanticIds().isEmpty()) {
+				if (sId.getSupplementalSemanticIds() != null) {
 					newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
 				}
 				if (sId.getSemanticId() != null) {
 					newId.setSemanticId(sId.getSemanticId());
 				}
 				newIdsWithoutExternalSubjectID.add(newId);
-			});
+			}
 			descriptor.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
 		}
-		} catch (Exception ignored){}
+
 
 		return descriptor;
 	}
