@@ -29,38 +29,9 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: aas-environment
-          path: basyx.aasenvironment/basyx.aasenvironment.component
-        - name: aas-repository
-          path: basyx.aasrepository/basyx.aasrepository.component
-        - name: submodel-repository
-          path: basyx.submodelrepository/basyx.submodelrepository.component
-        - name: submodel-service
-          path: basyx.submodelservice/basyx.submodelservice.component
-        - name: conceptdescription-repository
-          path: basyx.conceptdescriptionrepository/basyx.conceptdescriptionrepository.component
-        - name: aas-discovery
-          path: basyx.aasdiscoveryservice/basyx.aasdiscoveryservice.component
-        - name: aasxfileserver
-          path: basyx.aasxfileserver/basyx.aasxfileserver.component
-        - name: aas-registry-kafka-mem
-          path: basyx.aasregistry/basyx.aasregistry-service-release-kafka-mem/src/main/docker
-        - name: aas-registry-kafka-mongodb
-          path: basyx.aasregistry/basyx.aasregistry-service-release-kafka-mongodb/src/main/docker
-        - name: aas-registry-log-mem
-          path: basyx.aasregistry/basyx.aasregistry-service-release-log-mem/src/main/docker
         - name: aas-registry-log-mongodb
           path: basyx.aasregistry/basyx.aasregistry-service-release-log-mongodb/src/main/docker
-        - name: submodel-registry-kafka-mem
-          path: basyx.submodelregistry/basyx.submodelregistry-service-release-kafka-mem/src/main/docker
-        - name: submodel-registry-kafka-mongodb
-          path: basyx.submodelregistry/basyx.submodelregistry-service-release-kafka-mongodb/src/main/docker
-        - name: submodel-registry-log-mem
-          path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mem/src/main/docker
-        - name: submodel-registry-log-mongodb
-          path: basyx.submodelregistry/basyx.submodelregistry-service-release-log-mongodb/src/main/docker
-        - name: digitaltwinregistry
-          path: basyx.aasdigitaltwinregistry/basyx.digitaltwinregistry.component
+
 
     steps:
       - name: Checkout Code
