@@ -92,17 +92,19 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
 		foundDescriptors.forEach(desc -> {
 			List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
-			desc.getSpecificAssetIds().forEach(sId -> {
-				SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
-				if (!sId.getSupplementalSemanticIds().isEmpty()){
-					newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
-				}
-				if (sId.getSemanticId() != null) {
-					newId.setSemanticId(sId.getSemanticId());
-				}
-				newIdsWithoutExternalSubjectID.add(newId);
-			});
-			desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+			if (!desc.getSpecificAssetIds().isEmpty()) {
+				desc.getSpecificAssetIds().forEach(sId -> {
+					SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
+					if (!sId.getSupplementalSemanticIds().isEmpty()){
+						newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
+					}
+					if (sId.getSemanticId() != null) {
+						newId.setSemanticId(sId.getSemanticId());
+					}
+					newIdsWithoutExternalSubjectID.add(newId);
+				});
+				desc.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+			}
 		});
 		return new CursorResult<>(cursor, foundDescriptors);
 	}
@@ -163,17 +165,19 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
 		List<SpecificAssetId> newIdsWithoutExternalSubjectID = new ArrayList<>();
-		descriptor.getSpecificAssetIds().forEach(sId -> {
-			SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
-			if (!sId.getSupplementalSemanticIds().isEmpty()){
-				newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
-			}
-			if (sId.getSemanticId() != null) {
-				newId.setSemanticId(sId.getSemanticId());
-			}
-			newIdsWithoutExternalSubjectID.add(newId);
-		});
-		descriptor.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+		if (!descriptor.getSpecificAssetIds().isEmpty()) {
+			descriptor.getSpecificAssetIds().forEach(sId -> {
+				SpecificAssetId newId = new SpecificAssetId(sId.getName(), sId.getValue());
+				if (!sId.getSupplementalSemanticIds().isEmpty()) {
+					newId.setSupplementalSemanticIds(sId.getSupplementalSemanticIds());
+				}
+				if (sId.getSemanticId() != null) {
+					newId.setSemanticId(sId.getSemanticId());
+				}
+				newIdsWithoutExternalSubjectID.add(newId);
+			});
+			descriptor.setSpecificAssetIds(newIdsWithoutExternalSubjectID);
+		}
 		return descriptor;
 	}
 
