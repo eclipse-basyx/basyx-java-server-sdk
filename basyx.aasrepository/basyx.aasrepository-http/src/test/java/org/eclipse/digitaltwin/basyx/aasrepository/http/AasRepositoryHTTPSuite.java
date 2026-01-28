@@ -280,7 +280,7 @@ public abstract class AasRepositoryHTTPSuite {
 		CloseableHttpResponse deleteResponse = BaSyxHttpTestUtils.executeDeleteOnURL(url);
 		CloseableHttpResponse getResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasSubmodelRefAccessURL(dummyAasId));
 
-		assertEquals(200, deleteResponse.getCode());
+		assertEquals(204, deleteResponse.getCode());
 		
 		String response = BaSyxHttpTestUtils.getResponseAsString(getResponse);
 		BaSyxHttpTestUtils.assertSameJSONContent(getSMReferenceRemovalJson(), getJSONWithoutCursorInfo(response));
