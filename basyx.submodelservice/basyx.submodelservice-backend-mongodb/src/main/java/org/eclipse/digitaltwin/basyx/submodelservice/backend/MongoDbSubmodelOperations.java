@@ -30,12 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.SubmodelElementNotADataElementException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelOperations;
@@ -186,6 +183,13 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         } else if (parentSme instanceof Entity entity) {
             List<SubmodelElement> submodelElements = entity.getStatements();
             submodelElements.add(submodelElement);
+        } else if (parentSme instanceof AnnotatedRelationshipElement are) {
+            try {
+                List<DataElement> annotations = are.getAnnotations();
+                annotations.add((DataElement) submodelElement);
+            } catch (ClassCastException e) {
+                throw new SubmodelElementNotADataElementException(submodelElement.getIdShort());
+            }
         }
 
         updateSubmodelElement(submodelId, idShortPath, parentSme);

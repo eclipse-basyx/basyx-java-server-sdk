@@ -41,28 +41,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.NotImplementedException;
-import org.eclipse.digitaltwin.aas4j.v3.model.DataTypeDefXsd;
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.File;
-import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
-import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
-import org.eclipse.digitaltwin.aas4j.v3.model.Property;
-import org.eclipse.digitaltwin.aas4j.v3.model.Range;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEntity;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
-import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.*;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
@@ -687,6 +668,31 @@ public abstract class SubmodelServiceSuite {
 
 		SubmodelElement sme = submodelService.getSubmodelElement("MainEntity.SubEntity.Sub_SubEntity");
 		assertEquals(sub_subEntity.getIdShort(), sme.getIdShort());
+	}
+
+	@Test
+	public void addDataElementToARE(){
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		AnnotatedRelationshipElement topAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("MainAre").build();
+		Property property = createDummyProperty("Test");
+		submodelElements.add(topAre);
+		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
+		SubmodelService submodelService = getSubmodelService(submodel);
+
+		submodelService.createSubmodelElement("MainAre", property);
+		SubmodelElement sme = submodelService.getSubmodelElement("MainAre.Test");
+		assertEquals(sme.getIdShort(), sme.getIdShort());
+	}
+
+	@Test(expected = SubmodelElementNotADataElementException.class)
+	public void addNonDataElementToAre(){
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		AnnotatedRelationshipElement topAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("MainAre").build();
+		AnnotatedRelationshipElement subAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("SubAre").build();
+		submodelElements.add(topAre);
+		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
+		SubmodelService submodelService = getSubmodelService(submodel);
+		submodelService.createSubmodelElement("MainAre", subAre);
 	}
 
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
