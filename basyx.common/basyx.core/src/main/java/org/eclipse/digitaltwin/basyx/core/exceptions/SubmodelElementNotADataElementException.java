@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2023 the Eclipse BaSyx Authors
+ * Copyright (C) 2026 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,9 +26,9 @@
 package org.eclipse.digitaltwin.basyx.core.exceptions;
 
 /**
- * Indicates that the requested submodel element is not a File SubmodelElement
+ * Indicates that the requested submodel element is not a Data SubmodelElement
  * 
- * @author danish
+ * @author fried
  *
  */
 @SuppressWarnings("serial")
