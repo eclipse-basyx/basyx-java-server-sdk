@@ -38,11 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationRequest;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
@@ -225,6 +221,10 @@ public class ConnectedSubmodelService implements SubmodelService {
 	private RuntimeException mapExceptionSubmodelElementAccess(String idShortPath, ApiException e) {
 		if (e.getCode() == HttpStatus.NOT_FOUND.value()) {
 			return new ElementDoesNotExistException(idShortPath);
+		}
+		System.out.println(e.getMessage());
+		if (e.getCode() == HttpStatus.BAD_REQUEST.value() && e.getMessage().contains("is not a Data Element")) {
+			return new SubmodelElementNotADataElementException(idShortPath);
 		}
 
 		return e;
