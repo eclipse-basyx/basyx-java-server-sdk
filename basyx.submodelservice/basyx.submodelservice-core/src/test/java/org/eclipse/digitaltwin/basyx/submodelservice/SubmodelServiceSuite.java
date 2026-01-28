@@ -670,6 +670,25 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(submodelElementsPatch, patchedSubmodel.getSubmodelElements());
 	}
 
+	@Test
+	public void addEntityToEntity() {
+		List<SubmodelElement> submodelElements = new ArrayList<>();
+		Entity entity = new DefaultEntity.Builder().idShort("MainEntity").build();
+		submodelElements.add(entity);
+		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
+		SubmodelService submodelService = getSubmodelService(submodel);
+
+		Entity subEntity = new DefaultEntity.Builder().idShort("SubEntity").build();
+		submodelService.createSubmodelElement("MainEntity", subEntity);
+
+
+		Entity sub_subEntity = new DefaultEntity.Builder().idShort("Sub_SubEntity").build();
+		submodelService.createSubmodelElement("MainEntity.SubEntity", sub_subEntity);
+
+		SubmodelElement sme = submodelService.getSubmodelElement("MainEntity.SubEntity.Sub_SubEntity");
+		assertEquals(sub_subEntity.getIdShort(), sme.getIdShort());
+	}
+
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(submodelElements).build();
 	}

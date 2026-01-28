@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.GenericPath;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IdShortPath;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IndexPath;
@@ -54,6 +56,17 @@ public final class MongoFilterBuilder{
     static final String KEY_ID_SHORT = "idShort";
 
     public static MongoFilterResult parse(@NonNull String idShortPath) {
+        return parse(idShortPath, List.of());
+    }
+
+    /**
+     * Parses the idShortPath and builds MongoDB filter result.
+     * 
+     * @param idShortPath the path to parse
+     * @param parentElements list of parent SubmodelElements along the path (used to determine if Entity uses 'statements')
+     * @return MongoFilterResult with the update key and filters
+     */
+    public static MongoFilterResult parse(@NonNull String idShortPath, @NonNull List<SubmodelElement> parentElements) {
         Deque<GenericPath> paths = IdShortPathParser.parse(idShortPath);
 
         assert !paths.isEmpty();
@@ -61,6 +74,7 @@ public final class MongoFilterBuilder{
         StringBuilder updateKey = new StringBuilder();
         List<CriteriaDefinition> filterArray = new ArrayList<>();
         int filterCounter = 0;
+        int parentIndex = 0;
 
         updateKey.append(KEY_SUBMODEL_ELEMENTS);
 
@@ -74,7 +88,14 @@ public final class MongoFilterBuilder{
 
         while (!paths.isEmpty()) {
             GenericPath segment = paths.pop();
-            updateKey.append(".").append(KEY_VALUE);
+            // Determine whether to use 'statements' (for Entity) or 'value' (for others)
+            String childKey = KEY_VALUE;
+            if (parentIndex < parentElements.size() && parentElements.get(parentIndex) instanceof Entity) {
+                childKey = KEY_STATEMENTS;
+            }
+            updateKey.append(".").append(childKey);
+            parentIndex++;
+            
             if (segment instanceof IdShortPath idPath) {
                 placeholder = "elem" + filterCounter++;
                 updateKey.append(".$[").append(placeholder).append("]");

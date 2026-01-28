@@ -193,7 +193,8 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
 
     @Override
     public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-        MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath);
+        List<SubmodelElement> parentElements = getParentElements(submodelId, idShortPath);
+        MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath, parentElements);
 
         Query query = new Query(Criteria.where("_id").is(submodelId));
         Update update = new Update().set(filterResult.key(), submodelElement);
@@ -324,6 +325,36 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         } catch(ElementDoesNotExistException e) {
             return false;
         }
+    }
+
+    /**
+     * Gets the list of parent SubmodelElements along the path.
+     * This is used to determine if any parent is an Entity (which uses 'statements' instead of 'value').
+     */
+    private List<SubmodelElement> getParentElements(String submodelId, String idShortPath) {
+        List<SubmodelElement> parents = new ArrayList<>();
+        String[] segments = idShortPath.split("\\.");
+        
+        if (segments.length <= 1) {
+            return parents;
+        }
+        
+        StringBuilder currentPath = new StringBuilder();
+        for (int i = 0; i < segments.length - 1; i++) {
+            if (currentPath.length() > 0) {
+                currentPath.append(".");
+            }
+            currentPath.append(segments[i]);
+            try {
+                SubmodelElement element = getSubmodelElement(submodelId, currentPath.toString());
+                parents.add(element);
+            } catch (ElementDoesNotExistException e) {
+                // Element doesn't exist, stop here
+                break;
+            }
+        }
+        
+        return parents;
     }
 
     private static boolean hasLimit(PaginationInfo pInfo) {
