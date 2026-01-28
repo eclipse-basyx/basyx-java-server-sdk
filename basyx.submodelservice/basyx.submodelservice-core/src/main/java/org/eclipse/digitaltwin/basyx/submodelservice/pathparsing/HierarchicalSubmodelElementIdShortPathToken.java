@@ -25,7 +25,9 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
@@ -59,6 +61,12 @@ public class HierarchicalSubmodelElementIdShortPathToken implements PathToken {
 			Entity entity = (Entity) rootElement;
 
 			return filterSubmodelElement(entity.getStatements());
+		} else if (rootElement instanceof AnnotatedRelationshipElement) {
+			AnnotatedRelationshipElement are = (AnnotatedRelationshipElement) rootElement;
+
+			return filterSubmodelElement(are.getAnnotations().stream()
+					.map(de -> (SubmodelElement) de)
+					.collect(Collectors.toList()));
 		}
 
 		throw new ElementDoesNotExistException(token);
