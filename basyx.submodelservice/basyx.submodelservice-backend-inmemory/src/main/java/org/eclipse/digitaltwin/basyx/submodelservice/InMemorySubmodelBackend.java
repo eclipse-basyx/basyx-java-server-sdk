@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.common.backend.inmemory.core.InMemoryCrudRepository;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.SubmodelElementNotADataElementException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -126,6 +127,13 @@ public class InMemorySubmodelBackend extends InMemoryCrudRepository<Submodel> im
         } else if (parentSme instanceof Entity entity) {
             List<SubmodelElement> submodelElements = entity.getStatements();
             submodelElements.add(submodelElement);
+        } else if (parentSme instanceof AnnotatedRelationshipElement are) {
+            try {
+                List<DataElement> annotations = are.getAnnotations();
+                annotations.add((DataElement) submodelElement);
+            } catch (ClassCastException e) {
+                throw new SubmodelElementNotADataElementException(submodelElement.getIdShort());
+            }
         }
     }
 

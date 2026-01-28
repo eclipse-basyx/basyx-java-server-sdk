@@ -103,10 +103,15 @@ public class BaSyxExceptionHandler {
 	public ResponseEntity<Object> handleNotInvokableException(NotInvokableException exception) {
 		return buildResponse(exception.getMessage(), HttpStatus.METHOD_NOT_ALLOWED, exception);
 	}
-	
+
 	@ExceptionHandler(ElementNotAFileException.class)
 	public ResponseEntity<Object> handleElementNotAFileException(ElementNotAFileException exception) {
 		return buildResponse(exception.getMessage(), HttpStatus.PRECONDITION_FAILED, exception);
+	}
+
+	@ExceptionHandler(SubmodelElementNotADataElementException.class)
+	public ResponseEntity<Object> handleSubmodelElementNotADataElementException(SubmodelElementNotADataElementException exception) {
+		return buildResponse(exception.getMessage(), HttpStatus.BAD_REQUEST, exception);
 	}
 	
 	@ExceptionHandler(InsufficientPermissionException.class)

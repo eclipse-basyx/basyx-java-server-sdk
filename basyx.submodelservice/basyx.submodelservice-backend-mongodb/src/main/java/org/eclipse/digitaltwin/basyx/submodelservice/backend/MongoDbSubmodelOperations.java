@@ -30,12 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
-import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
-import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
-import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.SubmodelElementNotADataElementException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelOperations;
@@ -186,6 +183,13 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         } else if (parentSme instanceof Entity entity) {
             List<SubmodelElement> submodelElements = entity.getStatements();
             submodelElements.add(submodelElement);
+        } else if (parentSme instanceof AnnotatedRelationshipElement are) {
+            try {
+                List<DataElement> annotations = are.getAnnotations();
+                annotations.add((DataElement) submodelElement);
+            } catch (ClassCastException e) {
+                throw new SubmodelElementNotADataElementException(submodelElement.getIdShort());
+            }
         }
 
         updateSubmodelElement(submodelId, idShortPath, parentSme);
@@ -193,7 +197,8 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
 
     @Override
     public void updateSubmodelElement(String submodelId, String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-        MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath);
+        List<SubmodelElement> parentElements = getParentElements(submodelId, idShortPath);
+        MongoFilterResult filterResult = MongoFilterBuilder.parse(idShortPath, parentElements);
 
         Query query = new Query(Criteria.where("_id").is(submodelId));
         Update update = new Update().set(filterResult.key(), submodelElement);
@@ -324,6 +329,36 @@ public class MongoDbSubmodelOperations implements SubmodelOperations {
         } catch(ElementDoesNotExistException e) {
             return false;
         }
+    }
+
+    /**
+     * Gets the list of parent SubmodelElements along the path.
+     * This is used to determine if any parent is an Entity (which uses 'statements' instead of 'value').
+     */
+    private List<SubmodelElement> getParentElements(String submodelId, String idShortPath) {
+        List<SubmodelElement> parents = new ArrayList<>();
+        String[] segments = idShortPath.split("\\.");
+        
+        if (segments.length <= 1) {
+            return parents;
+        }
+        
+        StringBuilder currentPath = new StringBuilder();
+        for (int i = 0; i < segments.length - 1; i++) {
+            if (currentPath.length() > 0) {
+                currentPath.append(".");
+            }
+            currentPath.append(segments[i]);
+            try {
+                SubmodelElement element = getSubmodelElement(submodelId, currentPath.toString());
+                parents.add(element);
+            } catch (ElementDoesNotExistException e) {
+                // Element doesn't exist, stop here
+                break;
+            }
+        }
+        
+        return parents;
     }
 
     private static boolean hasLimit(PaginationInfo pInfo) {

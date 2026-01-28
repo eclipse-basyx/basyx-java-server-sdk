@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.AnnotatedRelationshipElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.Entity;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.GenericPath;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IdShortPath;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.IdShortPathParser.IndexPath;
@@ -50,10 +53,22 @@ import org.springframework.lang.NonNull;
 public final class MongoFilterBuilder{
     static final String KEY_VALUE = "value";
     static final String KEY_STATEMENTS = "statements";
+    static final String KEY_ANNOTATIONS = "annotations";
     static final String KEY_SUBMODEL_ELEMENTS = "submodelElements";
     static final String KEY_ID_SHORT = "idShort";
 
     public static MongoFilterResult parse(@NonNull String idShortPath) {
+        return parse(idShortPath, List.of());
+    }
+
+    /**
+     * Parses the idShortPath and builds MongoDB filter result.
+     * 
+     * @param idShortPath the path to parse
+     * @param parentElements list of parent SubmodelElements along the path (used to determine if Entity uses 'statements')
+     * @return MongoFilterResult with the update key and filters
+     */
+    public static MongoFilterResult parse(@NonNull String idShortPath, @NonNull List<SubmodelElement> parentElements) {
         Deque<GenericPath> paths = IdShortPathParser.parse(idShortPath);
 
         assert !paths.isEmpty();
@@ -61,6 +76,7 @@ public final class MongoFilterBuilder{
         StringBuilder updateKey = new StringBuilder();
         List<CriteriaDefinition> filterArray = new ArrayList<>();
         int filterCounter = 0;
+        int parentIndex = 0;
 
         updateKey.append(KEY_SUBMODEL_ELEMENTS);
 
@@ -74,7 +90,11 @@ public final class MongoFilterBuilder{
 
         while (!paths.isEmpty()) {
             GenericPath segment = paths.pop();
-            updateKey.append(".").append(KEY_VALUE);
+            // Determine the correct child key based on parent element type
+            String childKey = getChildKey(parentElements, parentIndex);
+            updateKey.append(".").append(childKey);
+            parentIndex++;
+            
             if (segment instanceof IdShortPath idPath) {
                 placeholder = "elem" + filterCounter++;
                 updateKey.append(".$[").append(placeholder).append("]");
@@ -104,19 +124,42 @@ public final class MongoFilterBuilder{
             currentPath = paths.pop();
             ops.add(new UnwindOperation(Fields.field("$"+KEY_VALUE), true));
             ops.add(new UnwindOperation(Fields.field("$"+KEY_STATEMENTS), true));
+            ops.add(new UnwindOperation(Fields.field("$"+KEY_ANNOTATIONS), true));
             if (currentPath instanceof IdShortPath idPath) {
                 Criteria inValue = Criteria.where(joinKeys(KEY_VALUE, KEY_ID_SHORT)).is(idPath.idShort());
                 Criteria inStatements = Criteria.where(joinKeys(KEY_STATEMENTS, KEY_ID_SHORT)).is(idPath.idShort());
-                ops.add(Aggregation.match(new Criteria().orOperator(inValue, inStatements)));
+                Criteria inAnnotations = Criteria.where(joinKeys(KEY_ANNOTATIONS, KEY_ID_SHORT)).is(idPath.idShort());
+                ops.add(Aggregation.match(new Criteria().orOperator(inValue, inStatements, inAnnotations)));
             } else if (currentPath instanceof IndexPath ixPath) {
                 ops.add(Aggregation.skip(ixPath.index()));
                 ops.add(Aggregation.limit(1));
             }
-            ops.add(Aggregation.replaceRoot(IfNull.ifNull("$"+KEY_VALUE).then("$"+KEY_STATEMENTS)));
+            ops.add(Aggregation.replaceRoot(
+                IfNull.ifNull("$"+KEY_VALUE)
+                    .thenValueOf(IfNull.ifNull("$"+KEY_STATEMENTS).then("$"+KEY_ANNOTATIONS))));
 
         }
 
         return ops;
+    }
+
+    /**
+     * Determines the correct child key based on the parent element type.
+     * - Entity uses 'statements'
+     * - AnnotatedRelationshipElement uses 'annotations'
+     * - Others (SubmodelElementList, SubmodelElementCollection) use 'value'
+     */
+    private static String getChildKey(List<SubmodelElement> parentElements, int parentIndex) {
+        if (parentIndex >= parentElements.size()) {
+            return KEY_VALUE;
+        }
+        SubmodelElement parent = parentElements.get(parentIndex);
+        if (parent instanceof Entity) {
+            return KEY_STATEMENTS;
+        } else if (parent instanceof AnnotatedRelationshipElement) {
+            return KEY_ANNOTATIONS;
+        }
+        return KEY_VALUE;
     }
 
     static CriteriaDefinition buildCriteria(String key, String value) {
