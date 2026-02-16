@@ -31,7 +31,7 @@
 		<maven-project.version>3.0-alpha-2</maven-project.version>
 		<mustache.compiler.version>0.9.14</mustache.compiler.version>
 		<docker.image.name>${project.artifactId}</docker.image.name>
-		<openapitools.version>6.6.0</openapitools.version>
+		<openapitools.version>7.19.0</openapitools.version>
 		<openapitools.jacksonnullable.version>0.2.8</openapitools.jacksonnullable.version>
 		<jsr305.version>3.0.2</jsr305.version>
 		<jsonpatch.plugin.version>0.5.1</jsonpatch.plugin.version>
