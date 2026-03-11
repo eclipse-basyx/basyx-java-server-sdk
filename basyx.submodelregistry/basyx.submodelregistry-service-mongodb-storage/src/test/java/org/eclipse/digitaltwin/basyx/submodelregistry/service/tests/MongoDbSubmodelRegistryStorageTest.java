@@ -26,11 +26,20 @@ package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bson.Document;
+import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
+import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.configuration.MongoDbConfiguration;
+import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
@@ -47,10 +56,60 @@ public class MongoDbSubmodelRegistryStorageTest extends SubmodelRegistryStorageT
 	@Autowired
 	private MongoTemplate template;
 
+	@Autowired
+	private SubmodelRegistryStorage storage;
+
+	@Autowired
+	private MongoDbConfiguration configuration;
+
 	@Test
 	public void whenGetById_NotAllDocumentsScannedButIndexUsed() {
 		MongoCollection<Document> collection = template.getCollection("submodeldescriptors");
 		Document doc = collection.find(new Document("_id", "11")).explain(ExplainVerbosity.QUERY_PLANNER);
 		assertThat(doc.toJson()).doesNotContain("\"COLLSCAN\"");
+	}
+
+	@Test
+	public void givenLegacySupplementalSemanticId_whenGetById_thenDescriptorContainsSupplementalSemanticField() {
+		template.remove(new Query(), configuration.collectionName);
+		template.save(createLegacyDocument("legacy-get-1"), configuration.collectionName);
+
+		SubmodelDescriptor descriptor = storage.getSubmodelDescriptor("legacy-get-1");
+		Document writtenDescriptor = new Document();
+		template.getConverter().write(descriptor, writtenDescriptor);
+
+		assertThat(extractSupplementalSemanticField(writtenDescriptor)).isNotNull();
+		assertThat(extractSupplementalSemanticField(writtenDescriptor)).isInstanceOf(List.class);
+		assertThat((List<?>) extractSupplementalSemanticField(writtenDescriptor)).hasSize(1);
+	}
+
+	@Test
+	public void givenLegacySupplementalSemanticId_whenGetAll_thenDescriptorContainsSupplementalSemanticField() {
+		template.remove(new Query(), configuration.collectionName);
+		template.save(createLegacyDocument("legacy-getall-1"), configuration.collectionName);
+
+		CursorResult<List<SubmodelDescriptor>> result = storage.getAllSubmodelDescriptors(PaginationInfo.NO_LIMIT);
+		SubmodelDescriptor descriptor = result.getResult().stream().filter(x -> "legacy-getall-1".equals(x.getId())).findFirst().orElse(null);
+		assertThat(descriptor).isNotNull();
+
+		Document writtenDescriptor = new Document();
+		template.getConverter().write(descriptor, writtenDescriptor);
+
+		assertThat(extractSupplementalSemanticField(writtenDescriptor)).isNotNull();
+		assertThat(extractSupplementalSemanticField(writtenDescriptor)).isInstanceOf(List.class);
+		assertThat((List<?>) extractSupplementalSemanticField(writtenDescriptor)).hasSize(1);
+	}
+
+	private Object extractSupplementalSemanticField(Document descriptorDocument) {
+		if (descriptorDocument.containsKey("supplementalSemanticIds")) {
+			return descriptorDocument.get("supplementalSemanticIds");
+		}
+		return descriptorDocument.get("supplementalSemanticId");
+	}
+
+	private Document createLegacyDocument(String id) {
+		Document key = new Document("type", "GlobalReference").append("value", "urn:test:" + id);
+		Document reference = new Document("type", "ExternalReference").append("keys", Arrays.asList(key));
+		return new Document("_id", id).append("idShort", "short-" + id).append("endpoints", Arrays.asList()).append("supplementalSemanticId", Arrays.asList(reference));
 	}
 }
