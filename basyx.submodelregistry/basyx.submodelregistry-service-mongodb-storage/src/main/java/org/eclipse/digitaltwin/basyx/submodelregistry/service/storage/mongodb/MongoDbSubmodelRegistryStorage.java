@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
@@ -58,6 +59,8 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 
 	// mongodb maps all id fields internally to _id
 	private static final String ID = "_id";
+	private static final String SUPPLEMENTAL_SEMANTIC_ID = "supplementalSemanticId";
+	private static final String SUPPLEMENTAL_SEMANTIC_IDS = "supplementalSemanticIds";
 
 	private final MongoTemplate template;
 	
@@ -68,8 +71,8 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 		List<AggregationOperation> allAggregations = new LinkedList<>();
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
-		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, SubmodelDescriptor.class);
-		List<SubmodelDescriptor> foundDescriptors = results.getMappedResults();
+		AggregationResults<Document> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, Document.class);
+		List<SubmodelDescriptor> foundDescriptors = results.getMappedResults().stream().map(this::toSubmodelDescriptor).collect(Collectors.toList());
 		String cursor = resolveCursor(pRequest, foundDescriptors);
 		return new CursorResult<List<SubmodelDescriptor>>(cursor, foundDescriptors);
 	}
@@ -84,11 +87,11 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	
 	@Override
 	public SubmodelDescriptor getSubmodelDescriptor(@NonNull String submodelId) throws SubmodelNotFoundException {
-		SubmodelDescriptor descriptor = template.findById(submodelId, SubmodelDescriptor.class, collectionName);
-		if (descriptor == null) {
+		Document foundDescriptor = template.findById(submodelId, Document.class, collectionName);
+		if (foundDescriptor == null) {
 			throw new SubmodelNotFoundException(submodelId);
 		}
-		return descriptor;
+		return toSubmodelDescriptor(foundDescriptor);
 	}
 	
 	@Override
@@ -140,6 +143,20 @@ public class MongoDbSubmodelRegistryStorage implements SubmodelRegistryStorage {
 	private void applySorting(List<AggregationOperation> allAggregations) {
 		SortOperation sortOp = Aggregation.sort(Direction.ASC, ID);
 		allAggregations.add(sortOp);
+	}
+
+	private SubmodelDescriptor toSubmodelDescriptor(Document descriptorDocument) {
+		Document compatibleDocument = ensureLegacyFieldCompatibility(descriptorDocument);
+		return template.getConverter().read(SubmodelDescriptor.class, compatibleDocument);
+	}
+
+	private Document ensureLegacyFieldCompatibility(Document descriptorDocument) {
+		if (descriptorDocument.containsKey(SUPPLEMENTAL_SEMANTIC_IDS) || !descriptorDocument.containsKey(SUPPLEMENTAL_SEMANTIC_ID)) {
+			return descriptorDocument;
+		}
+		Document compatibleDocument = new Document(descriptorDocument);
+		compatibleDocument.put(SUPPLEMENTAL_SEMANTIC_IDS, descriptorDocument.get(SUPPLEMENTAL_SEMANTIC_ID));
+		return compatibleDocument;
 	}
 
 	private String resolveCursor(PaginationInfo pRequest, List<SubmodelDescriptor> foundDescriptors) {

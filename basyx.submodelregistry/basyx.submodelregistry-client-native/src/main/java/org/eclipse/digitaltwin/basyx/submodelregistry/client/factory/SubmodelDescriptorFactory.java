@@ -86,7 +86,7 @@ public class SubmodelDescriptorFactory {
 
 		setSemanticId(submodel.getSemanticId(), descriptor);
 
-		setSupplementalSemanticId(submodel.getSupplementalSemanticIds(), descriptor);
+		setSupplementalSemanticIds(submodel.getSupplementalSemanticIds(), descriptor);
 
 		return descriptor;
 	}
@@ -131,12 +131,12 @@ public class SubmodelDescriptorFactory {
 		descriptor.setSemanticId(attributeMapper.mapSemanticId(reference));
 	}
 
-	private void setSupplementalSemanticId(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
+	private void setSupplementalSemanticIds(List<Reference> supplementalSemanticIds, SubmodelDescriptor descriptor) {
 
 		if (supplementalSemanticIds == null || supplementalSemanticIds.isEmpty())
 			return;
 
-		descriptor.setSupplementalSemanticId(attributeMapper.mapSupplementalSemanticId(supplementalSemanticIds));
+		descriptor.setSupplementalSemanticIds(attributeMapper.mapSupplementalSemanticIds(supplementalSemanticIds));
 	}
 
 	private void setEndpointItem(String submodelId, SubmodelDescriptor descriptor, List<String> submodelServerURLs) {

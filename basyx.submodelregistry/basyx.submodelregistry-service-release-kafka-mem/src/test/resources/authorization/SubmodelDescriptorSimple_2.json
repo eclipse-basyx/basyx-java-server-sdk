@@ -6,7 +6,7 @@
   "idShort": "specificSubmodelIdShort-2",
   "id": "specificSubmodelId-2",
   "semanticId": null,
-  "supplementalSemanticId": null,
+  "supplementalSemanticIds": null,
   "endpoints": [
     {
       "interface": "AAS-3.0",

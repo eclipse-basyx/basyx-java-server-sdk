@@ -304,7 +304,7 @@ public abstract class BaseIntegrationTest {
 				.symbol("$$");
 		EmbeddedDataSpecification edSpec = new EmbeddedDataSpecification().dataSpecification(reference).dataSpecificationContent(new DataSpecificationContent(dsContent));
 		AdministrativeInformation aInfo = new AdministrativeInformation().addEmbeddedDataSpecificationsItem(edSpec);
-		SubmodelDescriptor sm = new SubmodelDescriptor().id("sm").id("short").addDescriptionItem(dType).addDisplayNameItem(nType).addEndpointsItem(ep).addExtensionsItem(ext).addSupplementalSemanticIdItem(reference);
+		SubmodelDescriptor sm = new SubmodelDescriptor().id("sm").id("short").addDescriptionItem(dType).addDisplayNameItem(nType).addEndpointsItem(ep).addExtensionsItem(ext).addSupplementalSemanticIdsItem(reference);
 		sm.setAdministration(aInfo);
 		SubmodelDescriptor descr = api.postSubmodelDescriptor(sm);
 		

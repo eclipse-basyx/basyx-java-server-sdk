@@ -147,15 +147,15 @@ public class AttributeMapper {
 	 * @param supplementalSemanticIds
 	 * @return the mapped supplementalSemanticIds
 	 */
-	public List<Reference> mapSupplementalSemanticId(List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> supplementalSemanticIds) {
+	public List<Reference> mapSupplementalSemanticIds(List<org.eclipse.digitaltwin.aas4j.v3.model.Reference> supplementalSemanticIds) {
 		CustomTypeCloneFactory<org.eclipse.digitaltwin.aas4j.v3.model.Reference, Reference> cloneFactory = new CustomTypeCloneFactory<>(Reference.class, mapper);
 
-		List<Reference> mappedSupplementalSemanticId = cloneFactory.create(supplementalSemanticIds);
+		List<Reference> mappedSupplementalSemanticIds = cloneFactory.create(supplementalSemanticIds);
 
-		if (mappedSupplementalSemanticId == null)
+		if (mappedSupplementalSemanticIds == null)
 			logger.error("SupplementalSemanticId could not be mapped due to a failure.");
 
-		return mappedSupplementalSemanticId;
+		return mappedSupplementalSemanticIds;
 	}
 
 }

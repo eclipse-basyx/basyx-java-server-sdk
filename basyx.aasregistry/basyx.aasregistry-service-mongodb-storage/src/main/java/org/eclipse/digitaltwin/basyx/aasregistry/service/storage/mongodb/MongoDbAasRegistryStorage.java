@@ -36,6 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ShellDescriptorQuery;
@@ -80,6 +81,8 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 	private static final String SUBMODEL_DESCRIPTORS_ID = "submodelDescriptors._id";
 	private static final String ASSET_TYPE = "assetType";
 	private static final String ASSET_KIND = "assetKind";
+	private static final String SUPPLEMENTAL_SEMANTIC_ID = "supplementalSemanticId";
+	private static final String SUPPLEMENTAL_SEMANTIC_IDS = "supplementalSemanticIds";
 	
 	private final MongoTemplate template;
 
@@ -91,8 +94,8 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		applyFilter(filter, allAggregations);
 		applySorting(allAggregations);
 		applyPagination(pRequest, allAggregations);
-		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations),  collectionName, AssetAdministrationShellDescriptor.class);
-		List<AssetAdministrationShellDescriptor> foundDescriptors = results.getMappedResults();
+		AggregationResults<Document> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, Document.class);
+		List<AssetAdministrationShellDescriptor> foundDescriptors = results.getMappedResults().stream().map(this::toAasDescriptor).collect(Collectors.toList());
 		String cursor = resolveCursor(pRequest, foundDescriptors, AssetAdministrationShellDescriptor::getId);
 		return new CursorResult<>(cursor, foundDescriptors);
 	}
@@ -148,11 +151,11 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 
 	@Override
 	public AssetAdministrationShellDescriptor getAasDescriptor(@NonNull String aasDescriptorId) throws AasDescriptorNotFoundException {
-		AssetAdministrationShellDescriptor descriptor = template.findById(aasDescriptorId, AssetAdministrationShellDescriptor.class, collectionName);
+		Document descriptor = template.findById(aasDescriptorId, Document.class, collectionName);
 		if (descriptor == null) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
-		return descriptor;
+		return toAasDescriptor(descriptor);
 	}
 
 	@Override
@@ -212,8 +215,8 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		allAggregations.add(Aggregation.replaceRoot(SUBMODEL_DESCRIPTORS));
 		this.applySorting(allAggregations);
 		this.applyPagination(pRequest, allAggregations);
-		AggregationResults<SubmodelDescriptor> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, SubmodelDescriptor.class);
-		List<SubmodelDescriptor> submodels = results.getMappedResults();
+		AggregationResults<Document> results = template.aggregate(Aggregation.newAggregation(allAggregations), collectionName, Document.class);
+		List<SubmodelDescriptor> submodels = results.getMappedResults().stream().map(this::toSubmodelDescriptor).collect(Collectors.toList());
 		String cursor = resolveCursor(pRequest, submodels, SubmodelDescriptor::getId);
 		return new CursorResult<>(cursor, submodels);
 	}
@@ -224,16 +227,21 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		all.add(Aggregation.match(Criteria.where(ID).is(aasDescriptorId)));
 		ArrayOperators.Filter filter = ArrayOperators.arrayOf(SUBMODEL_DESCRIPTORS).filter().as(SUBMODEL_DESCRIPTORS).by(ComparisonOperators.valueOf(SUBMODEL_DESCRIPTORS_ID).equalToValue(submodelId));
 		all.add(Aggregation.project().and(filter).as(SUBMODEL_DESCRIPTORS));
-		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(Aggregation.newAggregation(all), collectionName, AssetAdministrationShellDescriptor.class);
-		List<AssetAdministrationShellDescriptor> aasDescriptors = results.getMappedResults();
+		AggregationResults<Document> results = template.aggregate(Aggregation.newAggregation(all), collectionName, Document.class);
+		List<Document> aasDescriptors = results.getMappedResults();
 		if (aasDescriptors.isEmpty()) {
 			throw new AasDescriptorNotFoundException(aasDescriptorId);
 		}
-		List<SubmodelDescriptor> descriptors = aasDescriptors.get(0).getSubmodelDescriptors();
-		if (descriptors == null || descriptors.isEmpty()) {
+		Document compatibleAasDescriptor = ensureLegacyAasDescriptorCompatibility(aasDescriptors.get(0));
+		Object descriptorsObject = compatibleAasDescriptor.get(SUBMODEL_DESCRIPTORS);
+		if (!(descriptorsObject instanceof List<?> descriptors) || descriptors.isEmpty()) {
 			throw new SubmodelNotFoundException(aasDescriptorId, submodelId);
 		}
-		return descriptors.get(0);
+		Object firstDescriptor = descriptors.get(0);
+		if (!(firstDescriptor instanceof Document descriptorDocument)) {
+			throw new SubmodelNotFoundException(aasDescriptorId, submodelId);
+		}
+		return toSubmodelDescriptor(descriptorDocument);
 	}
 
 	@Override
@@ -321,9 +329,52 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 		qBuilder.withProjection(grouped.getQueriesInsideSubmodel(), aggregationOps);
 
 		Aggregation aggregation = Aggregation.newAggregation(aggregationOps);
-		AggregationResults<AssetAdministrationShellDescriptor> results = template.aggregate(aggregation, collectionName, AssetAdministrationShellDescriptor.class);
+		AggregationResults<Document> results = template.aggregate(aggregation, collectionName, Document.class);
 
-		List<AssetAdministrationShellDescriptor> descriptors = results.getMappedResults();
+		List<AssetAdministrationShellDescriptor> descriptors = results.getMappedResults().stream().map(this::toAasDescriptor).collect(Collectors.toList());
 		return new ShellDescriptorSearchResponse(total, descriptors);
+	}
+
+	private AssetAdministrationShellDescriptor toAasDescriptor(Document descriptorDocument) {
+		Document compatibleDocument = ensureLegacyAasDescriptorCompatibility(descriptorDocument);
+		return template.getConverter().read(AssetAdministrationShellDescriptor.class, compatibleDocument);
+	}
+
+	private SubmodelDescriptor toSubmodelDescriptor(Document descriptorDocument) {
+		Document compatibleDocument = ensureLegacySubmodelDescriptorCompatibility(descriptorDocument);
+		return template.getConverter().read(SubmodelDescriptor.class, compatibleDocument);
+	}
+
+	private Document ensureLegacyAasDescriptorCompatibility(Document descriptorDocument) {
+		Object submodelDescriptorsObject = descriptorDocument.get(SUBMODEL_DESCRIPTORS);
+		if (!(submodelDescriptorsObject instanceof List<?> submodelDescriptors)) {
+			return descriptorDocument;
+		}
+		boolean changed = false;
+		List<Object> compatibleSubmodels = new ArrayList<>(submodelDescriptors.size());
+		for (Object eachSubmodel : submodelDescriptors) {
+			if (eachSubmodel instanceof Document submodelDocument) {
+				Document compatibleSubmodel = ensureLegacySubmodelDescriptorCompatibility(submodelDocument);
+				compatibleSubmodels.add(compatibleSubmodel);
+				changed |= compatibleSubmodel != submodelDocument;
+			} else {
+				compatibleSubmodels.add(eachSubmodel);
+			}
+		}
+		if (!changed) {
+			return descriptorDocument;
+		}
+		Document compatibleDescriptor = new Document(descriptorDocument);
+		compatibleDescriptor.put(SUBMODEL_DESCRIPTORS, compatibleSubmodels);
+		return compatibleDescriptor;
+	}
+
+	private Document ensureLegacySubmodelDescriptorCompatibility(Document descriptorDocument) {
+		if (descriptorDocument.containsKey(SUPPLEMENTAL_SEMANTIC_IDS) || !descriptorDocument.containsKey(SUPPLEMENTAL_SEMANTIC_ID)) {
+			return descriptorDocument;
+		}
+		Document compatibleDocument = new Document(descriptorDocument);
+		compatibleDocument.put(SUPPLEMENTAL_SEMANTIC_IDS, descriptorDocument.get(SUPPLEMENTAL_SEMANTIC_ID));
+		return compatibleDocument;
 	}
 }
