@@ -100,10 +100,10 @@ public class TestAttributeMapper {
 	}
 
 	@Test
-	public void mapSupplementalSemanticId() {
+	public void mapSupplementalSemanticIds() {
 		List<Reference> expectedSupplementalSemanticId = AttributeMapperFixture.getSubmodelRegSupplementalSemanticIds();
 
-		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticId(AttributeMapperFixture.getAas4jSupplementalSemanticIds());
+		List<Reference> actualSupplementalSemanticId = attributeMapper.mapSupplementalSemanticIds(AttributeMapperFixture.getAas4jSupplementalSemanticIds());
 
 		assertEquals(expectedSupplementalSemanticId.size(), actualSupplementalSemanticId.size());
 		assertEquals(expectedSupplementalSemanticId, actualSupplementalSemanticId);

@@ -366,7 +366,7 @@ components:
           type: string
         semanticId:
           $ref: '#/components/schemas/Reference'
-        supplementalSemanticId:
+        supplementalSemanticIds:
           minItems: 1
           type: array
           items:

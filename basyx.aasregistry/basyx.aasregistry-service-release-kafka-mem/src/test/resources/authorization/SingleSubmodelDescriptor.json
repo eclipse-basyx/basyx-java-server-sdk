@@ -6,7 +6,7 @@
   "idShort": "dummyShellIdShort_3-1-SM",
   "id": "dummyShellId_3-1-SM",
   "semanticId": null,
-  "supplementalSemanticId": null,
+  "supplementalSemanticIds": null,
   "endpoints": [
     {
       "interface": "AAS-3.0",

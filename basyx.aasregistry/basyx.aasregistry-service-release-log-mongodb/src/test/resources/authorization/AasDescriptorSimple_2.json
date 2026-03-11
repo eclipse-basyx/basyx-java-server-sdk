@@ -32,7 +32,7 @@
       "idShort": "specificAasIdShort-2-SM",
       "id": "specificAasId-2-SM",
       "semanticId": null,
-      "supplementalSemanticId": null,
+      "supplementalSemanticIds": null,
       "endpoints": [
         {
           "interface": "AAS-3.0",
