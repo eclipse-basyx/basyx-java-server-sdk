@@ -108,8 +108,8 @@ public class MongoDbSubmodelRegistryStorageTest extends SubmodelRegistryStorageT
 	}
 
 	private Document createLegacyDocument(String id) {
-		Document key = new Document("type", "GlobalReference").append("value", "urn:test:" + id);
-		Document reference = new Document("type", "ExternalReference").append("keys", Arrays.asList(key));
+		Document key = new Document("type", "FILE").append("value", "urn:test:" + id);
+		Document reference = new Document("type", "EXTERNALREFERENCE").append("keys", Arrays.asList(key));
 		return new Document("_id", id).append("idShort", "short-" + id).append("endpoints", Arrays.asList()).append("supplementalSemanticId", Arrays.asList(reference));
 	}
 }
