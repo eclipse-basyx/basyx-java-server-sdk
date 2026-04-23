@@ -42,7 +42,7 @@ public class HTTPOperationDelegation implements OperationDelegation {
 
 	public static final String INVOCATION_DELEGATION_TYPE = "invocationDelegation";
 
-	private WebClient webClient;
+	private final WebClient webClient;
 
 	public HTTPOperationDelegation(WebClient webClient) {
 		this.webClient = webClient;
@@ -55,6 +55,10 @@ public class HTTPOperationDelegation implements OperationDelegation {
 
 		try {
 			return webClient.post().uri(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(input)).exchangeToMono(response -> {
+				if (response.statusCode().is3xxRedirection()) {
+					throw new OperationDelegationException(String.format("Unable to delegate the invocation operation on the URI: '%s' redirects are not allowed", uri));
+				}
+
 				if (response.statusCode().isError()) {
 					throw new OperationDelegationException(String.format("Unable to delegate the invocation operation on the URI: '%s' the response code is %s", uri, response.statusCode()));
 				} else {
@@ -62,8 +66,12 @@ public class HTTPOperationDelegation implements OperationDelegation {
 				}
 			}).block();
 
+		} catch (OperationDelegationException e) {
+			throw e;
 		} catch (WebClientResponseException e) {
-			throw new OperationDelegationException(String.format("Exception occurred while invocing operation on the URI: '%s' the error is %s", uri, e.getStackTrace()));
+			throw new OperationDelegationException(String.format("Exception occurred while invoking operation on the URI: '%s' the error is %s", uri, e.getMessage()));
+		} catch (Exception e) {
+			throw new OperationDelegationException(String.format("Exception occurred while invoking operation on the URI: '%s' the error is %s", uri, e.getMessage()));
 		}
 
 	}

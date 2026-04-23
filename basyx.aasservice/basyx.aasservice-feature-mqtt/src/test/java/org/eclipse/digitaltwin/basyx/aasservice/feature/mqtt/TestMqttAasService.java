@@ -46,8 +46,8 @@ import org.eclipse.digitaltwin.basyx.aasservice.backend.CrudAasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
@@ -109,9 +109,7 @@ public class TestMqttAasService extends AasServiceSuite {
 		AssetAdministrationShell expected = DummyAssetAdministrationShellFactory.createForThumbnail();
 		AasService aasServiceWithThumbnail = getAasService(expected);
 
-		FileMetadata defaultThumbnail = new FileMetadata("dummyImgA.jpeg", "", createDummyImageIS_A());
-		
-		String thumbnailFilePath = fileRepository.save(defaultThumbnail);
+		String thumbnailFilePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, "dummyImgA.jpeg", "", createDummyImageIS_A());
 		
 		Resource defaultResource = new DefaultResource.Builder().path(thumbnailFilePath).contentType("").build();
 		AssetInformation defaultAasAssetInformation = aasServiceWithThumbnail.getAssetInformation();

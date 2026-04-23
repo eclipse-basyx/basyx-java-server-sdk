@@ -28,10 +28,12 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.deleg
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -44,22 +46,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Configuration
 @ConditionalOnExpression("${" + OperationDelegationSubmodelRepositoryFeature.FEATURENAME + ".enabled:true}")
+@EnableConfigurationProperties(OperationDelegationSecurityProperties.class)
 public class OperationDelegationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public OperationDelegation getOperationDelegation(ObjectMapper mapper) {
-
-		return new HTTPOperationDelegation(createWebClient(mapper));
+	public OperationDelegationTargetValidator operationDelegationTargetValidator(OperationDelegationSecurityProperties securityProperties) {
+		return new OperationDelegationTargetValidator(securityProperties);
 	}
 
-	private WebClient createWebClient(ObjectMapper mapper) {
+	@Bean
+	@ConditionalOnMissingBean
+	public OperationDelegation getOperationDelegation(ObjectMapper mapper, OperationDelegationTargetValidator targetValidator) {
+
+		return new HTTPOperationDelegation(createWebClient(mapper, targetValidator));
+	}
+
+	private WebClient createWebClient(ObjectMapper mapper, OperationDelegationTargetValidator targetValidator) {
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
 			configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(mapper));
 			configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper));
 		}).build();
 
-		return WebClient.builder().exchangeStrategies(strategies).build();
+		return WebClient.builder().exchangeStrategies(strategies).filter(validateTargetFilter(targetValidator)).build();
+	}
+
+	private ExchangeFilterFunction validateTargetFilter(OperationDelegationTargetValidator targetValidator) {
+		return (request, next) -> {
+			targetValidator.validate(request.url());
+			return next.exchange(request);
+		};
 	}
 
 }

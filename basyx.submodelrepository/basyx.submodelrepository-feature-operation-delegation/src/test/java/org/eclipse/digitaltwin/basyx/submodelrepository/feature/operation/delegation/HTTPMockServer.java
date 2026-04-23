@@ -88,4 +88,10 @@ public class HTTPMockServer {
 				.respond(HttpResponse.response().withStatusCode(expectedResponseCode.code()).withBody(expectedResponse).withContentType(MediaType.APPLICATION_JSON));
 	}
 
+	public void createExpectationsForPostRequest(String path, String requestBody, String expectedResponse, int expectedResponseCode) throws JsonMappingException, JsonProcessingException {
+
+		clientAndServer.when(HttpRequest.request().withMethod("POST").withPath(path).withBody(requestBody))
+				.respond(HttpResponse.response().withStatusCode(expectedResponseCode).withBody(expectedResponse).withContentType(MediaType.APPLICATION_JSON));
+	}
+
 }

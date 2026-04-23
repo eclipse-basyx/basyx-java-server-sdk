@@ -30,3 +30,30 @@ This means that operations can be delegated to endpoints of the same server as w
 The independent destination where the request is to be delegated should support the request with a parameter ([OperationVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31)) and provide the output in a strict format ([OperationVariable[]](https://github.com/eclipse-aas4j/aas4j/blob/2abf04bc01f80bceafa575cf85da429d5fe63918/model/src/main/java/org/eclipse/digitaltwin/aas4j/v3/model/OperationVariable.java#L31))
 
 As of now, only delegation to HTTP URLs is supported.
+
+## Security defaults for operation delegation
+
+Operation delegation now validates each outbound delegation URI before dispatch.
+
+- Only `http` and `https` URIs are allowed.
+- Loopback, private, link-local, and metadata addresses are blocked by default.
+- Redirect responses are rejected.
+- Explicit allowlists can be configured for approved hybrid deployments.
+
+Example configuration:
+
+```
+basyx.submodelrepository.feature.operation.delegation.security.enabled = true
+basyx.submodelrepository.feature.operation.delegation.security.denyPrivateTargets = true
+basyx.submodelrepository.feature.operation.delegation.security.denyLinkLocalTargets = true
+basyx.submodelrepository.feature.operation.delegation.security.denyLoopbackTargets = true
+basyx.submodelrepository.feature.operation.delegation.security.denyMetadataTargets = true
+basyx.submodelrepository.feature.operation.delegation.security.denyRedirects = true
+
+# Optional explicit overrides for trusted targets
+basyx.submodelrepository.feature.operation.delegation.security.allowlist.hosts = localhost,*.trusted.example
+basyx.submodelrepository.feature.operation.delegation.security.allowlist.cidrs = 10.42.0.0/16,127.0.0.0/8,::1/128
+basyx.submodelrepository.feature.operation.delegation.security.allowlist.ports = 443,8443
+```
+
+If an existing setup delegates to localhost or private network endpoints, configure the corresponding allowlist entries explicitly.

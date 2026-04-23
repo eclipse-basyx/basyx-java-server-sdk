@@ -202,6 +202,11 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
+	@Override
+	public String getOriginalFileNameByPath(String submodelId, String idShortPath) {
+		return decorated.getOriginalFileNameByPath(submodelId, idShortPath);
+	}
+
 	private void submodelCreated(Submodel submodel, String repoId) {
 		sendMqttMessage(topicFactory.createCreateSubmodelTopic(repoId), SubmodelSerializer.serializeSubmodel(submodel));
 	}

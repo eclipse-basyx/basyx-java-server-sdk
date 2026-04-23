@@ -197,6 +197,11 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public String getOriginalFileNameByPath(String submodelId, String idShortPath) {
+		return decorated.getOriginalFileNameByPath(submodelId, idShortPath);
+	}
+
+	@Override
 	public CursorResult<List<Submodel>> getAllSubmodels(String semanticId, PaginationInfo pInfo) {
 		return decorated.getAllSubmodels(semanticId, pInfo);
 	}

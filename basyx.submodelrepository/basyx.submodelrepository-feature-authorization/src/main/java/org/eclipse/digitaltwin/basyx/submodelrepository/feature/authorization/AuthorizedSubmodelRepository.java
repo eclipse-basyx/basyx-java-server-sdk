@@ -309,6 +309,11 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 
+	@Override
+	public String getOriginalFileNameByPath(String submodelId, String idShortPath) {
+		return decorated.getOriginalFileNameByPath(submodelId, idShortPath);
+	}
+
 	private List<String> getIdAsList(String id) {
 		return new ArrayList<>(Arrays.asList(id));
 	}

@@ -143,8 +143,14 @@ public abstract class BaseIntegrationTest {
 		adapter.assertNoAdditionalMessages();
 		GetSubmodelDescriptorsResult result = api.getAllSubmodelDescriptors(null, null);
 		for (SubmodelDescriptor eachDescriptor : result.getResult()) {
-			api.deleteSubmodelDescriptorById(eachDescriptor.getId());
-			assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.SUBMODEL_UNREGISTERED).build());
+			try {
+				api.deleteSubmodelDescriptorById(eachDescriptor.getId());
+				assertThatEventWasSend(RegistryEvent.builder().id(eachDescriptor.getId()).type(EventType.SUBMODEL_UNREGISTERED).build());
+			} catch (ApiException e) {
+				if (e.getCode() != NOT_FOUND) {
+					throw e;
+				}
+			}
 		}
 	}
 
