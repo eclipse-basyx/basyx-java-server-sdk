@@ -95,6 +95,14 @@
 - op: add
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/revision/pattern
   value: "^(0|[1-9][0-9]{0,3})$"
+- op: add
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/createdAt
+  value:
+    type: string
+- op: add
+  path: /components/schemas/AdministrativeInformation/allOf/1/properties/updatedAt
+  value:
+    type: string
 - op: replace
   path: /components/schemas/AdministrativeInformation/allOf/1/properties/templateId/pattern
   value: "^([\\x09\\x0a\\x0d\\x20-\\ud7ff\\ue000-\\ufffd]|\\ud800[\\udc00-\\udfff]|[\\ud801-\\udbfe][\\udc00-\\udfff]|\\udbff[\\udc00-\\udfff])*$"
