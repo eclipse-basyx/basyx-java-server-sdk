@@ -20,7 +20,7 @@ ENV SERVER_SERVLET_CONTEXT_PATH=${CONTEXT_PATH}
 WORKDIR /application
 
 RUN mkdir -p /application/classes /application/libs && \
-    chmod -R a+rwx /application
+    chmod a+rwx /application /application/classes /application/libs
 
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
