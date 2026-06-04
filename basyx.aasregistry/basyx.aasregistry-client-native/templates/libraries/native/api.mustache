@@ -361,7 +361,7 @@ public class {{classname}} {
     {{/required}}
     {{/allParams}}        
 
-    {{#hasPathParams}}{{#pathParams}}{{#vendorExtensions.x-utf8-base64-url-encoded-as-string}}String {{{paramName}}}AsBase64EncodedParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
+    {{#hasPathParams}}{{#pathParams}}{{#vendorExtensions.x-utf8-base64-url-encoded-as-string}}String {{{paramName}}}AsBase64EncodedParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().withoutPadding().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
     {{/vendorExtensions.x-utf8-base64-url-encoded-as-string}}{{/pathParams}}{{/hasPathParams}}
 
     HttpRequest.Builder localVarRequestBuilder = HttpRequest.newBuilder();
@@ -377,7 +377,7 @@ public class {{classname}} {
     {{#queryParams}}
     localVarQueryParameterBaseName = "{{{baseName}}}";
     {{#vendorExtensions.x-utf8-base64-url-encoded-as-string}}
-    String {{{paramName}}}AsBase64EncodedQueryParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
+    String {{{paramName}}}AsBase64EncodedQueryParam = {{{paramName}}} == null ? null : new String(java.util.Base64.getUrlEncoder().withoutPadding().encode({{paramName}}.getBytes(java.nio.charset.StandardCharsets.UTF_8)), java.nio.charset.StandardCharsets.UTF_8);
     {{#collectionFormat}}
     localVarQueryParams.addAll(ApiClient.parameterToPairs("{{{collectionFormat}}}", "{{baseName}}", {{paramName}}AsBase64EncodedQueryParam));
     {{/collectionFormat}}
