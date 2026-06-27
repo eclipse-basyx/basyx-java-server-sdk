@@ -72,6 +72,7 @@
 		<aas4j-version>2.0.1</aas4j-version>
 		<querydsl-version>5.1.0</querydsl-version>
 		<jakarta-version>3.2.0</jakarta-version>
+		<fasterxml-jackson-version>2.22.0</fasterxml-jackson-version>
 	</properties>
 
 	<pluginRepositories>
@@ -300,6 +301,13 @@
 	</build>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${fasterxml-jackson-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.aas4j</groupId>
 				<artifactId>aas4j-model</artifactId>
@@ -1066,12 +1074,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasservice-backend-mongodb</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasservice-feature-mqtt</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1285,12 +1287,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasregistry-feature-search</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.aasregistry-client-native</artifactId>
 				<version>${revision}</version>
 				<classifier>tests</classifier>
@@ -1374,12 +1370,6 @@
 				<version>${revision}</version>
 				<classifier>tests</classifier>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasdiscoveryservice-core</artifactId>
-				<version>${revision}</version>
-				<classifier>tests</classifier>
-			</dependency>
 			<!-- basyx.aasxfileserver -->
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -1420,16 +1410,6 @@
 			<dependency>
 				<groupId>org.eclipse.digitaltwin.basyx</groupId>
 				<artifactId>basyx.client</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.aasservice-client</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.digitaltwin.basyx</groupId>
-				<artifactId>basyx.submodelservice-client</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
