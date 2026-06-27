@@ -104,7 +104,7 @@
 				</plugin>
 				<plugin>
 					<!-- If you want to override templates you can copy these:
-					https://github.com/OpenAPITools/openapi-generator/tree/v6.6.0/modules/openapi-generator/src/main/resources -->
+					https://github.com/OpenAPITools/openapi-generator/tree/v7.23.0/modules/openapi-generator/src/main/resources -->
 					<groupId>org.openapitools</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>
 					<version>${openapitools.version}</version>

@@ -65,7 +65,7 @@ public class ProjectionTest {
 	
 	@Test
 	public void testSegmentBlockCollectorDataSpecificationContentDefinition() {
-		String path = AasRegistryPaths.submodelDescriptors().administration().embeddedDataSpecifications().dataSpecificationContent().asDataSpecificationIec61360().definition().text();
+		String path = AasRegistryPaths.submodelDescriptors().administration().embeddedDataSpecifications().dataSpecificationContent().definition().text();
 		assertSegmentBlocksCreated(path, false, "submodelDescriptors", "administration.embeddedDataSpecifications", "dataSpecificationContent.definition", "text");
 	}
 	

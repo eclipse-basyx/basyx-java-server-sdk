@@ -54,8 +54,8 @@ public class InMemoryAasRegistyStorageTest extends AasRegistryStorageTest {
 	@Test
 	public void whenInsertDescriptorWithDuplicateSubmodelIds_thenThrowException() throws IOException {
 		AssetAdministrationShellDescriptor descr = new AssetAdministrationShellDescriptor(IDENTIFICATION_NEW);
-		descr.addSubmodelDescriptorsItem(new SubmodelDescriptor(IDENTIFICATION_NEW_1, List.of()));
-		descr.addSubmodelDescriptorsItem(new SubmodelDescriptor(IDENTIFICATION_NEW_1, List.of()));
+		descr.addSubmodelDescriptorsItem(new SubmodelDescriptor().id(IDENTIFICATION_NEW_1));
+		descr.addSubmodelDescriptorsItem(new SubmodelDescriptor().id(IDENTIFICATION_NEW_1));
 		
 		assertThrows(DuplicateSubmodelIds.class, ()->storage.insertAasDescriptor(descr));
 		

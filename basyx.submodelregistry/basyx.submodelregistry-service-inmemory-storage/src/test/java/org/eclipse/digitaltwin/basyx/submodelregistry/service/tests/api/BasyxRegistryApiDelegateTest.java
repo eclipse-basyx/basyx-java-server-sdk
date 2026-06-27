@@ -146,7 +146,7 @@ public class BasyxRegistryApiDelegateTest {
 
 	@Test
 	public void whenPostSubmodelDescriptor_thenApplied() throws IOException {
-		SubmodelDescriptor input = new SubmodelDescriptor(ID_3, List.of());
+		SubmodelDescriptor input = new SubmodelDescriptor().id(ID_3);
 		ResponseEntity<SubmodelDescriptor> response = submodelController.postSubmodelDescriptor(input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(response.getBody()).isEqualTo(input);
@@ -158,7 +158,7 @@ public class BasyxRegistryApiDelegateTest {
 
 	@Test
 	public void whenPutSubmodelDescriptor_thenOverridden() throws IOException {
-		SubmodelDescriptor input = new SubmodelDescriptor(ID_2, List.of());
+		SubmodelDescriptor input = new SubmodelDescriptor().id(ID_2);
 		ResponseEntity<Void> response = submodelController.putSubmodelDescriptorById(encode(ID_2), input);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 

@@ -100,6 +100,8 @@
 
 							<!-- See https://openapi-generator.tech/docs/generators/spring -->
 							<configOptions>
+								<enumPropertyNaming>legacy</enumPropertyNaming>
+								<containerDefaultToNull>true</containerDefaultToNull>
 								<openApiNullable>false</openApiNullable>
 								<java8>true</java8>
 								<dateLibrary>java8</dateLibrary>

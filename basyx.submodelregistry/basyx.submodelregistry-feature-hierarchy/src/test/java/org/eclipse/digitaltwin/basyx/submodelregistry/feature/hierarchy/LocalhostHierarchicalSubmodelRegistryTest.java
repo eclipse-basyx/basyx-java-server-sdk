@@ -50,16 +50,19 @@ public class LocalhostHierarchicalSubmodelRegistryTest extends HierarchicalSubmo
 
 	private static final DummyDescriptorFactory factory = new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_SMID);
 
-	private static ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext rootAppContext;
+	private static ConfigurableApplicationContext delegatedAppContext;
 
 	@BeforeClass
-	public static void setupRootRegistry() {
-		appContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] {});
+	public static void setupRegistries() {
+		delegatedAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] { "--server.port=8060", "--basyx.feature.hierarchy.enabled=false" });
+		rootAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] {});
 	}
 
 	@AfterClass
-	public static void tearDownRootRegistry() {
-		appContext.close();
+	public static void tearDownRegistries() {
+		rootAppContext.close();
+		delegatedAppContext.close();
 	}
 
 	@Override

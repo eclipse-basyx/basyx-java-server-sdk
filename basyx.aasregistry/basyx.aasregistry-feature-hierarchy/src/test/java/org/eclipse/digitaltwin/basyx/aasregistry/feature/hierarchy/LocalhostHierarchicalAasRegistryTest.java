@@ -49,16 +49,19 @@ public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistr
 	private static final RegistryAndDiscoveryInterfaceApi delegatedRegistryApi = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
 	private static final DummyDescriptorFactory factory = new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_AASID);
 
-	private static ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext rootAppContext;
+	private static ConfigurableApplicationContext delegatedAppContext;
 
 	@BeforeClass
-	public static void setupRootRegistry() {
-		appContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] {});
+	public static void setupRegistries() {
+		delegatedAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] { "--server.port=8050", "--basyx.feature.hierarchy.enabled=false" });
+		rootAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] {});
 	}
 
 	@AfterClass
-	public static void tearDownRootRegistry() {
-		appContext.close();
+	public static void tearDownRegistries() {
+		rootAppContext.close();
+		delegatedAppContext.close();
 	}
 
 	@Override
