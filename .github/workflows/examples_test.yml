@@ -32,6 +32,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
+
       - name: Start BaSyx Client Example
         run: docker compose -f examples/BaSyxClient/docker-compose.yml up -d
 
