@@ -26,6 +26,8 @@
 package org.eclipse.digitaltwin.basyx.authorization;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.health.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -55,7 +57,7 @@ public class CommonSecurityConfiguration {
 		http
 				.cors(cors -> cors.configurationSource(corsConfigurationSource))
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/actuator/health/**").permitAll()
+						.requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
 						.requestMatchers("/v3/**").permitAll()

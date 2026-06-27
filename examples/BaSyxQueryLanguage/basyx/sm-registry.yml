@@ -10,6 +10,7 @@ basyx:
           indexname: smdesc-index
 spring:
   mongodb:
+    database: sm-registry
     uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
   elasticsearch:
     uris: http://elasticsearch:9200

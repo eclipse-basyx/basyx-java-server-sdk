@@ -73,7 +73,12 @@ jobs:
       - name: Start BaSyx Dynamic RBAC Example
         run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml up -d
 
+      - name: Show BaSyx Dynamic RBAC Example Logs
+        if: failure()
+        run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml logs --no-color
+
       - name: Stop BaSyx Dynamic RBAC Example
+        if: always()
         run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml down
 
   test-basyx-kafka:
@@ -111,7 +116,12 @@ jobs:
       - name: Start BaSyx Minimal Example
         run: docker compose -f examples/BaSyxMinimal/docker-compose.yml up -d
 
+      - name: Show BaSyx Minimal Example Logs
+        if: failure()
+        run: docker compose -f examples/BaSyxMinimal/docker-compose.yml logs --no-color
+
       - name: Stop BaSyx Minimal Example
+        if: always()
         run: docker compose -f examples/BaSyxMinimal/docker-compose.yml down
 
   test-basyx-reverse-proxy:
@@ -206,7 +216,12 @@ jobs:
       - name: Start BaSyx Query Language Example
         run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml up -d
 
+      - name: Show BaSyx Query Language Example Logs
+        if: failure()
+        run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml logs --no-color
+
       - name: Stop BaSyx Query Language Example
+        if: always()
         run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml down
 
   test-basyx-cad:

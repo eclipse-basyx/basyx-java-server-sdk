@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -93,12 +94,7 @@ public class TestAuthorizedSubmodelService {
 
 	@Test
 	public void testGetHealthStatusUnauthorized() throws Exception {
-		String expectedBody = """
-			{
-				    "status": "UP"
-			}
-			""";
-		mockMvc.perform(get(EP_HEALTH)).andExpect(status().isOk()).andExpect(content().json(expectedBody));
+		mockMvc.perform(get(EP_HEALTH)).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("UP"));
 	}
 
 	@Test

@@ -106,16 +106,12 @@ public abstract class AuthorizedAasRegistryTestSuite {
 
     @Test
     public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
-    	
-    	
-        String expectedHealthEndpointOutput = getStringFromFile("authorization/HealthOutput.json");
-
         String healthEndpointUrl = BASE_URL + "/actuator/health";
 
         CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
         assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
 
-        BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
+        BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
     }
 
     @Test

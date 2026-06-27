@@ -113,6 +113,12 @@ public class BaSyxHttpTestUtils {
 		assertEquals(mapper.readTree(expected), mapper.readTree(actual));
 	}
 
+	public static void assertJSONValueEquals(String actual, String jsonPointer, String expectedValue) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		assertEquals(expectedValue, mapper.readTree(actual).at(jsonPointer).asText());
+	}
+
 	/**
 	 * Performs a get request on the passed URL
 	 * 

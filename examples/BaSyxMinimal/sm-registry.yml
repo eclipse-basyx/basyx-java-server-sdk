@@ -6,4 +6,5 @@ basyx:
 
 spring:
   mongodb:
+    database: sm-registry
     uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
