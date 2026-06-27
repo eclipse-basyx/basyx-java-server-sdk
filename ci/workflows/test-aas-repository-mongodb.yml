@@ -4,11 +4,11 @@ services:
     container_name: test_aas_repository
     environment:
       - SERVER_PORT=8081
-      - SPRING_DATA_MONGODB_HOST=mongo
-      - SPRING_DATA_MONGODB_DATABASE=aasrepo
-      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
-      - SPRING_DATA_MONGODB_USERNAME=mongoAdmin
-      - SPRING_DATA_MONGODB_PASSWORD=mongoPassword
+      - SPRING_MONGODB_HOST=mongo
+      - SPRING_MONGODB_DATABASE=aasrepo
+      - SPRING_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_MONGODB_USERNAME=mongoAdmin
+      - SPRING_MONGODB_PASSWORD=mongoPassword
       - BASYX_BACKEND=MongoDB
     ports:
       - '8081:8081'
@@ -24,7 +24,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "mongosh --quiet --username \"$MONGO_INITDB_ROOT_USERNAME\" --password \"$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval \"db.adminCommand({ ping: 1 })\" || exit 1"]
+      test: ["CMD-SHELL", "mongosh --quiet --username \"$$MONGO_INITDB_ROOT_USERNAME\" --password \"$$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval \"db.adminCommand({ ping: 1 })\" || exit 1"]
       interval: 10s
       timeout: 5s
       start_period: 20s

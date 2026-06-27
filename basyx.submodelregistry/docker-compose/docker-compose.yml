@@ -120,7 +120,7 @@ services:
     restart: always
     environment:
       KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SPRING_MONGODB_URI: mongodb://admin:admin@mongodb:27017
     networks:
       - basyx-submodel
 
@@ -137,7 +137,7 @@ services:
     restart: always
     environment:
       KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SPRING_MONGODB_URI: mongodb://admin:admin@mongodb:27017
       SERVER_PORT: "8091"
       SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1/    
     networks:
@@ -206,7 +206,7 @@ services:
       - mongodb
     restart: always
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SPRING_MONGODB_URI: mongodb://admin:admin@mongodb:27017
     networks:
       - basyx-submodel
 
@@ -221,7 +221,7 @@ services:
       - mongodb
     restart: always
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SPRING_MONGODB_URI: mongodb://admin:admin@mongodb:27017
       SERVER_PORT: "8091"
       SERVER_SERVLET_CONTEXT_PATH: /api/v3.0.1/ 
     networks:

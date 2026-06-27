@@ -36,7 +36,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class TestConfiguration extends AbstractMongoClientConfiguration {
 
-	@Value("${spring.data.mongodb.database}")
+	@Value("${spring.mongodb.database}")
 	private String databaseName;
 
 	@Bean

@@ -1,6 +1,5 @@
 registry:
   type: mongodb
 spring:
-  data:
-    mongodb:
-      database: submodelregistry
+  mongodb:
+    database: submodelregistry

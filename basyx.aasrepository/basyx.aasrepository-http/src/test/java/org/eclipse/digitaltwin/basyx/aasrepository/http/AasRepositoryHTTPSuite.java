@@ -46,6 +46,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
@@ -403,7 +404,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 		uploadThumbnail(dummyAasId);
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId), new BasicHeader("Accept", ContentType.IMAGE_PNG.getMimeType()));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 		assertEquals(ContentType.IMAGE_PNG.getMimeType(), response.getFirstHeader("Content-Type").getValue());
 

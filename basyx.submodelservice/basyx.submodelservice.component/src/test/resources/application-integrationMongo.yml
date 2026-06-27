@@ -17,12 +17,11 @@ basyx:
             additionalClasspath: 
             - example/jars/HelloWorld.jar
 spring:
-  data:
-    mongodb:
-      host: 127.0.0.1
-      port: 27017
-      collectionName: submodelServiceTestCollection
-      database: submodelservice
-      authentication-database: admin
-      username: mongoAdmin
-      password: mongoPassword
+  mongodb:
+    host: 127.0.0.1
+    port: 27017
+    collectionName: submodelServiceTestCollection
+    database: submodelservice
+    authentication-database: admin
+    username: mongoAdmin
+    password: mongoPassword

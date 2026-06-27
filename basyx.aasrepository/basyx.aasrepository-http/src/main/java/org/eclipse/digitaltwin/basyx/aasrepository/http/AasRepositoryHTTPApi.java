@@ -291,7 +291,7 @@ public interface AasRepositoryHTTPApi {
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
 
 			@ApiResponse(responseCode = "200", description = "Default error handling for unmentioned status codes", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))) })
-	@RequestMapping(value = "/shells/{aasIdentifier}/asset-information/thumbnail", produces = { "application/octet-stream", "application/json" }, method = RequestMethod.GET)
+	@RequestMapping(value = "/shells/{aasIdentifier}/asset-information/thumbnail", produces = { "application/octet-stream", "application/json", "*/*" }, method = RequestMethod.GET)
 	ResponseEntity<Resource> getThumbnailAasRepository(
 			@Parameter(in = ParameterIn.PATH, description = "The Asset Administration Shell’s unique id (UTF8-BASE64-URL-encoded)", required = true, schema = @Schema()) @PathVariable("aasIdentifier") Base64UrlEncodedIdentifier aasIdentifier);
 

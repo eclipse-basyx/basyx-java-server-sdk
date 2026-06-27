@@ -14,7 +14,6 @@
 	<description>BaSyx AAS Registry Feature Hierarchy Example</description>
 	
 	<properties>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class> org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>aas-registry-feature-hierarchy-example</docker.image.name>
 	</properties>

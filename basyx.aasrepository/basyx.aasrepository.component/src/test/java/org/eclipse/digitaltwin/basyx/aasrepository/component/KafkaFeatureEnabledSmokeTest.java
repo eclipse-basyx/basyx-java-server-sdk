@@ -25,6 +25,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
@@ -45,6 +47,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -53,6 +56,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
@@ -63,6 +67,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka" })
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = { "basyx.feature.kafka.enabled=true", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
@@ -88,6 +93,7 @@ public class KafkaFeatureEnabledSmokeTest {
 	
 	@Before
 	public void init() {
+		restTemplate.getRestTemplate().getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		adapter.skipMessages();
 		cleanup();
 
@@ -110,7 +116,7 @@ public class KafkaFeatureEnabledSmokeTest {
 	public void testAasCreatedEvent() throws SerializationException {
 		AssetAdministrationShell shell = new DefaultAssetAdministrationShell.Builder().id("http://aas.id/1").idShort("1").build();
 		HttpEntity<String> entity = createHttpEntity(shell);
-		restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, String.class);
+		restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, Void.class);
 		AasEvent event = adapter.next();
 		Assert.assertEquals(AasEventType.AAS_CREATED, event.getType());
 		Assert.assertEquals(shell.getId(), event.getId());

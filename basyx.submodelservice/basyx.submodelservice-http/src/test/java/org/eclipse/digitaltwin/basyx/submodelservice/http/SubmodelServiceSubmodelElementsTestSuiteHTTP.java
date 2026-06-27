@@ -44,6 +44,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -631,7 +632,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 
-		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT), new BasicHeader("Accept", ContentType.IMAGE_PNG.getMimeType()));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
 		assertEquals(ContentType.IMAGE_PNG.getMimeType(), response.getFirstHeader("Content-Type").getValue());
 

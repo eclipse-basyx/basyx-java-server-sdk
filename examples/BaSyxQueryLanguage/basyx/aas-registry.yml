@@ -9,9 +9,8 @@ basyx:
           enabled: true
           indexname: aasdesc-index
 spring:
-  data:
-    mongodb:
-      uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
+  mongodb:
+    uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
   elasticsearch:
     uris: http://elasticsearch:9200
     username: elastic

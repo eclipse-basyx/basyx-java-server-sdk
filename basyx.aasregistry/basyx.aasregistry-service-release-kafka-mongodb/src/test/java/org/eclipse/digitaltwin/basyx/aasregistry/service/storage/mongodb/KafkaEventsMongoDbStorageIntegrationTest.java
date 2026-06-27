@@ -28,8 +28,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.BaseI
 import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = { "spring.profiles.active=kafkaEvents,mongoDbStorage",
-		"spring.kafka.bootstrap-servers=localhost:9092", "spring.data.mongodb.database=aasregistry",
-		"spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
+		"spring.kafka.bootstrap-servers=localhost:9092", "spring.mongodb.database=aasregistry",
+		"spring.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017/" })
 public class KafkaEventsMongoDbStorageIntegrationTest extends BaseIntegrationTest {
 
 	

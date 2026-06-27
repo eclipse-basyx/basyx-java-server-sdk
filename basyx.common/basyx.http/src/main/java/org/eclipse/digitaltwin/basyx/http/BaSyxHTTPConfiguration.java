@@ -51,6 +51,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 /**
  * Configuration class providing all relevant beans for HTTP payload
@@ -74,7 +75,9 @@ public class BaSyxHTTPConfiguration {
 	 */
 	@Bean
 	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
+		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+				.serializationInclusion(JsonInclude.Include.NON_NULL)
+				.modulesToInstall(new Jdk8Module());
 
 		for (SerializationExtension serializationExtension : serializationExtensions) {
 			serializationExtension.extend(builder);
