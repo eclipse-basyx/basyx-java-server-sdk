@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.http;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 
 public final class BaSyxMediaType {
 
@@ -42,6 +43,38 @@ public final class BaSyxMediaType {
 		} catch (IllegalArgumentException e) {
 			return MediaType.APPLICATION_OCTET_STREAM;
 		}
+	}
+
+	public static String parseOrInferFromFileNameOrOctetStream(String mediaType, String fileName) {
+		if (isSpecificMediaType(mediaType)) {
+			return mediaType;
+		}
+
+		if (fileName == null || fileName.isBlank()) {
+			return MediaType.APPLICATION_OCTET_STREAM_VALUE;
+		}
+
+		return MediaTypeFactory.getMediaType(fileName)
+				.map(MediaType::toString)
+				.orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+	}
+
+	private static boolean isSpecificMediaType(String mediaType) {
+		if (mediaType == null || mediaType.isBlank()) {
+			return false;
+		}
+
+		try {
+			MediaType parsedMediaType = MediaType.parseMediaType(mediaType);
+			return !isApplicationOctetStream(parsedMediaType);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	private static boolean isApplicationOctetStream(MediaType mediaType) {
+		return MediaType.APPLICATION_OCTET_STREAM.getType().equals(mediaType.getType())
+				&& MediaType.APPLICATION_OCTET_STREAM.getSubtype().equals(mediaType.getSubtype());
 	}
 
 }

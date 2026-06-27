@@ -89,7 +89,9 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 
 	@AfterClass
 	public static void shutdownAASRepo() {
-		appContext.close();
+		if (appContext != null) {
+			appContext.close();
+		}
 	}
 	
 	@Test
