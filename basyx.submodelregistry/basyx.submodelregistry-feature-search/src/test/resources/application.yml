@@ -27,10 +27,8 @@ server:
 spring:
   application:
     name: Basyx Submodel Registry
-  data:
-    mongodb:
-      uri: mongodb://mongoAdmin:mongoPassword@localhost:27017
-      database: submodelregistry-ci-test
+  mongodb:
+    uri: mongodb://mongoAdmin:mongoPassword@localhost:27017/submodelregistry-ci-test?authSource=admin
   elasticsearch:
     uris: http://localhost:9200
     username: elastic

@@ -11,9 +11,8 @@ spring:
       - org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration
   main:
     allow-bean-definition-overriding: true
-  data:
-    mongodb:
-      uri:
+  mongodb:
+    uri:
 
 management:
   endpoints:
