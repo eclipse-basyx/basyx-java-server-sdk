@@ -26,12 +26,20 @@
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingAuthorizationConfigurationException;
+import org.reflections.Reflections;
 import org.springframework.core.io.ResourceLoader;
 
 /**
@@ -48,9 +56,12 @@ public class RbacRuleInitializer {
 	private ResourceLoader resourceLoader;
 
 	public RbacRuleInitializer(ObjectMapper objectMapper, String filePath, ResourceLoader resourceLoader) {
-		this.objectMapper = objectMapper;
+		this.objectMapper = objectMapper.copy()
+				.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		this.rbacJsonFilePath = filePath;
 		this.resourceLoader = resourceLoader;
+		registerTargetInformationSubtypes();
 	}
 
 	/**
@@ -63,8 +74,50 @@ public class RbacRuleInitializer {
 	 * @throws IOException
 	 */
 	public HashMap<String, RbacRule> deserialize() throws IOException {
-		return objectMapper.readValue(getFile(rbacJsonFilePath), new TypeReference<HashMap<String, RbacRule>>() {
-		});
+		JsonNode rules = objectMapper.readTree(getFile(rbacJsonFilePath));
+
+		if (rules.isArray()) {
+			return mapByGeneratedKey(objectMapper.convertValue(rules, new TypeReference<List<RbacRule>>() {
+			}));
+		}
+
+		if (rules.isObject()) {
+			Map<String, RbacRule> mappedRules = objectMapper.convertValue(rules, new TypeReference<Map<String, RbacRule>>() {
+			});
+			return new HashMap<>(mappedRules);
+		}
+
+		throw new IOException("Unsupported RBAC rules format: " + rules.getNodeType());
+	}
+
+	private HashMap<String, RbacRule> mapByGeneratedKey(List<RbacRule> rbacRules) {
+		HashMap<String, RbacRule> result = new HashMap<>();
+
+		for (RbacRule rule : rbacRules) {
+			for (Action action : rule.getAction()) {
+				RbacRule singleActionRule = new RbacRule(rule.getRole(), List.of(action), rule.getTargetInformation());
+				result.put(createKey(singleActionRule), singleActionRule);
+			}
+		}
+
+		return result;
+	}
+
+	private String createKey(RbacRule rbacRule) {
+		return RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
+	}
+
+	private void registerTargetInformationSubtypes() {
+		Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
+		Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
+
+		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(objectMapper::registerSubtypes);
+	}
+
+	private NamedType createNamedType(Class<?> subType) {
+		TargetInformationSubtype annotation = subType.getAnnotation(TargetInformationSubtype.class);
+
+		return (annotation != null) ? new NamedType(subType, annotation.getValue()) : null;
 	}
 
 	private File getFile(String filePath) {

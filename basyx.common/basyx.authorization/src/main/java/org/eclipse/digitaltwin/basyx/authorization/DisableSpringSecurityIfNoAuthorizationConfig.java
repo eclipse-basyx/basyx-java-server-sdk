@@ -30,6 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.NoneNestedConditions;
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.ManagementWebSecurityAutoConfiguration;
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
 import org.springframework.boot.security.oauth2.server.resource.autoconfigure.servlet.OAuth2ResourceServerAutoConfiguration;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,7 @@ import org.springframework.context.annotation.Configuration;
  * @author wege, danish
  */
 @Configuration
-@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, OAuth2ResourceServerAutoConfiguration.class })
+@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class, ServletWebSecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, OAuth2ResourceServerAutoConfiguration.class })
 @Conditional(DisableSpringSecurityIfNoAuthorizationConfig.NoAuthorizationCondition.class)
 public class DisableSpringSecurityIfNoAuthorizationConfig {
 

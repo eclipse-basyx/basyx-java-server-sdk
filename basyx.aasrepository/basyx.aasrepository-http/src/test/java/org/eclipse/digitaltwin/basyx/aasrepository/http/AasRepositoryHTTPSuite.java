@@ -36,9 +36,13 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -401,6 +405,7 @@ public abstract class AasRepositoryHTTPSuite {
 
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), dummyAasId));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
+		assertEquals(ContentType.IMAGE_PNG.getMimeType(), response.getFirstHeader("Content-Type").getValue());
 
 		byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
 
@@ -582,7 +587,14 @@ public abstract class AasRepositoryHTTPSuite {
 
 		java.io.File file = ResourceUtils.getFile("classpath:" + THUMBNAIL_FILE_PATH);
 
-		HttpPut putRequest = BaSyxHttpTestUtils.createPutRequestWithFile(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), aasId), THUMBNAIL_FILE_PATH, file);
+		HttpPut putRequest = new HttpPut(BaSyxHttpTestUtils.getThumbnailAccessURL(getURL(), aasId));
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addPart("file", new FileBody(file, ContentType.IMAGE_PNG, THUMBNAIL_FILE_PATH));
+		builder.addTextBody("fileName", THUMBNAIL_FILE_PATH);
+		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
+
+		HttpEntity multipart = builder.build();
+		putRequest.setEntity(multipart);
 
 		return BaSyxHttpTestUtils.executePutRequest(client, putRequest);
 	}

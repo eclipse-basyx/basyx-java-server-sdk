@@ -1,15 +1,16 @@
 FROM eclipse-temurin:17 as builder
+WORKDIR /workspace
 COPY maven/${project.build.finalName}.jar ./
-RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
+RUN java -Djarmode=tools -jar ${project.build.finalName}.jar extract --layers --launcher --destination . --force
 
 FROM eclipse-temurin:17
 RUN mkdir /workspace
 WORKDIR /workspace
-COPY --from=builder dependencies/ ./
-COPY --from=builder snapshot-dependencies/ ./
+COPY --from=builder /workspace/dependencies/ ./
+COPY --from=builder /workspace/snapshot-dependencies/ ./
 RUN true
-COPY --from=builder spring-boot-loader/ ./
-COPY --from=builder application/ ./
+COPY --from=builder /workspace/spring-boot-loader/ ./
+COPY --from=builder /workspace/application/ ./
 ENV SPRING_PROFILES_ACTIVE=logEvents,inMemoryStorage,hierarchy
 ARG PORT=8080
 ENV SERVER_PORT=${PORT}
