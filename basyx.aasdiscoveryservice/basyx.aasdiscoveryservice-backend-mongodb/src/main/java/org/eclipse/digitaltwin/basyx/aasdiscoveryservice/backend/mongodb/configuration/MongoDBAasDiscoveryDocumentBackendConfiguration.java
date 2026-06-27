@@ -30,7 +30,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.AasDiscoveryDoc
 import org.eclipse.digitaltwin.basyx.common.mongocore.MappingEntry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;

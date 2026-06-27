@@ -122,8 +122,8 @@ _No additional environment variables required for InMemory profile._
 ### Auto-configuration Exclusions
 The InMemory profile excludes MongoDB auto-configuration:
 
-- `org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration`
-- `org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration`
+- `org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration`
+- `org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration`
 
 ---
 

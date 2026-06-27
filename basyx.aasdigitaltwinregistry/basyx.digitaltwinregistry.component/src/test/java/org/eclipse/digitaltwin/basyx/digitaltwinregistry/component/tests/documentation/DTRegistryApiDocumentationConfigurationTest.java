@@ -29,15 +29,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.documentation.DTRegistryApiDocumentationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
-@Slf4j
 public class DTRegistryApiDocumentationConfigurationTest {
+	private static final Logger log = LoggerFactory.getLogger(DTRegistryApiDocumentationConfigurationTest.class);
 
 	private DTRegistryApiDocumentationConfiguration config;
 

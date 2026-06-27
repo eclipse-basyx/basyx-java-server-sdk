@@ -56,7 +56,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -84,10 +84,10 @@ public class BasyxRegistryApiDelegateTest {
 
 	private static final String ID_2_3 = "identification_2.3";
 
-	@MockBean
+	@MockitoBean
 	private RegistryEventSink listener;
 
-	@MockBean
+	@MockitoBean
 	private LocationBuilder locationBuilder;
 
 	@Autowired

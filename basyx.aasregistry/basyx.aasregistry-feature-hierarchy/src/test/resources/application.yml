@@ -29,8 +29,9 @@ spring:
     name: Basyx Aas Registry
   jackson:
     date-format: org.eclipse.digitaltwin.basyx.aasregistry.service.RFC3339DateFormat
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
+    datatype:
+      datetime:
+        WRITE_DATES_AS_TIMESTAMPS: false
   profiles:
     active: logEvents,inMemoryStorage
 
@@ -44,4 +45,4 @@ basyx:
   feature:
     hierarchy:
       enabled: true
-      prefix: 
+      prefix:

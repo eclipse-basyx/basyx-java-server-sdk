@@ -25,16 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
 
-import org.springframework.boot.actuate.autoconfigure.data.elasticsearch.ElasticsearchReactiveHealthContributorAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.metrics.export.elastic.ElasticMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ReactiveElasticsearchClientAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -43,15 +35,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnExpression("!(${" + SearchSubmodelRegistryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.experimental.search.enabled:false})")
-@EnableAutoConfiguration(exclude = {
-        ElasticsearchClientAutoConfiguration.class,
-        ElasticsearchRepositoriesAutoConfiguration.class,
-        ElasticsearchDataAutoConfiguration.class,
-        ElasticsearchRestClientAutoConfiguration.class,
-        ElasticsearchReactiveHealthContributorAutoConfiguration.class,
-        ElasticMetricsExportAutoConfiguration.class,
-        ReactiveElasticsearchClientAutoConfiguration.class,
-        ReactiveElasticsearchRepositoriesAutoConfiguration.class
+@EnableAutoConfiguration(excludeName = {
+        "org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchClientAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchRepositoriesAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchAutoConfiguration",
+        "org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchRestClientAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.health.DataElasticsearchReactiveHealthContributorAutoConfiguration",
+        "org.springframework.boot.micrometer.metrics.autoconfigure.export.elastic.ElasticMetricsExportAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchReactiveRepositoriesAutoConfiguration"
 })
 public class DisableSearchSubmodelRegistryConfiguration {
 }

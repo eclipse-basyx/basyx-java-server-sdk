@@ -43,8 +43,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRe
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -58,10 +58,10 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(properties = { "description.profiles=https://admin-shell.io/aas/API/3/0/SubmodelRegistryServiceSpecification/SSP-001,https://admin-shell.io/aas/API/3/0/DiscoveryServiceSpecification/SSP-001,https://basyx.org/aas/API/3/0/BaSyxServiceSpecification/SSP-001" })
 public class DescriptionProfilesTest {
 
-	@MockBean
+	@MockitoBean
 	public SubmodelRegistryStorage storage;
 
-	@MockBean
+	@MockitoBean
 	public RegistryEventSink eventSink;
 
 	@Autowired

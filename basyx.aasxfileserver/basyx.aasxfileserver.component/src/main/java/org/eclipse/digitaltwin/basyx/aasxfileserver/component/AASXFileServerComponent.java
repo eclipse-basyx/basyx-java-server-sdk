@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.component;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration;
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration;
 
 /**
  * Creates and starts the {@link AASXFileServer} off-the-shelf-component
@@ -37,7 +37,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
  * @author schnicke, chaithra
  *
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, DataMongoAutoConfiguration.class })
 public class AASXFileServerComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(AASXFileServerComponent.class, args);
