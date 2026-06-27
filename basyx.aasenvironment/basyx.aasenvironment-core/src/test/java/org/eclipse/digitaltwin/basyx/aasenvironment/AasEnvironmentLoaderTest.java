@@ -27,6 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.base.DefaultAASEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
@@ -96,6 +98,37 @@ public class AasEnvironmentLoaderTest {
 		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
 		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
 		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+	}
+
+	@Test
+	public void testEnvironmentWithoutShells_LoadsOtherElements() {
+		Environment environment = new DefaultEnvironment();
+		environment.setSubmodels(List.copyOf(TestAASEnvironmentSerialization.createDummySubmodels()));
+
+		loadEnvironment(environment);
+
+		assertRepositorySizes(0, 2, 0);
+	}
+
+	@Test
+	public void testEnvironmentWithoutSubmodels_LoadsOtherElements() {
+		Environment environment = new DefaultEnvironment();
+		environment.setAssetAdministrationShells(List.copyOf(TestAASEnvironmentSerialization.createDummyShells()));
+
+		loadEnvironment(environment);
+
+		assertRepositorySizes(2, 0, 0);
+	}
+
+	@Test
+	public void testEnvironmentWithoutConceptDescriptions_LoadsOtherElements() {
+		Environment environment = new DefaultEnvironment();
+		environment.setAssetAdministrationShells(List.copyOf(TestAASEnvironmentSerialization.createDummyShells()));
+		environment.setSubmodels(List.copyOf(TestAASEnvironmentSerialization.createDummySubmodels()));
+
+		loadEnvironment(environment);
+
+		assertRepositorySizes(2, 2, 0);
 	}
 
 	@Test
@@ -198,6 +231,17 @@ public class AasEnvironmentLoaderTest {
 			File file = rLoader.getResource(path).getFile();
 			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
 		}
+	}
+
+	private void loadEnvironment(Environment environment) {
+		AasEnvironment envLoader = new DefaultAASEnvironment(aasRepository, submodelRepository, conceptDescriptionRepository);
+		envLoader.loadEnvironment(new CompleteEnvironment(environment, null));
+	}
+
+	private void assertRepositorySizes(int expectedAasCount, int expectedSubmodelCount, int expectedConceptDescriptionCount) {
+		Assert.assertEquals(expectedAasCount, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assert.assertEquals(expectedSubmodelCount, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assert.assertEquals(expectedConceptDescriptionCount, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 	
 	private void deleteElementsFromRepos() {

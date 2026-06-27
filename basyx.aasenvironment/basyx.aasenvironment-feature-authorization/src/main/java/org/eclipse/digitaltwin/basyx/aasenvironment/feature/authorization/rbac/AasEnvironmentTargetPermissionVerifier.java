@@ -25,6 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.AasEnvironmentTargetInformation;
@@ -44,13 +45,15 @@ public class AasEnvironmentTargetPermissionVerifier implements TargetPermissionV
 	public boolean isVerified(RbacRule rbacRule, AasEnvironmentTargetInformation targetInformation) {
 		List<String> targetInformationShellIds = targetInformation.getAasIds();
 		List<String> targetInformationSubmdelIds = targetInformation.getSubmodelIds();
+		List<String> targetInformationConceptDescriptionIds = emptyIfNull(targetInformation.getConceptDescriptionIds());
 		
 		AasEnvironmentTargetInformation rbacRuleAasEnvironmentTargetInformation = (AasEnvironmentTargetInformation) rbacRule.getTargetInformation();
 		
 		List<String> rbacRuleShellIds = rbacRuleAasEnvironmentTargetInformation.getAasIds();
 		List<String> rbacRuleSubmdelIds = rbacRuleAasEnvironmentTargetInformation.getSubmodelIds();
+		List<String> rbacRuleConceptDescriptionIds = wildcardIfNull(rbacRuleAasEnvironmentTargetInformation.getConceptDescriptionIds());
 		
-		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds) && areSubmodelsAllowed(rbacRuleSubmdelIds, targetInformationSubmdelIds);
+		return areShellsAllowed(rbacRuleShellIds, targetInformationShellIds) && areSubmodelsAllowed(rbacRuleSubmdelIds, targetInformationSubmdelIds) && areConceptDescriptionsAllowed(rbacRuleConceptDescriptionIds, targetInformationConceptDescriptionIds);
 	}
 
 	private boolean areShellsAllowed(List<String> rbacRuleShellIds, List<String> targetInformationShellIds) {
@@ -59,8 +62,13 @@ public class AasEnvironmentTargetPermissionVerifier implements TargetPermissionV
 	}
 	
 	private boolean areSubmodelsAllowed(List<String> rbacRuleSubmdelIds, List<String> targetInformationSubmdelIds) {
-		
-		return allSubmodelsAllowed(rbacRuleSubmdelIds) || rbacRuleSubmdelIds.containsAll(targetInformationSubmdelIds);	
+
+		return allSubmodelsAllowed(rbacRuleSubmdelIds) || rbacRuleSubmdelIds.containsAll(targetInformationSubmdelIds);
+	}
+
+	private boolean areConceptDescriptionsAllowed(List<String> rbacRuleConceptDescriptionIds, List<String> targetInformationConceptDescriptionIds) {
+
+		return allConceptDescriptionsAllowed(rbacRuleConceptDescriptionIds) || rbacRuleConceptDescriptionIds.containsAll(targetInformationConceptDescriptionIds);
 	}
 
 	private boolean allSubmodelsAllowed(List<String> rbacRuleSubmdelIds) {
@@ -69,8 +77,21 @@ public class AasEnvironmentTargetPermissionVerifier implements TargetPermissionV
 	}
 
 	private boolean allShellsAllowed(List<String> rbacRuleShellIds) {
-		
+
 		return rbacRuleShellIds.size() == 1 && rbacRuleShellIds.get(0).equals(ALL_ALLOWED_WILDCARD);
+	}
+
+	private boolean allConceptDescriptionsAllowed(List<String> rbacRuleConceptDescriptionIds) {
+
+		return rbacRuleConceptDescriptionIds.size() == 1 && rbacRuleConceptDescriptionIds.get(0).equals(ALL_ALLOWED_WILDCARD);
+	}
+
+	private List<String> emptyIfNull(List<String> targetInformationIds) {
+		return targetInformationIds == null ? Collections.emptyList() : targetInformationIds;
+	}
+
+	private List<String> wildcardIfNull(List<String> rbacRuleIds) {
+		return rbacRuleIds == null ? Collections.singletonList(ALL_ALLOWED_WILDCARD) : rbacRuleIds;
 	}
 
 }

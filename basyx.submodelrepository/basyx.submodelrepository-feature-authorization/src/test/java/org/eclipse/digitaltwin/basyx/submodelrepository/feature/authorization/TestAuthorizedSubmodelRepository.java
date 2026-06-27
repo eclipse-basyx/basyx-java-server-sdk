@@ -50,6 +50,7 @@ import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -103,6 +104,13 @@ public class TestAuthorizedSubmodelRepository {
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
 		
 		initializeRepository();
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		if (appContext != null) {
+			appContext.close();
+		}
 	}
 
 	@Test

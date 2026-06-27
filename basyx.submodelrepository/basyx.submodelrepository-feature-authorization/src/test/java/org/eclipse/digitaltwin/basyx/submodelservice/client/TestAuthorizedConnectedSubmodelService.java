@@ -95,7 +95,9 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 
 	@AfterClass
 	public static void shutdownSubmodelService() {
-		appContext.close();
+		if (appContext != null) {
+			appContext.close();
+		}
 	}
 	
 	@Test

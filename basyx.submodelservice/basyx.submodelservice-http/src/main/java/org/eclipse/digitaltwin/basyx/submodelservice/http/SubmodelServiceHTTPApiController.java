@@ -272,7 +272,8 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 		InputStream fileInputstream = null;
 		try {
 			fileInputstream = file.getInputStream();
-			service.setFileValue(idShortPath, fileName, file.getContentType(), fileInputstream);
+			String contentType = BaSyxMediaType.parseOrInferFromFileNameOrOctetStream(file.getContentType(), fileName);
+			service.setFileValue(idShortPath, fileName, contentType, fileInputstream);
 			closeInputStream(fileInputstream);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (ElementDoesNotExistException e) {

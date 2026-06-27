@@ -49,7 +49,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockserver.model.HttpStatusCode;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -80,7 +79,7 @@ public class TestOperationDelegationFeature {
 	private ObjectMapper mapper = configureObjectMapper();
 
 	@BeforeClass
-	public static void setUp() {
+	public static void setUp() throws IOException {
 		httpMockServer.start();
 
 		webClient = createWebClient(createSecurityPropertiesWithLocalhostAllowlist());
@@ -109,7 +108,7 @@ public class TestOperationDelegationFeature {
 	public void invokeOperationDelegation() throws FileNotFoundException, IOException {
 		String expectedResponse = getExpectedOutputResponse(getInputVariable());
 
-		createExpectationsForPost("/operationInvocation", getRequestBody(getInputVariable()), expectedResponse, HttpStatusCode.OK_200);
+		createExpectationsForPost("/operationInvocation", getRequestBody(getInputVariable()), expectedResponse, 200);
 
 		String submodelId = "dummySubmodelOperationDelegation";
 
@@ -129,7 +128,7 @@ public class TestOperationDelegationFeature {
 	@Test(expected = OperationDelegationException.class)
 	public void invokeFailOperationDelegation() throws FileNotFoundException, IOException {
 
-		createExpectationsForPost("/operationInvocationFail", getRequestBody(getInputVariable()), getExpectedOutputResponse(getInputVariable()), HttpStatusCode.BAD_REQUEST_400);
+		createExpectationsForPost("/operationInvocationFail", getRequestBody(getInputVariable()), getExpectedOutputResponse(getInputVariable()), 400);
 
 		String submodelId = "dummySubmodelOperationDelegation";
 
@@ -187,7 +186,7 @@ public class TestOperationDelegationFeature {
 		String expectedResponse = getExpectedOutputResponse(getInputVariable());
 		String path = "/operationInvocationAllowlisted";
 
-		createExpectationsForPost(path, getRequestBody(inputOperationVariable), expectedResponse, HttpStatusCode.OK_200);
+		createExpectationsForPost(path, getRequestBody(inputOperationVariable), expectedResponse, 200);
 		createSubmodelAtRepository(allowlistedRepository, submodelId);
 		createInvokableSMEAtRepository(allowlistedRepository, submodelId, "operationDelegationSME", "http://127.0.0.1:2020" + path);
 
@@ -260,10 +259,6 @@ public class TestOperationDelegationFeature {
 		securityProperties.getAllowlist().setCidrs(Arrays.asList("127.0.0.0/8", "::1/128"));
 		securityProperties.getAllowlist().setPorts(Arrays.asList(2020));
 		return securityProperties;
-	}
-
-	private void createExpectationsForPost(String path, String requestBody, String expectedResponse, HttpStatusCode expectedResponseCode) throws FileNotFoundException, IOException {
-		httpMockServer.createExpectationsForPostRequest(path, requestBody, expectedResponse, expectedResponseCode);
 	}
 
 	private void createExpectationsForPost(String path, String requestBody, String expectedResponse, int expectedResponseCode) throws FileNotFoundException, IOException {

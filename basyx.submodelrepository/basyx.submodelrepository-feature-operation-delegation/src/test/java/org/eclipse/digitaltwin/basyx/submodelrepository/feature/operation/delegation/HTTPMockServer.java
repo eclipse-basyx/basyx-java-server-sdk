@@ -25,14 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
-import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
-import org.mockserver.model.HttpStatusCode;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import org.mockserver.model.MediaType;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An HTTP Mock server for mocking operation delgation feature
@@ -41,8 +42,9 @@ import org.mockserver.model.MediaType;
  */
 public class HTTPMockServer {
 
-	private ClientAndServer clientAndServer;
-	private int port;
+	private final int port;
+	private final Map<String, PostExpectation> expectations = new ConcurrentHashMap<>();
+	private HttpServer server;
 
 	public HTTPMockServer(int port) {
 		super();
@@ -56,8 +58,10 @@ public class HTTPMockServer {
 	/**
 	 * Starts the mock server
 	 */
-	public void start() {
-		clientAndServer = ClientAndServer.startClientAndServer(port);
+	public void start() throws IOException {
+		server = HttpServer.create(new InetSocketAddress(port), 0);
+		server.createContext("/", this::handleRequest);
+		server.start();
 	}
 
 	/**
@@ -65,10 +69,10 @@ public class HTTPMockServer {
 	 */
 	public void stop() {
 
-		if (clientAndServer == null || !clientAndServer.isRunning())
+		if (server == null)
 			return;
 
-		clientAndServer.stop();
+		server.stop(0);
 	}
 
 	/**
@@ -79,19 +83,46 @@ public class HTTPMockServer {
 	 * @param responseBody
 	 * @param expectedResponseCode
 	 * 
-	 * @throws JsonMappingException
-	 * @throws JsonProcessingException
 	 */
-	public void createExpectationsForPostRequest(String path, String requestBody, String expectedResponse, HttpStatusCode expectedResponseCode) throws JsonMappingException, JsonProcessingException {
-
-		clientAndServer.when(HttpRequest.request().withMethod("POST").withPath(path).withBody(requestBody))
-				.respond(HttpResponse.response().withStatusCode(expectedResponseCode.code()).withBody(expectedResponse).withContentType(MediaType.APPLICATION_JSON));
+	public void createExpectationsForPostRequest(String path, String requestBody, String expectedResponse, int expectedResponseCode) {
+		expectations.put(path, new PostExpectation(requestBody, expectedResponse, expectedResponseCode));
 	}
 
-	public void createExpectationsForPostRequest(String path, String requestBody, String expectedResponse, int expectedResponseCode) throws JsonMappingException, JsonProcessingException {
+	private void handleRequest(HttpExchange exchange) throws IOException {
+		PostExpectation expectation = expectations.get(exchange.getRequestURI().getPath());
 
-		clientAndServer.when(HttpRequest.request().withMethod("POST").withPath(path).withBody(requestBody))
-				.respond(HttpResponse.response().withStatusCode(expectedResponseCode).withBody(expectedResponse).withContentType(MediaType.APPLICATION_JSON));
+		if (expectation == null || !exchange.getRequestMethod().equals("POST")) {
+			sendResponse(exchange, 404, "");
+			return;
+		}
+
+		String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+		if (!expectation.requestBody.equals(requestBody)) {
+			sendResponse(exchange, 400, "");
+			return;
+		}
+
+		exchange.getResponseHeaders().set("Content-Type", "application/json");
+		sendResponse(exchange, expectation.responseCode, expectation.responseBody);
 	}
 
+	private void sendResponse(HttpExchange exchange, int responseCode, String responseBody) throws IOException {
+		byte[] response = responseBody.getBytes(StandardCharsets.UTF_8);
+		exchange.sendResponseHeaders(responseCode, response.length);
+		try (OutputStream responseStream = exchange.getResponseBody()) {
+			responseStream.write(response);
+		}
+	}
+
+	private static class PostExpectation {
+		private final String requestBody;
+		private final String responseBody;
+		private final int responseCode;
+
+		private PostExpectation(String requestBody, String responseBody, int responseCode) {
+			this.requestBody = requestBody;
+			this.responseBody = responseBody;
+			this.responseCode = responseCode;
+		}
+	}
 }

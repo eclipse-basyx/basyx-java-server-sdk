@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.backend.submodel;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization.rbac.
  */
 public class AasEnvironmentTargetInformationAdapter implements TargetInformationAdapter {
 
+	private static final String ALL_ALLOWED_WILDCARD = "*";
+
 	@Override
 	public SubmodelElementCollection adapt(TargetInformation targetInformation) {
 		
@@ -71,14 +74,17 @@ public class AasEnvironmentTargetInformationAdapter implements TargetInformation
 
 		SubmodelElementList aasId = new DefaultSubmodelElementList.Builder().idShort("aasIds").build();
 		SubmodelElementList submodelId = new DefaultSubmodelElementList.Builder().idShort("submodelIds").build();
+		SubmodelElementList conceptDescriptionId = new DefaultSubmodelElementList.Builder().idShort("conceptDescriptionIds").build();
 		Property typeProperty = new DefaultProperty.Builder().idShort("@type").value("aas-environment").build();
 
 		List<SubmodelElement> aasIds = ((AasEnvironmentTargetInformation) targetInformation).getAasIds().stream().map(this::transform).collect(Collectors.toList());
 		List<SubmodelElement> submodelIds = ((AasEnvironmentTargetInformation) targetInformation).getSubmodelIds().stream().map(this::transform).collect(Collectors.toList());
+		List<SubmodelElement> conceptDescriptionIds = getRuleConceptDescriptionIds((AasEnvironmentTargetInformation) targetInformation).stream().map(this::transform).collect(Collectors.toList());
 		aasId.setValue(aasIds);
 		submodelId.setValue(submodelIds);
+		conceptDescriptionId.setValue(conceptDescriptionIds);
 
-		targetInformationSMC.setValue(Arrays.asList(aasId, submodelId, typeProperty));
+		targetInformationSMC.setValue(Arrays.asList(aasId, submodelId, conceptDescriptionId, typeProperty));
 
 		return targetInformationSMC;
 	}
@@ -107,8 +113,12 @@ public class AasEnvironmentTargetInformationAdapter implements TargetInformation
 		
 		SubmodelElement submodelIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("submodelIds")).findAny().orElseThrow(
 				() -> new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName()));
+		SubmodelElement conceptDescriptionIdSubmodelElement = targetInformation.getValue().stream().filter(sme -> sme.getIdShort().equals("conceptDescriptionIds")).findAny().orElse(null);
 
 		if (!(aasIdSubmodelElement instanceof SubmodelElementList) || !(submodelIdSubmodelElement instanceof SubmodelElementList))
+			throw new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
+
+		if (conceptDescriptionIdSubmodelElement != null && !(conceptDescriptionIdSubmodelElement instanceof SubmodelElementList))
 			throw new InvalidTargetInformationException("The TargetInformation defined in the SubmodelElementCollection Rule with id: " + targetInformation.getIdShort() + " is not compatible with the " + getClass().getName());
 
 		SubmodelElementList aasIdList = (SubmodelElementList) aasIdSubmodelElement;
@@ -116,8 +126,9 @@ public class AasEnvironmentTargetInformationAdapter implements TargetInformation
 
 		List<String> aasIds = aasIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
 		List<String> submodelIds = submodelIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
+		List<String> conceptDescriptionIds = getRuleConceptDescriptionIds(conceptDescriptionIdSubmodelElement);
 
-		return new AasEnvironmentTargetInformation(aasIds, submodelIds);
+		return new AasEnvironmentTargetInformation(aasIds, submodelIds, conceptDescriptionIds);
 	}
 
 	private String getTargetInformationType(SubmodelElementCollection targetInformation) {
@@ -129,6 +140,22 @@ public class AasEnvironmentTargetInformationAdapter implements TargetInformation
 
 	private Property transform(String aasId) {
 		return new DefaultProperty.Builder().value(aasId).build();
+	}
+
+	private List<String> getRuleConceptDescriptionIds(AasEnvironmentTargetInformation targetInformation) {
+		List<String> conceptDescriptionIds = targetInformation.getConceptDescriptionIds();
+
+		return conceptDescriptionIds == null ? Collections.singletonList(ALL_ALLOWED_WILDCARD) : conceptDescriptionIds;
+	}
+
+	private List<String> getRuleConceptDescriptionIds(SubmodelElement conceptDescriptionIdSubmodelElement) {
+		if (conceptDescriptionIdSubmodelElement == null) {
+			return Collections.singletonList(ALL_ALLOWED_WILDCARD);
+		}
+
+		SubmodelElementList conceptDescriptionIdList = (SubmodelElementList) conceptDescriptionIdSubmodelElement;
+
+		return conceptDescriptionIdList.getValue().stream().map(Property.class::cast).map(Property::getValue).collect(Collectors.toList());
 	}
 
 }

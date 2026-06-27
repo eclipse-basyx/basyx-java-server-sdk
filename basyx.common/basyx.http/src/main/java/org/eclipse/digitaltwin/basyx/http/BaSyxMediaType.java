@@ -26,6 +26,7 @@
 package org.eclipse.digitaltwin.basyx.http;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 
 public final class BaSyxMediaType {
 
@@ -42,6 +43,46 @@ public final class BaSyxMediaType {
 		} catch (IllegalArgumentException e) {
 			return MediaType.APPLICATION_OCTET_STREAM;
 		}
+	}
+
+	/**
+	 * Parses the given media type or infers a media type from the file name when
+	 * the given media type is missing, invalid, or {@code application/octet-stream}.
+	 *
+	 * @param mediaType the media type to parse
+	 * @param fileName the file name to infer a media type from
+	 * @return the parsed, inferred, or {@code application/octet-stream} media type
+	 */
+	public static String parseOrInferFromFileNameOrOctetStream(String mediaType, String fileName) {
+		if (isSpecificMediaType(mediaType)) {
+			return mediaType;
+		}
+
+		if (fileName == null || fileName.isBlank()) {
+			return MediaType.APPLICATION_OCTET_STREAM_VALUE;
+		}
+
+		return MediaTypeFactory.getMediaType(fileName)
+				.map(MediaType::toString)
+				.orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+	}
+
+	private static boolean isSpecificMediaType(String mediaType) {
+		if (mediaType == null || mediaType.isBlank()) {
+			return false;
+		}
+
+		try {
+			MediaType parsedMediaType = MediaType.parseMediaType(mediaType);
+			return !isApplicationOctetStream(parsedMediaType);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	private static boolean isApplicationOctetStream(MediaType mediaType) {
+		return MediaType.APPLICATION_OCTET_STREAM.getType().equals(mediaType.getType())
+				&& MediaType.APPLICATION_OCTET_STREAM.getSubtype().equals(mediaType.getSubtype());
 	}
 
 }
