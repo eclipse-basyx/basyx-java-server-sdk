@@ -26,12 +26,15 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.http;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAdministrativeInformation;
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
@@ -110,8 +113,28 @@ public class AasEnvironmentApiHTTPController implements AASEnvironmentHTTPApi {
 
 		if (envType == null)
 			envType = EnvironmentType.AASX;
-		aasEnvironment.loadEnvironment(CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType),
-				ignoreDuplicates);
+		
+        CompleteEnvironment completeEnv = CompleteEnvironment.fromInputStream(envFile.getInputStream(), envType);
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
+        OffsetDateTime epoch = OffsetDateTime.parse("1970-01-01T00:00:00Z");
+
+        completeEnv.getEnvironment().getAssetAdministrationShells().forEach(shell -> {
+            if (shell.getAdministration() == null) {
+                shell.setAdministration(new DefaultAdministrativeInformation());
+            }
+
+            if (shell.getAdministration().getCreatedAt() == null) {
+                shell.getAdministration().setCreatedAt(epoch);
+            }
+            if (shell.getAdministration().getUpdatedAt() == null) {
+                shell.getAdministration().setUpdatedAt(now);
+            }
+        });
+
+        // 3. Load the modified environment into the repositories
+        aasEnvironment.loadEnvironment(completeEnv, ignoreDuplicates);
+
         return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
