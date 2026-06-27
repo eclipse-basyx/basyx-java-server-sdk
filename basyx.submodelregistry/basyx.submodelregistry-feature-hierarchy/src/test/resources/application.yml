@@ -6,10 +6,6 @@ description:
 springdoc:
    api-docs:
       path: /api-docs
-springfox:
-  documentation:
-    enabled: true
-  #  open-api.v3.path: /api-docs
 management:
   endpoints:
     web:
