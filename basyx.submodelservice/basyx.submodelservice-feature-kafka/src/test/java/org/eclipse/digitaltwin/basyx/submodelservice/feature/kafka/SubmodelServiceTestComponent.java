@@ -27,16 +27,15 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class,
-		MongoDataAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx",
+		excludeName = { "org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration",
+				"org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration" })
 @Profile("test-submodel")
 public class SubmodelServiceTestComponent {
 	

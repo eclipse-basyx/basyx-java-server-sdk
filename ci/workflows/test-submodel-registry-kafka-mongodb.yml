@@ -104,6 +104,6 @@ services:
     restart: always
     environment:
       KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb:27017
+      SPRING_MONGODB_URI: mongodb://admin:admin@mongodb:27017
     networks:
       - basyx-submodel

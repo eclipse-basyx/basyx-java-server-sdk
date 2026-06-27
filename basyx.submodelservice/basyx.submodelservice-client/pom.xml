@@ -79,19 +79,6 @@
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.digitaltwin.basyx</groupId>
-			<artifactId>basyx.submodelrepository-feature-authorization</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>

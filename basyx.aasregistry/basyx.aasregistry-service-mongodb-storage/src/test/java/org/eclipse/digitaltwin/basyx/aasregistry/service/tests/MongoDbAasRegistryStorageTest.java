@@ -56,8 +56,8 @@ import org.springframework.test.context.TestPropertySource;
 import com.mongodb.ExplainVerbosity;
 import com.mongodb.client.MongoCollection;
 
-@TestPropertySource(properties = { "registry.type=mongodb", "spring.data.mongodb.database=aasregistry"
-		, "spring.data.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017", "basyx.aasregistry.mongodb.collectionName=aasdescriptors" })
+@TestPropertySource(properties = { "registry.type=mongodb", "spring.mongodb.database=aasregistry"
+		, "spring.mongodb.uri=mongodb://mongoAdmin:mongoPassword@localhost:27017", "basyx.aasregistry.mongodb.collectionName=aasdescriptors" })
 @ContextConfiguration(classes = { MongoDbConfiguration.class })
 @EnableAutoConfiguration
 public class MongoDbAasRegistryStorageTest extends AasRegistryStorageTest {

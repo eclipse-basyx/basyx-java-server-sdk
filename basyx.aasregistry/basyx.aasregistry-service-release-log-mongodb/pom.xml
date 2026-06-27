@@ -15,7 +15,6 @@
 	<description>BaSyx AAS Registry Service Release Log MongoDB</description>
 	
 	<properties>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class>org.eclipse.digitaltwin.basyx.aasregistry.service.OpenApiGeneratorApplication</start-class>
 		<docker.image.name>aas-registry-log-mongodb</docker.image.name>
 	</properties>
@@ -69,7 +68,6 @@
 		<dependency>
 			<groupId>co.elastic.clients</groupId>
 			<artifactId>elasticsearch-java</artifactId>
-			<version>9.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>

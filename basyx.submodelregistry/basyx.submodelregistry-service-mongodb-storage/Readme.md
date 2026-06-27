@@ -18,12 +18,12 @@ Then included, you can activate it by either setting the active profile or the *
 Dont't forget to also set the mongodb url as property
 
 ```
--Dspring.data.mongodb.uri=mongodb://admin:admin@localhost:27017/
+-Dspring.mongodb.uri=mongodb://admin:admin@localhost:27017/
 ```
 
 or use the environment variable
 
 ```
-SPRING_DATA_MONGODB_URI=mongodb://admin:admin@localhost:27017/
+SPRING_MONGODB_URI=mongodb://admin:admin@localhost:27017/
 ```
 

@@ -1,11 +1,10 @@
 registry:
   type: mongodb
 spring:
-  data:
-    mongodb:
-      host: 127.0.0.1
-      port: 27017
-      database: aasregistry
-      authentication-database: admin
-      username: mongoAdmin
-      password: mongoPassword
+  mongodb:
+    host: 127.0.0.1
+    port: 27017
+    database: aasregistry
+    authentication-database: admin
+    username: mongoAdmin
+    password: mongoPassword

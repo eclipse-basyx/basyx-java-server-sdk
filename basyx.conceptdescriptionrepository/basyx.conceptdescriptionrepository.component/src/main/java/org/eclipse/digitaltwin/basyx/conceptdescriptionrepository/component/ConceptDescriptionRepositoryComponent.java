@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration;
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration;
 
 /**
  * Creates and starts the ConceptDescriptionRepository off-shelf-component
@@ -38,7 +38,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
  *
  */
 @SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", 
-exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+exclude = { MongoAutoConfiguration.class, DataMongoAutoConfiguration.class })
 public class ConceptDescriptionRepositoryComponent {
 	public static void main(String[] args) {
 		SpringApplication.run(ConceptDescriptionRepositoryComponent.class, args);

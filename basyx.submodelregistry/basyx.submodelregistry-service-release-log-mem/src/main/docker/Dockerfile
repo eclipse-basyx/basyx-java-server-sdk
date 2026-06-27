@@ -1,9 +1,10 @@
 FROM eclipse-temurin:17 as builder
+WORKDIR /workspace
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
 ARG FINAL_NAME=${project.build.finalName}
 COPY maven/${FINAL_NAME}.jar ./
-RUN java -Djarmode=layertools -jar ${FINAL_NAME}.jar extract
+RUN java -Djarmode=tools -jar ${FINAL_NAME}.jar extract --layers --launcher --destination . --force
 
 FROM eclipse-temurin:17
 ARG HTTP_PROXY
@@ -11,11 +12,11 @@ ARG HTTPS_PROXY
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN mkdir /workspace
 WORKDIR /workspace
-COPY --from=builder dependencies/ ./
-COPY --from=builder snapshot-dependencies/ ./
+COPY --from=builder /workspace/dependencies/ ./
+COPY --from=builder /workspace/snapshot-dependencies/ ./
 RUN true
-COPY --from=builder spring-boot-loader/ ./
-COPY --from=builder application/ ./
+COPY --from=builder /workspace/spring-boot-loader/ ./
+COPY --from=builder /workspace/application/ ./
 ENV SPRING_PROFILES_ACTIVE=logEvents,inMemoryStorage
 ARG PORT=8080
 ENV SERVER_PORT=${PORT}

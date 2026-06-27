@@ -44,6 +44,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -631,8 +632,28 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 
 		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT);
 
+		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT), new BasicHeader("Accept", ContentType.IMAGE_PNG.getMimeType()));
+		assertEquals(HttpStatus.OK.value(), response.getCode());
+		assertEquals(ContentType.IMAGE_PNG.getMimeType(), response.getFirstHeader("Content-Type").getValue());
+
+		byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
+
+		response.close();
+
+		assertArrayEquals(expectedFile, actualFile);
+	}
+
+	@Test
+	public void getFilePreservesStoredJsonMediaType() throws FileNotFoundException, IOException, ParseException {
+		String fileName = DummySubmodelFactory.FILE_NAME;
+
+		byte[] expectedFile = readBytesFromClasspath(fileName);
+
+		uploadFileToSubmodelElement(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT, fileName, ContentType.APPLICATION_JSON);
+
 		CloseableHttpResponse response = BaSyxHttpTestUtils.executeGetOnURL(createSMEFileGetURL(DummySubmodelFactory.SUBMODEL_ELEMENT_FILE_ID_SHORT));
 		assertEquals(HttpStatus.OK.value(), response.getCode());
+		assertEquals(ContentType.APPLICATION_JSON.getMimeType(), ContentType.parse(response.getFirstHeader("Content-Type").getValue()).getMimeType());
 
 		byte[] actualFile = EntityUtils.toByteArray(response.getEntity());
 
@@ -749,21 +770,25 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelElementIdShort, String fileName) throws IOException {
+		return uploadFileToSubmodelElement(submodelElementIdShort, fileName, ContentType.IMAGE_PNG);
+	}
+
+	private CloseableHttpResponse uploadFileToSubmodelElement(String submodelElementIdShort, String fileName, ContentType contentType) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
 		java.io.File file = ResourceUtils.getFile("classpath:" + DummySubmodelFactory.FILE_NAME);
 
-		HttpPut putRequest = createPutRequestWithFile(submodelElementIdShort, fileName, file);
+		HttpPut putRequest = createPutRequestWithFile(submodelElementIdShort, fileName, file, contentType);
 
 		return executePutRequest(client, putRequest);
 	}
 
-	private HttpPut createPutRequestWithFile(String submodelElementIdShort, String fileName, java.io.File file) {
+	private HttpPut createPutRequestWithFile(String submodelElementIdShort, String fileName, java.io.File file, ContentType contentType) {
 		HttpPut putRequest = new HttpPut(createSMEFileUploadURL(submodelElementIdShort, fileName));
 
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-		builder.addPart("file", new FileBody(file));
+		builder.addPart("file", new FileBody(file, contentType, fileName));
 		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
 
 		HttpEntity multipart = builder.build();

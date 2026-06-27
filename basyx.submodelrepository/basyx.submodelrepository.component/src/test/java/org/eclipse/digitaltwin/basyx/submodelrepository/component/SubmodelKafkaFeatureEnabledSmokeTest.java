@@ -25,6 +25,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.component;
 
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -39,14 +41,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -58,6 +62,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx" })
 @ContextConfiguration(classes = { SubmodelRepositoryComponent.class })
 @RunWith(SpringRunner.class)
@@ -81,13 +86,14 @@ public class SubmodelKafkaFeatureEnabledSmokeTest {
 	
 	@Before
 	public void setUp() {
+		restTemplate.getRestTemplate().getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		adapter.skipMessages();
 	}
 	@Test
 	public void testAasCreatedEvent() throws SerializationException {
 		Submodel sm = new DefaultSubmodel.Builder().id("http://sm.id/1").build();
 		HttpEntity<String> entity = createHttpEntity(sm);
-		Assert.assertTrue(restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, String.class).getStatusCode().is2xxSuccessful());
+		Assert.assertTrue(restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, Void.class).getStatusCode().is2xxSuccessful());
 		SubmodelEvent event = adapter.next();
 		Assert.assertEquals(SubmodelEventType.SM_CREATED, event.getType());
 		Assert.assertEquals(sm.getId(), event.getId());

@@ -27,8 +27,9 @@
 package org.eclipse.digitaltwin.basyx.common.mongocore;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Disables automatic MongoDB configuration if it is not configured
@@ -38,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnExpression("'${basyx.backend}'.equals('MongoDB')")
-public class CustomMongoDataAutoConfiguration extends MongoDataAutoConfiguration {
+@Import(DataMongoAutoConfiguration.class)
+public class CustomMongoDataAutoConfiguration {
 
 }

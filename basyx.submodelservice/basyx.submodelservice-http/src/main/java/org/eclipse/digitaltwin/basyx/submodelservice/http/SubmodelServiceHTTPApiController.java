@@ -40,6 +40,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
+import org.eclipse.digitaltwin.basyx.http.BaSyxMediaType;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
@@ -259,8 +260,11 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 	@Override
 	public ResponseEntity<Resource> getFileByPath(String idShortPath) {
 		Resource resource = new FileSystemResource(service.getFileByPath(idShortPath));
+		org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement = (org.eclipse.digitaltwin.aas4j.v3.model.File) service.getSubmodelElement(idShortPath);
 
-		return new ResponseEntity<>(resource, HttpStatus.OK);
+		return ResponseEntity.ok()
+				.contentType(BaSyxMediaType.parseOrOctetStream(fileSubmodelElement.getContentType()))
+				.body(resource);
 	}
 
 	@Override

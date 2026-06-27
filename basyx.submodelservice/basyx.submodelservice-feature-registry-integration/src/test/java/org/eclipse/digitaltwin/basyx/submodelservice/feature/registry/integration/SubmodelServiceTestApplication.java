@@ -27,12 +27,13 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integrati
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+
 /**
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */
-@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx", exclude = { MongoAutoConfiguration.class, MongoDataAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages = "org.eclipse.digitaltwin.basyx",
+		excludeName = { "org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration",
+				"org.springframework.boot.data.mongodb.autoconfigure.DataMongoAutoConfiguration" })
 public class SubmodelServiceTestApplication {
 	
 	public static void main(String[] args) {

@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.data.util.TypeInformation;
+import org.springframework.data.core.TypeInformation;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.NonNull;
 

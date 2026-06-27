@@ -25,15 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
-import org.springframework.boot.actuate.autoconfigure.elasticsearch.ElasticsearchRestHealthContributorAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ReactiveElasticsearchRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.elasticsearch.ReactiveElasticsearchClientAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -42,14 +35,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnExpression("!(${" + SearchAasRepositoryFeature.FEATURENAME + ".enabled:false} || ${basyx.feature.experimental.search.enabled:false})")
-@EnableAutoConfiguration(exclude = {
-        ElasticsearchClientAutoConfiguration.class,
-        ElasticsearchRepositoriesAutoConfiguration.class,
-        ElasticsearchDataAutoConfiguration.class,
-        ElasticsearchRestClientAutoConfiguration.class,
-        ReactiveElasticsearchClientAutoConfiguration.class,
-        ReactiveElasticsearchRepositoriesAutoConfiguration.class,
-        ElasticsearchRestHealthContributorAutoConfiguration.class
+@EnableAutoConfiguration(excludeName = {
+        "org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchClientAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchRepositoriesAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchAutoConfiguration",
+        "org.springframework.boot.elasticsearch.autoconfigure.ElasticsearchRestClientAutoConfiguration",
+        "org.springframework.boot.data.elasticsearch.autoconfigure.DataElasticsearchReactiveRepositoriesAutoConfiguration",
+        "org.springframework.boot.elasticsearch.autoconfigure.health.ElasticsearchRestHealthContributorAutoConfiguration"
 })
 public class DisableSearchAasRepositoryConfiguration {
 }

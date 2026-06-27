@@ -16,7 +16,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<start-class>org.eclipse.digitaltwin.basyx.submodelregistry.service.OpenApiGeneratorApplication</start-class>
 	</properties>
 

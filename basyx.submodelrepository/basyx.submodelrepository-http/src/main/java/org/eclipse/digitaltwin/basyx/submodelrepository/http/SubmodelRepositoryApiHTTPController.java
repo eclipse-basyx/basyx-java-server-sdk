@@ -46,6 +46,7 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifierSize;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
+import org.eclipse.digitaltwin.basyx.http.BaSyxMediaType;
 import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
@@ -230,14 +231,17 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 
 	@Override
 	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
-		java.io.File file = repository.getFileByPathSubmodel(submodelIdentifier.getIdentifier(), idShortPath);
+		String submodelId = submodelIdentifier.getIdentifier();
+		java.io.File file = repository.getFileByPathSubmodel(submodelId, idShortPath);
 		Resource resource = new FileSystemResource(file);
+		org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement = (org.eclipse.digitaltwin.aas4j.v3.model.File) repository.getSubmodelElement(submodelId, idShortPath);
 
-		String fileName = repository.getOriginalFileNameByPath(submodelIdentifier.getIdentifier(), idShortPath);
-		
-	    return ResponseEntity.ok()
-	            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-	            .body(resource);
+		String fileName = repository.getOriginalFileNameByPath(submodelId, idShortPath);
+
+		return ResponseEntity.ok()
+				.contentType(BaSyxMediaType.parseOrOctetStream(fileSubmodelElement.getContentType()))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+				.body(resource);
 	}
 
 	@Override

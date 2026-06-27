@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.controllerAd
 
 import java.time.OffsetDateTime;
 
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Result;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.Message.MessageTypeEnum;
@@ -44,6 +43,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +56,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
+	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Result> handleValidationException(MethodArgumentNotValidException ex) {

@@ -26,11 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.mapping.DynamicMapping;
-import co.elastic.clients.elasticsearch._types.mapping.Property;
-import co.elastic.clients.elasticsearch._types.mapping.TypeMapping;
-import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
-import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import co.elastic.clients.json.JsonData;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
@@ -194,7 +190,7 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 			esclient.create(
 					c -> c.index(indexName)
 							.id(submodel.getId())
-							.document(normalizedSubmodel)
+							.document(JsonData.fromJson(normalizedSubmodel.toString()))
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -209,8 +205,8 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 			esclient.update(
 					u -> u.index(indexName)
 							.id(submodel.getId())
-							.doc(normalizedSubmodel),
-					JsonNode.class
+							.doc(JsonData.fromJson(normalizedSubmodel.toString())),
+					JsonData.class
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

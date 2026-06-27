@@ -43,6 +43,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferences
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
+import org.eclipse.digitaltwin.basyx.http.BaSyxMediaType;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
@@ -199,10 +200,14 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 
 	@Override
 	public ResponseEntity<Resource> getThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
-        Resource resource = new FileSystemResource(aasRepository.getThumbnail(aasIdentifier.getIdentifier()));
+		String aasId = aasIdentifier.getIdentifier();
+		Resource resource = new FileSystemResource(aasRepository.getThumbnail(aasId));
+		String contentType = aasRepository.getAssetInformation(aasId).getDefaultThumbnail().getContentType();
 
-        return new ResponseEntity<>(resource, HttpStatus.OK);
-    }
+		return ResponseEntity.ok()
+				.contentType(BaSyxMediaType.parseOrOctetStream(contentType))
+				.body(resource);
+	}
 
 	@Override
 	public ResponseEntity<Void> putThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier, String fileName, @Valid MultipartFile file) {

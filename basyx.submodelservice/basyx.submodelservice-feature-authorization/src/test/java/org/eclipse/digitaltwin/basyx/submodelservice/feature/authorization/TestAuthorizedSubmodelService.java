@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -42,7 +43,7 @@ import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.UseMainMethod;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -52,6 +53,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
@@ -92,12 +94,7 @@ public class TestAuthorizedSubmodelService {
 
 	@Test
 	public void testGetHealthStatusUnauthorized() throws Exception {
-		String expectedBody = """
-			{
-				    "status": "UP"
-			}
-			""";
-		mockMvc.perform(get(EP_HEALTH)).andExpect(status().isOk()).andExpect(content().json(expectedBody));
+		mockMvc.perform(get(EP_HEALTH)).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("UP"));
 	}
 
 	@Test
@@ -582,7 +579,7 @@ public class TestAuthorizedSubmodelService {
 		File file = ResourceUtils.getFile("classpath:" + FILE_NAME);
 		byte[] content = FileCopyUtils.copyToByteArray(file);
 		MockMultipartFile toSend = new MockMultipartFile("file", FILE_NAME, MediaType.IMAGE_PNG_VALUE, content);
-		MockHttpServletRequestBuilder builder = multipart(EP_SME_6_ATTACHMENT).file(toSend).param("fileName", FILE_NAME).with(request -> {
+		MockMultipartHttpServletRequestBuilder builder = multipart(EP_SME_6_ATTACHMENT).file(toSend).param("fileName", FILE_NAME).with(request -> {
 			request.setMethod("PUT");
 			return request;
 		}).with(csrf());

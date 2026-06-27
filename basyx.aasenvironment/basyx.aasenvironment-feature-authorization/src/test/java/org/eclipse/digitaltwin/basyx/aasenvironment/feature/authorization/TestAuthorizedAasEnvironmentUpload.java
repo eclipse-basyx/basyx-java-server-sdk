@@ -111,12 +111,10 @@ public class TestAuthorizedAasEnvironmentUpload {
 
 	@Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
-		String expectedHealthEndpointOutput = getStringFromFile("authorization/HealthOutput.json");
-
 		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
 		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
+		BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
 	}
 	
 	@Test

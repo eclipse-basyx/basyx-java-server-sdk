@@ -31,10 +31,14 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,6 +46,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 /**
  * Configuration class providing all relevant beans for HTTP payload
@@ -63,13 +69,46 @@ public class BaSyxHTTPConfiguration {
 	 */
 	@Bean
 	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
+		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+				.serializationInclusion(JsonInclude.Include.NON_NULL)
+				.modulesToInstall(new Jdk8Module());
 
 		for (SerializationExtension serializationExtension : serializationExtensions) {
 			serializationExtension.extend(builder);
 		}
 		
 		return builder;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(ObjectMapper.class)
+	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+		return builder.build();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(MappingJackson2HttpMessageConverter.class)
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
+		return new MappingJackson2HttpMessageConverter(objectMapper);
+	}
+
+	@Bean
+	public WebMvcConfigurer resourceHttpMessageConverterConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+				moveResourceHttpMessageConverterToFront(converters);
+			}
+		};
+	}
+
+	private static void moveResourceHttpMessageConverterToFront(List<HttpMessageConverter<?>> converters) {
+		for (int i = 0; i < converters.size(); i++) {
+			if (converters.get(i) instanceof ResourceHttpMessageConverter) {
+				converters.add(0, converters.remove(i));
+				return;
+			}
+		}
 	}
 
 	/**

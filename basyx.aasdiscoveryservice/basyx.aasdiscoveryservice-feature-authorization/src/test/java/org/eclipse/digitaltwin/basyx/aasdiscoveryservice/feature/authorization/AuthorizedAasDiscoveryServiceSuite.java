@@ -72,7 +72,6 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 	private static final String AASID2_ENCODED = Base64UrlEncoder.encode(AASID2);
 	private static final String ASSETLINKS_SET1_PATH = "authorization/AssetLinks_Set1.json";
 	private static final String ASSETLINKS_SET2_PATH = "authorization/AssetLinks_Set2.json";
-	private static final String HEALTHOUTPUT_PATH = "authorization/HealthOutput.json";
 
 	protected abstract ConfigurableApplicationContext getAppContext();
 	protected abstract AasDiscoveryService getUnauthDiscoveryService();
@@ -99,12 +98,10 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 
 	@Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
-		String expectedHealthEndpointOutput = getStringFromFile(HEALTHOUTPUT_PATH);
-
 		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(Endpoints.healthEndpoint());
 		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
 
-		BaSyxHttpTestUtils.assertSameJSONContent(expectedHealthEndpointOutput, BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse));
+		BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
 	}
 
 	@Test
