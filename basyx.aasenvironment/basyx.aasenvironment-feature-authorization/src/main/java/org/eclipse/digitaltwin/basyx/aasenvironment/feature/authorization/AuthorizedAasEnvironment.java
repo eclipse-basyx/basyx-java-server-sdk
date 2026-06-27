@@ -26,11 +26,13 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
+import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.aas4j.v3.model.Environment;
 import org.eclipse.digitaltwin.aas4j.v3.model.Identifiable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -48,6 +50,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.InsufficientPermissionExcep
  */
 public class AuthorizedAasEnvironment implements AasEnvironment {
 
+	private static final String ALL_ALLOWED_WILDCARD = "*";
+
 	private AasEnvironment decorated;
 	private RbacPermissionResolver<AasEnvironmentTargetInformation> permissionResolver;
 	
@@ -58,7 +62,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public String createJSONAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, getConceptDescriptionIds(includeConceptDescriptions)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -67,7 +71,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public String createXMLAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, getConceptDescriptionIds(includeConceptDescriptions)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -76,7 +80,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 
 	@Override
 	public byte[] createAASXAASEnvironmentSerialization(List<String> aasIds, List<String> submodelIds, boolean includeConceptDescriptions) throws SerializationException, IOException {
-		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new AasEnvironmentTargetInformation(aasIds, submodelIds, getConceptDescriptionIds(includeConceptDescriptions)));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -92,7 +96,7 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 	public void loadEnvironment(CompleteEnvironment completeEnvironment, boolean ignoreDuplicates) {
 		Environment environment = completeEnvironment.getEnvironment();
 		
-		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels())));
+		boolean isAuthorized = permissionResolver.hasPermission(Action.CREATE, new AasEnvironmentTargetInformation(getAasIds(environment.getAssetAdministrationShells()), getSubmodelIds(environment.getSubmodels()), getConceptDescriptionIds(environment.getConceptDescriptions())));
 		
 		throwExceptionIfInsufficientPermission(isAuthorized);
 		
@@ -105,13 +109,35 @@ public class AuthorizedAasEnvironment implements AasEnvironment {
 	}
 
 	private List<String> getSubmodelIds(List<Submodel> submodels) {
+		if (submodels == null) {
+			return Collections.emptyList();
+		}
 		
 		return submodels.stream().map(Identifiable::getId).collect(Collectors.toList());
 	}
 
 	private List<String> getAasIds(List<AssetAdministrationShell> assetAdministrationShells) {
+		if (assetAdministrationShells == null) {
+			return Collections.emptyList();
+		}
 		
 		return assetAdministrationShells.stream().map(Identifiable::getId).collect(Collectors.toList());
+	}
+
+	private List<String> getConceptDescriptionIds(List<ConceptDescription> conceptDescriptions) {
+		if (conceptDescriptions == null) {
+			return Collections.emptyList();
+		}
+
+		return conceptDescriptions.stream().map(Identifiable::getId).collect(Collectors.toList());
+	}
+
+	private List<String> getConceptDescriptionIds(boolean includeConceptDescriptions) {
+		if (!includeConceptDescriptions) {
+			return Collections.emptyList();
+		}
+
+		return Collections.singletonList(ALL_ALLOWED_WILDCARD);
 	}
 
 }

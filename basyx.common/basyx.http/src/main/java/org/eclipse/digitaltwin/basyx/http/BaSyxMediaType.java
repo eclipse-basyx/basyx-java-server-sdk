@@ -45,6 +45,14 @@ public final class BaSyxMediaType {
 		}
 	}
 
+	/**
+	 * Parses the given media type or infers a media type from the file name when
+	 * the given media type is missing, invalid, or {@code application/octet-stream}.
+	 *
+	 * @param mediaType the media type to parse
+	 * @param fileName the file name to infer a media type from
+	 * @return the parsed, inferred, or {@code application/octet-stream} media type
+	 */
 	public static String parseOrInferFromFileNameOrOctetStream(String mediaType, String fileName) {
 		if (isSpecificMediaType(mediaType)) {
 			return mediaType;

@@ -45,11 +45,17 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 	
 	private List<String> aasIds;
 	private List<String> submodelIds;
+	private List<String> conceptDescriptionIds;
 
 	@JsonCreator
-	public AasEnvironmentTargetInformation(final @JsonProperty("aasIds") List<String> aasIds, final @JsonProperty("submodelIds") List<String> submodelIds) {
+	public AasEnvironmentTargetInformation(final @JsonProperty("aasIds") List<String> aasIds, final @JsonProperty("submodelIds") List<String> submodelIds, final @JsonProperty("conceptDescriptionIds") List<String> conceptDescriptionIds) {
 		this.aasIds = aasIds;
 		this.submodelIds = submodelIds;
+		this.conceptDescriptionIds = conceptDescriptionIds;
+	}
+
+	public AasEnvironmentTargetInformation(final List<String> aasIds, final List<String> submodelIds) {
+		this(aasIds, submodelIds, null);
 	}
 
 	@Override
@@ -57,6 +63,7 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		final Map<String, Object> map = new HashMap<>();
 		map.put("aasIds", aasIds);
 		map.put("submodelIds", submodelIds);
+		map.put("conceptDescriptionIds", conceptDescriptionIds);
 		
 		return map;
 	}
@@ -69,9 +76,13 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		return submodelIds;
 	}
 
+	public List<String> getConceptDescriptionIds() {
+		return conceptDescriptionIds;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(aasIds, submodelIds);
+		return Objects.hash(aasIds, submodelIds, conceptDescriptionIds);
 	}
 
 	@Override
@@ -83,12 +94,12 @@ public class AasEnvironmentTargetInformation implements TargetInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		AasEnvironmentTargetInformation other = (AasEnvironmentTargetInformation) obj;
-		return Objects.equals(aasIds, other.aasIds) && Objects.equals(submodelIds, other.submodelIds);
+		return Objects.equals(aasIds, other.aasIds) && Objects.equals(submodelIds, other.submodelIds) && Objects.equals(conceptDescriptionIds, other.conceptDescriptionIds);
 	}
 
 	@Override
 	public String toString() {
-		return "AasEnvironmentTargetInformation [aasIds=" + aasIds + ", submodelIds=" + submodelIds;
+		return "AasEnvironmentTargetInformation [aasIds=" + aasIds + ", submodelIds=" + submodelIds + ", conceptDescriptionIds=" + conceptDescriptionIds + "]";
 	}
 
 }

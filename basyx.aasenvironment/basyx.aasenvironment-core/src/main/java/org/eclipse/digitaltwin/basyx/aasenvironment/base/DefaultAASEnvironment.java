@@ -107,10 +107,10 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		List<InMemoryFile> relatedFiles = new ArrayList<>();
 		HashMap<String, List<File>> fileSubmodelElements = new HashMap<>();
 
-		aasEnvironment.getSubmodels().forEach(sm-> fileSubmodelElements.put(sm.getId(),getAllFileSubmodelElements(sm)));
+		getEnvironmentSubmodels(aasEnvironment).forEach(sm -> fileSubmodelElements.put(sm.getId(), getAllFileSubmodelElements(sm)));
 
 		addFilesToRelatedFiles(fileSubmodelElements, relatedFiles);
-		aasEnvironment.getAssetAdministrationShells().forEach(aas->addThumbnailToRelatedFiles(aas.getId(),aas.getAssetInformation().getDefaultThumbnail(),relatedFiles));
+		getEnvironmentAssetAdministrationShells(aasEnvironment).forEach(aas -> addThumbnailToRelatedFiles(aas.getId(), aas.getAssetInformation().getDefaultThumbnail(), relatedFiles));
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		aasxSerializer.write(aasEnvironment, relatedFiles, outputStream);
@@ -164,14 +164,14 @@ public class DefaultAASEnvironment implements AasEnvironment {
 		IdentifiableRepository<ConceptDescription> repo = new DelegatingIdentifiableRepository<ConceptDescription>(conceptDescriptionRepository::getConceptDescription, conceptDescriptionRepository::updateConceptDescription,
 				conceptDescriptionRepository::createConceptDescription);
 		IdentifiableUploader<ConceptDescription> uploader = new IdentifiableUploader<ConceptDescription>(repo);
-		for (ConceptDescription conceptDescription : environment.getConceptDescriptions()) {
+		for (ConceptDescription conceptDescription : getEnvironmentConceptDescriptions(environment)) {
 			boolean success = uploader.upload(conceptDescription);
 			logSuccessConceptDescription(conceptDescription.getId(), success);
 		}
 	}
 
 	private void createSubmodelsOnRepositoryFromEnvironment(Environment environment, List<InMemoryFile> relatedFiles) {
-		List<Submodel> submodels = environment.getSubmodels();
+		List<Submodel> submodels = getEnvironmentSubmodels(environment);
 
 		createSubmodelsOnRepository(submodels);
 
@@ -219,7 +219,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	private void createShellsOnRepositoryFromEnvironment(Environment environment, List<InMemoryFile> relatedFiles) {
 		IdentifiableRepository<AssetAdministrationShell> repo = new DelegatingIdentifiableRepository<AssetAdministrationShell>(aasRepository::getAas, aasRepository::updateAas, aasRepository::createAas);
 		IdentifiableUploader<AssetAdministrationShell> uploader = new IdentifiableUploader<>(repo);
-		for (AssetAdministrationShell shell : environment.getAssetAdministrationShells()) {
+		for (AssetAdministrationShell shell : getEnvironmentAssetAdministrationShells(environment)) {
 			boolean success = uploader.upload(shell);
 			setThumbnail(shell.getId(), relatedFiles);
 			logSuccess("shell", shell.getId(), success);
@@ -306,11 +306,11 @@ public class DefaultAASEnvironment implements AasEnvironment {
 	}
 
 	private void includeConceptDescriptions(Environment aasEnvironment) {
-		List<ConceptDescription> conceptDescriptions = cloneCreator.cloneConceptDescriptions(getConceptDescriptions(aasEnvironment));
+		List<ConceptDescription> conceptDescriptions = cloneCreator.cloneConceptDescriptions(getReferencedConceptDescriptions(aasEnvironment));
 		aasEnvironment.setConceptDescriptions(conceptDescriptions);
 	}
 
-	private List<ConceptDescription> getConceptDescriptions(Environment env) {
+	private List<ConceptDescription> getReferencedConceptDescriptions(Environment env) {
 		if (conceptDescriptionRepository == null) {
 			throw new NullPointerException("The parameter includeConceptDescriptions is set to true but ConceptDescriptionRepository is null");
 		}
@@ -327,6 +327,22 @@ public class DefaultAASEnvironment implements AasEnvironment {
 			logger.error("Concept description with id {} could not be found in the repository", conceptDescriptionId);
 			return null;
 		}
+	}
+
+	private List<AssetAdministrationShell> getEnvironmentAssetAdministrationShells(Environment environment) {
+		return emptyIfNull(environment.getAssetAdministrationShells());
+	}
+
+	private List<Submodel> getEnvironmentSubmodels(Environment environment) {
+		return emptyIfNull(environment.getSubmodels());
+	}
+
+	private List<ConceptDescription> getEnvironmentConceptDescriptions(Environment environment) {
+		return emptyIfNull(environment.getConceptDescriptions());
+	}
+
+	private <T> List<T> emptyIfNull(List<T> elements) {
+		return elements == null ? Collections.emptyList() : elements;
 	}
 
 	private void addFilesToRelatedFiles(HashMap<String, List<File>> submodelFileSMEMap, List<InMemoryFile> relatedFiles) {
