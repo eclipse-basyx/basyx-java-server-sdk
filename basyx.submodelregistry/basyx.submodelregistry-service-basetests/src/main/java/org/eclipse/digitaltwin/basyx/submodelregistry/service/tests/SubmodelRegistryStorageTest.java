@@ -29,7 +29,6 @@ import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
@@ -51,7 +50,7 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 		List<SubmodelDescriptor> initialState = getAllSubmodels();
 		List<SubmodelDescriptor> expected = testResourcesLoader.loadList(SubmodelDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
-		SubmodelDescriptor toAdd = new SubmodelDescriptor(SM_ID_2, List.of()).addDescriptionItem(new LangStringTextType("de-DE", "Overridden"));
+		SubmodelDescriptor toAdd = submodelDescriptor(SM_ID_2).addDescriptionItem(new LangStringTextType("de-DE", "Overridden"));
 		storage.replaceSubmodelDescriptor(SM_ID_2, toAdd);
 		List<SubmodelDescriptor> newState = getAllSubmodels();
 		assertThat(newState).asList().isNotEqualTo(initialState).containsExactlyInAnyOrderElementsOf(expected);
@@ -59,7 +58,7 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 	}
 	
 	public void whenReplaceSubmodelDescriptorAdnNotPresent_thenExceptionIsTrown() {
-		assertThrows(SubmodelNotFoundException.class, () -> storage.replaceSubmodelDescriptor(UNKNOWN_SM_ID, new SubmodelDescriptor(UNKNOWN_SM_ID, List.of())));
+		assertThrows(SubmodelNotFoundException.class, () -> storage.replaceSubmodelDescriptor(UNKNOWN_SM_ID, submodelDescriptor(UNKNOWN_SM_ID)));
 		
 	}
 
@@ -68,7 +67,7 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 		List<SubmodelDescriptor> initialState = getAllSubmodels();
 		List<SubmodelDescriptor> expected = testResourcesLoader.loadList(SubmodelDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
-		SubmodelDescriptor toAdd = new SubmodelDescriptor(SM_ID_3, List.of());
+		SubmodelDescriptor toAdd = submodelDescriptor(SM_ID_3);
 		storage.insertSubmodelDescriptor(toAdd);
 		List<SubmodelDescriptor> newState = getAllSubmodels();
 		
@@ -143,7 +142,7 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 		List<SubmodelDescriptor> initialState = getAllSubmodels();
 		List<SubmodelDescriptor> expected = testResourcesLoader.loadList(SubmodelDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
-		SubmodelDescriptor testResource = new SubmodelDescriptor("new", List.of());
+		SubmodelDescriptor testResource = submodelDescriptor("new");
 		storage.insertSubmodelDescriptor(testResource);
 		List<SubmodelDescriptor> newState = getAllSubmodels();
 		assertThat(newState).asList().isNotEqualTo(initialState).containsExactlyInAnyOrderElementsOf(expected);
@@ -183,7 +182,8 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 		List<SubmodelDescriptor> initialState = getAllSubmodels();
 		SubmodelDescriptor descr = initialState.stream().filter(a -> a.getId().equals(SM_ID_2)).findAny().orElseThrow();
 		
-		SubmodelDescriptor copy = new SubmodelDescriptor(SM_ID_3, new LinkedList<>(descr.getEndpoints()));
+		SubmodelDescriptor copy = submodelDescriptor(SM_ID_3);
+		copy.setEndpoints(descr.getEndpoints());
 		copy.idShort(descr.getIdShort());
 		
 		storage.replaceSubmodelDescriptor(SM_ID_2, copy);
@@ -196,12 +196,16 @@ public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 
 	@Test
 	public void whenTryToReplaceUnknownSubmodel_thenThrowException() {
-		SubmodelDescriptor descr = new SubmodelDescriptor(SM_ID_5, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(SM_ID_5);
 		assertThrows(SubmodelNotFoundException.class, () -> storage.replaceSubmodelDescriptor(UNKNOWN_SM_ID, descr));
 	}
 
 	@Test
 	public void whenInsertSubmodelAndSubmodelAlreadyAvailable_thenThrowException() {
-		assertThrows(SubmodelAlreadyExistsException.class, () -> storage.insertSubmodelDescriptor(new SubmodelDescriptor("sm1", List.of())));
+		assertThrows(SubmodelAlreadyExistsException.class, () -> storage.insertSubmodelDescriptor(submodelDescriptor("sm1")));
+	}
+
+	private static SubmodelDescriptor submodelDescriptor(String id) {
+		return new SubmodelDescriptor().id(id);
 	}
 }

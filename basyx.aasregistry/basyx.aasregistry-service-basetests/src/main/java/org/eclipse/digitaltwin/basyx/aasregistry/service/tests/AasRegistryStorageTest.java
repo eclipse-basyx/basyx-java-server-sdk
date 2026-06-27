@@ -63,7 +63,7 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 	@Test
 	public void whenRegisterSubmodelDescriptorUnknownId_thenThrowNotFound() {
 		List<AssetAdministrationShellDescriptor> initialState = getAllAasDescriptors();
-		SubmodelDescriptor ignored = new SubmodelDescriptor("ignored", List.of());
+		SubmodelDescriptor ignored = submodelDescriptor("ignored");
 		assertThrows(AasDescriptorNotFoundException.class, () -> storage.insertSubmodel(UNKNOWN, ignored));
 		List<AssetAdministrationShellDescriptor> currentState = getAllAasDescriptors();
 		assertThat(currentState).isEqualTo(initialState);
@@ -75,7 +75,7 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 		List<AssetAdministrationShellDescriptor> initialState = getAllAasDescriptors();
 		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
-		SubmodelDescriptor toAdd = new SubmodelDescriptor(IDENTIFICATION_2_2, List.of()).addDescriptionItem(new LangStringTextType("de-DE", "Overridden"));
+		SubmodelDescriptor toAdd = submodelDescriptor(IDENTIFICATION_2_2).addDescriptionItem(new LangStringTextType("de-DE", "Overridden"));
 		storage.replaceSubmodel(IDENTIFICATION_2, toAdd.getId(), toAdd);
 		List<AssetAdministrationShellDescriptor> newState = getAllAasDescriptors();
 		assertThat(newState).asList().isNotEqualTo(initialState).containsExactlyInAnyOrderElementsOf(expected);
@@ -87,7 +87,7 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 		List<AssetAdministrationShellDescriptor> initialState = getAllAasDescriptors();
 		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
-		SubmodelDescriptor toAdd = new SubmodelDescriptor(IDENTIFICATION_2_3, List.of());
+		SubmodelDescriptor toAdd = submodelDescriptor(IDENTIFICATION_2_3);
 
 		// RegistryTestObjects.addDefaultEndpoint(toAdd);
 		storage.insertSubmodel(IDENTIFICATION_2, toAdd);
@@ -295,7 +295,7 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class);
 		assertThat(initialState).isNotEqualTo(expected);
 		AssetAdministrationShellDescriptor testResource = new AssetAdministrationShellDescriptor(IDENTIFICATION_NEW);
-		SubmodelDescriptor subModel = new SubmodelDescriptor(IDENTIFICATION_NEW_1, List.of());
+		SubmodelDescriptor subModel = submodelDescriptor(IDENTIFICATION_NEW_1);
 		testResource.setSubmodelDescriptors(Collections.singletonList(subModel));
 		storage.insertAasDescriptor(testResource);
 		List<AssetAdministrationShellDescriptor> newState = getAllAasDescriptors();
@@ -402,25 +402,25 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 
 	@Test
 	public void whenInsertSubmodelAndAlreadyExists_thenThrowException() {
-		SubmodelDescriptor descr = new SubmodelDescriptor(IDENTIFICATION_2_1, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(IDENTIFICATION_2_1);
 		assertThrows(SubmodelAlreadyExistsException.class, () -> storage.insertSubmodel(IDENTIFICATION_2, descr));
 	}
 
 	@Test
 	public void whenInsertSubmodelAndAasDescriptorNotFound_thenThrowException() {
-		SubmodelDescriptor descr = new SubmodelDescriptor(IDENTIFICATION_2_1, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(IDENTIFICATION_2_1);
 		assertThrows(AasDescriptorNotFoundException.class, () -> storage.insertSubmodel(UNKNOWN, descr));
 	}
 
 	@Test
 	public void whenReplaceSubmodelAndNotAvailable_thenThrowException() {
-		SubmodelDescriptor descr = new SubmodelDescriptor(UNKNOWN, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(UNKNOWN);
 		assertThrows(SubmodelNotFoundException.class, () -> storage.replaceSubmodel(IDENTIFICATION_1, UNKNOWN, descr));
 	}
 
 	@Test
 	public void whenReplaceSubmodelAndDescriptorNotAvailable_thenThrowException() {
-		SubmodelDescriptor descr = new SubmodelDescriptor(UNKNOWN, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(UNKNOWN);
 		assertThrows(DescriptorNotFoundException.class, () -> storage.replaceSubmodel(UNKNOWN, UNKNOWN, descr));
 	}
 
@@ -431,16 +431,20 @@ public abstract class AasRegistryStorageTest extends ExtensionsTest {
 
 	@Test
 	public void whenReplaceSubmodelAndWithDifferentId_thenEventIsSent() throws IOException {
-		SubmodelDescriptor descr = new SubmodelDescriptor(IDENTIFICATION_NEW, List.of());
+		SubmodelDescriptor descr = submodelDescriptor(IDENTIFICATION_NEW);
 		storage.replaceSubmodel(IDENTIFICATION_2, IDENTIFICATION_2_1, descr);
 		verifyEventsSent();
 	}
 
 	@Test
 	public void whenReplaceSubmodelButNotFound_thenThrowNotFound() {
-		SubmodelDescriptor sm = new SubmodelDescriptor(IDENTIFICATION_NEW, List.of());
+		SubmodelDescriptor sm = submodelDescriptor(IDENTIFICATION_NEW);
 		assertThrows(SubmodelNotFoundException.class, () -> storage.replaceSubmodel(IDENTIFICATION_1, IDENTIFICATION_NEW, sm));
 		verifyNoEventSent();
+	}
+
+	private static SubmodelDescriptor submodelDescriptor(String id) {
+		return new SubmodelDescriptor().id(id);
 	}
 
 }

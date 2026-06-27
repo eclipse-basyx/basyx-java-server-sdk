@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.server.context.WebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -39,26 +40,39 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistryTestSuite {
 
-	private static final String ROOT_REGISTRY_URL = "http://localhost:8081";
-	private static final String DELEGATED_REGISTRY_URL = "http://localhost:8050";
-
 	private static final String REPO_BASE_URL = "http://localhost:8080";
-	private static final String DELEGATED_AASID = "http://localhost:8050/test/aas";
 
-	private static final RegistryAndDiscoveryInterfaceApi rootRegistryApi = new RegistryAndDiscoveryInterfaceApi(ROOT_REGISTRY_URL);
-	private static final RegistryAndDiscoveryInterfaceApi delegatedRegistryApi = new RegistryAndDiscoveryInterfaceApi(DELEGATED_REGISTRY_URL);
-	private static final DummyDescriptorFactory factory = new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_AASID);
+	private static RegistryAndDiscoveryInterfaceApi rootRegistryApi;
+	private static RegistryAndDiscoveryInterfaceApi delegatedRegistryApi;
+	private static DummyDescriptorFactory factory;
 
-	private static ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext rootAppContext;
+	private static ConfigurableApplicationContext delegatedAppContext;
 
 	@BeforeClass
-	public static void setupRootRegistry() {
-		appContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] {});
+	public static void setupRegistries() {
+		delegatedAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] { "--server.port=0", "--basyx.feature.hierarchy.enabled=false" });
+		rootAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] { "--server.port=0" });
+
+		String rootRegistryUrl = localUrl(rootAppContext);
+		String delegatedRegistryUrl = localUrl(delegatedAppContext);
+
+		rootRegistryApi = new RegistryAndDiscoveryInterfaceApi(rootRegistryUrl);
+		delegatedRegistryApi = new RegistryAndDiscoveryInterfaceApi(delegatedRegistryUrl);
+		factory = new DummyDescriptorFactory(REPO_BASE_URL, delegatedRegistryUrl + "/test/aas");
 	}
 
 	@AfterClass
-	public static void tearDownRootRegistry() {
-		appContext.close();
+	public static void tearDownRegistries() {
+		if (rootAppContext != null)
+			rootAppContext.close();
+
+		if (delegatedAppContext != null)
+			delegatedAppContext.close();
+	}
+
+	private static String localUrl(ConfigurableApplicationContext applicationContext) {
+		return "http://localhost:" + ((WebServerApplicationContext) applicationContext).getWebServer().getPort();
 	}
 
 	@Override

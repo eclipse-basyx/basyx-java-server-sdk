@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistr
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.server.context.WebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -39,27 +40,39 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class LocalhostHierarchicalSubmodelRegistryTest extends HierarchicalSubmodelRegistryTestSuite {
 
-	private static final String ROOT_REGISTRY_URL = "http://localhost:8081";
-	private static final String DELEGATED_REGISTRY_URL = "http://localhost:8060";
-
 	private static final String REPO_BASE_URL = "http://localhost:8080";
-	private static final String DELEGATED_SMID = "http://localhost:8060/test/sm";
 
-	private static final SubmodelRegistryApi rootRegistryApi = new SubmodelRegistryApi(ROOT_REGISTRY_URL);
-	private static final SubmodelRegistryApi delegatedRegistryApi = new SubmodelRegistryApi(DELEGATED_REGISTRY_URL);
+	private static SubmodelRegistryApi rootRegistryApi;
+	private static SubmodelRegistryApi delegatedRegistryApi;
+	private static DummyDescriptorFactory factory;
 
-	private static final DummyDescriptorFactory factory = new DummyDescriptorFactory(REPO_BASE_URL, DELEGATED_SMID);
-
-	private static ConfigurableApplicationContext appContext;
+	private static ConfigurableApplicationContext rootAppContext;
+	private static ConfigurableApplicationContext delegatedAppContext;
 
 	@BeforeClass
-	public static void setupRootRegistry() {
-		appContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] {});
+	public static void setupRegistries() {
+		delegatedAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] { "--server.port=0", "--basyx.feature.hierarchy.enabled=false" });
+		rootAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] { "--server.port=0" });
+
+		String rootRegistryUrl = localUrl(rootAppContext);
+		String delegatedRegistryUrl = localUrl(delegatedAppContext);
+
+		rootRegistryApi = new SubmodelRegistryApi(rootRegistryUrl);
+		delegatedRegistryApi = new SubmodelRegistryApi(delegatedRegistryUrl);
+		factory = new DummyDescriptorFactory(REPO_BASE_URL, delegatedRegistryUrl + "/test/sm");
 	}
 
 	@AfterClass
-	public static void tearDownRootRegistry() {
-		appContext.close();
+	public static void tearDownRegistries() {
+		if (rootAppContext != null)
+			rootAppContext.close();
+
+		if (delegatedAppContext != null)
+			delegatedAppContext.close();
+	}
+
+	private static String localUrl(ConfigurableApplicationContext applicationContext) {
+		return "http://localhost:" + ((WebServerApplicationContext) applicationContext).getWebServer().getPort();
 	}
 
 	@Override

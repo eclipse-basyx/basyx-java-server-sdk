@@ -98,6 +98,8 @@
 							<templateDirectory>${project.basedir}/templates</templateDirectory>
 							<!-- See https://openapi-generator.tech/docs/generators/spring -->
 							<configOptions>
+								<enumPropertyNaming>legacy</enumPropertyNaming>
+								<containerDefaultToNull>true</containerDefaultToNull>
 								<java8>true</java8>
 								<dateLibrary>java8</dateLibrary>
 								<sourceFolder>java</sourceFolder>

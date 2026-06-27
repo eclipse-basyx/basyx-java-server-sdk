@@ -94,7 +94,7 @@ public class AttributeMapperFixture {
 
 	// Extension SMRegistry
 	private static final org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension SUBMODEL_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension().semanticId(SUBMODEL_REG_DATASPECIFICATION)
-			.name("extension").valueType(DataTypeDefXsd.STRING).value("extensionValue");
+			.name("extension").valueType(DataTypeDefXsd.XS_STRING).value("extensionValue");
 
 	public static List<LangStringTextType> getAas4jLangStringTextTypes() {
 		return Arrays.asList(AAS4J_LANG_STRING_TEXT_TYPE_1, AAS4J_LANG_STRING_TEXT_TYPE_2);

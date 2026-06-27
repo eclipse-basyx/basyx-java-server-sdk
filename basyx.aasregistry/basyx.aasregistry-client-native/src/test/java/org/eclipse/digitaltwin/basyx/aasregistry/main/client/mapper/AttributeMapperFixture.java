@@ -103,7 +103,7 @@ public class AttributeMapperFixture {
 
 	// Extension AasRegistry
 	private static final org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension AAS_REG_EXTENSION = new org.eclipse.digitaltwin.basyx.aasregistry.client.model.Extension().semanticId(AAS_REG_DATASPECIFICATION).name("extension")
-			.valueType(DataTypeDefXsd.STRING).value("extensionValue");
+			.valueType(DataTypeDefXsd.XS_STRING).value("extensionValue");
 
 	// ExternalSubjectId AAS4J
 	private static final Reference AAS4J_EXTERNAL_SUBJECT_ID = new DefaultReference.Builder().keys(new DefaultKey.Builder().type(KeyTypes.BLOB).value("BlobValue").build()).type(ReferenceTypes.EXTERNAL_REFERENCE).build();

@@ -44,7 +44,6 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiResponse;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.AdministrativeInformation;
-import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataSpecificationContent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataSpecificationIec61360;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.DataTypeIec61360;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.EmbeddedDataSpecification;
@@ -308,7 +307,7 @@ public abstract class BaseIntegrationTest {
 		dsContent.addDefinitionItem(new LangStringDefinitionTypeIec61360().language(LANG_DE_DE).text("def")).addPreferredNameItem(new LangStringPreferredNameTypeIec61360().language(LANG_DE_DE).text("prefName"))
 				.addShortNameItem(new LangStringShortNameTypeIec61360().language(LANG_DE_DE).text("sn")).dataType(DataTypeIec61360.FILE).levelType(new LevelType().max(true).min(false).nom(false).typ(true)).sourceOfDefinition("sod")
 				.symbol("$$");
-		EmbeddedDataSpecification edSpec = new EmbeddedDataSpecification().dataSpecification(reference).dataSpecificationContent(new DataSpecificationContent(dsContent));
+		EmbeddedDataSpecification edSpec = new EmbeddedDataSpecification().dataSpecification(reference).dataSpecificationContent(dsContent);
 		AdministrativeInformation aInfo = new AdministrativeInformation().addEmbeddedDataSpecificationsItem(edSpec);
 		SubmodelDescriptor sm = new SubmodelDescriptor().id("sm").id("short").addDescriptionItem(dType).addDisplayNameItem(nType).addEndpointsItem(ep).addExtensionsItem(ext).addSupplementalSemanticIdsItem(reference);
 		sm.setAdministration(aInfo);
