@@ -33,16 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -62,8 +58,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
  */
 @Configuration
 public class BaSyxHTTPConfiguration {
-	private static final String SPRINGDOC_QUERYDSL_CUSTOMIZER_BEAN_NAME = "queryDslQuerydslPredicateOperationCustomizer";
-
 	Logger logger = LoggerFactory.getLogger(BaSyxHTTPConfiguration.class);
 
 	/**
@@ -115,26 +109,6 @@ public class BaSyxHTTPConfiguration {
 				return;
 			}
 		}
-	}
-
-	@Bean
-	public static BeanDefinitionRegistryPostProcessor springdocQuerydslCompatibilityPostProcessor() {
-		return new BeanDefinitionRegistryPostProcessor() {
-			@Override
-			public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
-				if (isLegacySpringDataTypeInformationMissing() && registry.containsBeanDefinition(SPRINGDOC_QUERYDSL_CUSTOMIZER_BEAN_NAME)) {
-					registry.removeBeanDefinition(SPRINGDOC_QUERYDSL_CUSTOMIZER_BEAN_NAME);
-				}
-			}
-
-			@Override
-			public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-			}
-		};
-	}
-
-	private static boolean isLegacySpringDataTypeInformationMissing() {
-		return !ClassUtils.isPresent("org.springframework.data.util.TypeInformation", BaSyxHTTPConfiguration.class.getClassLoader());
 	}
 
 	/**
