@@ -51,6 +51,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
+
       - name: Start BaSyx DataBridge Example
         run: docker compose -f examples/BaSyxDatabridge/docker-compose.yml up -d
 
@@ -69,6 +72,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh dynamic-rbac
 
       - name: Start BaSyx Dynamic RBAC Example
         run: docker compose -f examples/BaSyxDynamicRBAC/docker-compose.yaml up -d
@@ -94,6 +100,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh kafka
+
       - name: Start BaSyx Kafka Example
         run: docker compose -f examples/BaSyxKafka/docker-compose.yaml up -d
 
@@ -112,6 +121,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mongodb
 
       - name: Start BaSyx Minimal Example
         run: docker compose -f examples/BaSyxMinimal/docker-compose.yml up -d
@@ -137,6 +149,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
+
       - name: Start BaSyx Reverse Proxy Example
         run: docker compose -f examples/BaSyxReverseProxy/docker-compose.yml up -d
 
@@ -155,6 +170,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
 
       - name: Start BaSyx Operation Delegation Example
         run: docker compose -f examples/BaSyxOperationDelegation/docker-compose.yml up -d
@@ -175,6 +193,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
+
       - name: Start BaSyx Secured Example
         run: docker compose -f examples/BaSyxSecured/docker-compose.yaml up -d
 
@@ -194,6 +215,9 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
+
       - name: Start BaSyx Node-RED Example
         run: docker compose -f examples/BaSyxNodeRED/docker-compose.yml up -d
 
@@ -212,6 +236,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mongodb
 
       - name: Start BaSyx Query Language Example
         run: docker compose -f examples/BaSyxQueryLanguage/docker-compose.yml up -d
@@ -236,6 +263,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
+
+      - name: Build BaSyx Example Images
+        run: bash .github/workflows/scripts/build_example_images.sh mem
 
       - name: Start BaSyx CAD file Example
         run: docker compose -f examples/BaSyxCADFiles/docker-compose.yml up -d
