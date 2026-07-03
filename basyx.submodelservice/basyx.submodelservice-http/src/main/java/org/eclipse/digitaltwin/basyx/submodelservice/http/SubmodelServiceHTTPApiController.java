@@ -52,7 +52,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -259,8 +259,12 @@ public class SubmodelServiceHTTPApiController implements SubmodelServiceHTTPApi 
 
 	@Override
 	public ResponseEntity<Resource> getFileByPath(String idShortPath) {
-		Resource resource = new FileSystemResource(service.getFileByPath(idShortPath));
-		org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement = (org.eclipse.digitaltwin.aas4j.v3.model.File) service.getSubmodelElement(idShortPath);
+		SubmodelElement submodelElement = service.getSubmodelElement(idShortPath);
+
+		if (!(submodelElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement))
+			throw new ElementNotAFileException(submodelElement.getIdShort());
+
+		Resource resource = new InputStreamResource(service.getFileByPathAsStream(idShortPath));
 
 		return ResponseEntity.ok()
 				.contentType(BaSyxMediaType.parseOrOctetStream(fileSubmodelElement.getContentType()))

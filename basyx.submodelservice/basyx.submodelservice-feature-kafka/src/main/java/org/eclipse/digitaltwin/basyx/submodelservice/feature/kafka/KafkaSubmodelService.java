@@ -130,6 +130,12 @@ public class KafkaSubmodelService implements SubmodelService {
 	}
 
 	@Override
+	public InputStream getFileByPathAsStream(String idShortPath)
+			throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		return decorated.getFileByPathAsStream(idShortPath);
+	}
+
+	@Override
 	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream)
 			throws ElementDoesNotExistException, ElementNotAFileException {
 		decorated.setFileValue(idShortPath, fileName, contentType, inputStream);

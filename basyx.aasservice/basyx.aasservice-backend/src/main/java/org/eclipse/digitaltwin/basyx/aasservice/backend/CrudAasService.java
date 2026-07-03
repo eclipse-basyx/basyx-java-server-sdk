@@ -96,6 +96,11 @@ public class CrudAasService implements AasService {
     }
 
     @Override
+    public InputStream getThumbnailInputStream() {
+        return thumbnailOperations.getThumbnailInputStream(aasId);
+    }
+
+    @Override
     public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
         thumbnailOperations.setThumbnail(aasId, fileName, contentType, inputStream);
     }

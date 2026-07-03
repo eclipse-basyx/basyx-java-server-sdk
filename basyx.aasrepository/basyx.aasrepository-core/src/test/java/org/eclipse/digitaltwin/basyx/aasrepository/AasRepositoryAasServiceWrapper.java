@@ -89,6 +89,11 @@ public class AasRepositoryAasServiceWrapper implements AasService {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream() {
+		return repoApi.getThumbnailInputStream(aasId);
+	}
+
+	@Override
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
 		repoApi.setThumbnail(aasId, fileName, contentType, inputStream);
 

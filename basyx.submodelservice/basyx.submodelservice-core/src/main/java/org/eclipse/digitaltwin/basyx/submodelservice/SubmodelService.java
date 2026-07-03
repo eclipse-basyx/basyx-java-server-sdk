@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -34,6 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
@@ -147,7 +150,10 @@ public interface SubmodelService {
 	public OperationVariable[] invokeOperation(String idShortPath, OperationVariable[] input) throws ElementDoesNotExistException;
 
 	/**
-	 * Retrieves the file of a file submodelelement
+	 * Retrieves the file of a file submodelelement.
+	 * <p>
+	 * Implementations that materialize repository content as a temporary file must
+	 * document whether the caller is responsible for deleting the returned file.
 	 * 
 	 * @param idShortPath
 	 *            the IdShort path of the file element
@@ -157,6 +163,31 @@ public interface SubmodelService {
 	 * @throws FileDoesNotExistException
 	 */
 	public java.io.File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException;
+
+	/**
+	 * Retrieves the content of a file submodel element as a stream.
+	 * <p>
+	 * The file is resolved by the submodel element idShort path, not by the
+	 * repository storage id. The caller is responsible for closing the returned
+	 * stream.
+	 *
+	 * @param idShortPath
+	 *            the IdShort path of the file element
+	 * @return File InputStream
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 * @throws ElementNotAFileException
+	 *             if the SubmodelElement is not a File
+	 * @throws FileDoesNotExistException
+	 *             if the referenced file content does not exist
+	 */
+	public default InputStream getFileByPathAsStream(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		try {
+			return new FileInputStream(getFileByPath(idShortPath));
+		} catch (FileNotFoundException e) {
+			throw new FileHandlingException("Could not open file stream.", e);
+		}
+	}
 
 	/**
 	 * Uploads a file to a file submodelelement
@@ -189,11 +220,13 @@ public interface SubmodelService {
 
 
 	/**
-	 * Retrieves the file of a file submodelelement via its absolute path
+	 * Retrieves file content by repository storage id.
 	 *
 	 * @param filePath
-	 *            the path of the file
+	 *            the repository file id
 	 * @return File InputStream
+	 * @throws FileDoesNotExistException
+	 *             if the repository file id does not exist
 	 */
 	public InputStream getFileByFilePath(String filePath);
 

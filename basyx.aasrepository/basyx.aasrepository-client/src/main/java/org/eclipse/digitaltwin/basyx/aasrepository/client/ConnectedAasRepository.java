@@ -182,6 +182,11 @@ public class ConnectedAasRepository implements AasRepository {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream(String aasId) {
+		return getConnectedAasService(aasId).getThumbnailInputStream();
+	}
+
+	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
 		getConnectedAasService(aasId).setThumbnail(fileName, contentType, inputStream);
 	}

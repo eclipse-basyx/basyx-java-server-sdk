@@ -136,6 +136,11 @@ public class DiscoveryIntegrationAasRepository implements AasRepository {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream(String aasId) {
+		return decorated.getThumbnailInputStream(aasId);
+	}
+
+	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
 		decorated.setThumbnail(aasId, fileName, contentType, inputStream);
 	}

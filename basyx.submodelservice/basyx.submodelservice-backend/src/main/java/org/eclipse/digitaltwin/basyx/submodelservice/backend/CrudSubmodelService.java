@@ -44,9 +44,8 @@ import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Default {@link SubmodelService} based on {@link SubmodelBackend}
@@ -113,7 +112,7 @@ public class CrudSubmodelService implements SubmodelService {
         boolean newSubmodelElementIsFile = newElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
 
         if (existingSubmodelElementIsFile && newSubmodelElementIsFile) {
-            handleFileAttachmentUpdate(submodelId, idShortPath, newElement);
+            handleFileAttachmentUpdate(idShortPath, existingSubmodelElement, newElement);
         } else if (existingSubmodelElementIsFile) {
             deleteAssociatedFileIfAny(idShortPath);
         }
@@ -121,9 +120,9 @@ public class CrudSubmodelService implements SubmodelService {
         backend.updateSubmodelElement(submodelId, idShortPath, newElement);
     }
 
-    private void handleFileAttachmentUpdate(String submodelId, String idShortPath, SubmodelElement updatedElement) {
+    private void handleFileAttachmentUpdate(String idShortPath, SubmodelElement existingElement, SubmodelElement updatedElement) {
         try {
-            if (hasFilePathChanged(submodelId, idShortPath, updatedElement)) {
+            if (hasFilePathChanged(existingElement, updatedElement)) {
                 deleteAssociatedFileIfAny(idShortPath);
             }
         } catch (Exception e) {
@@ -132,52 +131,23 @@ public class CrudSubmodelService implements SubmodelService {
         }
     }
 
-    private boolean hasFilePathChanged(String submodelId, String idShortPath, SubmodelElement updatedElement) {
+    private boolean hasFilePathChanged(SubmodelElement existingElement, SubmodelElement updatedElement) {
+        if (!(existingElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File existingFile)) {
+            logger.warn("Expected File element but got: {}", existingElement.getClass().getSimpleName());
+            return true;
+        }
+
         if (!(updatedElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File file)) {
             logger.warn("Expected File element but got: {}", updatedElement.getClass().getSimpleName());
             return true;
         }
 
-        String newPathString = extractFilePath(file);
-        if (newPathString == null) {
-            return true;
-        }
-
-        String oldPathString = getExistingFilePath(submodelId, idShortPath);
-        if (oldPathString == null) {
-            return true;
-        }
-
-        return pathsDiffer(oldPathString, newPathString);
-    }
-
-    private boolean isFileElement(SubmodelElement element) {
-        return element instanceof org.eclipse.digitaltwin.aas4j.v3.model.File;
+        return !Objects.equals(extractFilePath(existingFile), extractFilePath(file));
     }
 
     // Extracts the new file path (value) from the updated File element
     private String extractFilePath(org.eclipse.digitaltwin.aas4j.v3.model.File fileElement) {
         return fileElement.getValue();
-    }
-
-    private String getExistingFilePath(String submodelId, String idShortPath) {
-        try {
-            return submodelFileOperations.getFile(submodelId, idShortPath).getPath();
-        } catch (Exception e) {
-            logger.warn("Failed to retrieve existing file path for '{}': {}", idShortPath, e.getMessage(), e);
-            return null;
-        }
-    }
-
-    private boolean pathsDiffer(String path1, String path2) {
-        try {
-            Path normalized1 = Paths.get(path1).normalize().toAbsolutePath();
-            Path normalized2 = Paths.get(path2).normalize().toAbsolutePath();
-            return !normalized1.equals(normalized2);
-        } catch (Exception e) {
-            logger.error("Error comparing file paths: {}", e.getMessage(), e);
-            return true; // Consider paths different in case of error
-        }
     }
 
     @Override
@@ -205,6 +175,11 @@ public class CrudSubmodelService implements SubmodelService {
     @Override
     public File getFileByPath(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
         return submodelFileOperations.getFile(submodelId, idShortPath);
+    }
+
+    @Override
+    public InputStream getFileByPathAsStream(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+        return submodelFileOperations.getFileAsStream(submodelId, idShortPath);
     }
 
     @Override

@@ -60,8 +60,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListVa
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -232,15 +233,17 @@ public class SubmodelRepositoryApiHTTPController implements SubmodelRepositoryHT
 	@Override
 	public ResponseEntity<Resource> getFileByPath(Base64UrlEncodedIdentifier submodelIdentifier, String idShortPath) {
 		String submodelId = submodelIdentifier.getIdentifier();
-		java.io.File file = repository.getFileByPathSubmodel(submodelId, idShortPath);
-		Resource resource = new FileSystemResource(file);
-		org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement = (org.eclipse.digitaltwin.aas4j.v3.model.File) repository.getSubmodelElement(submodelId, idShortPath);
+		SubmodelElement submodelElement = repository.getSubmodelElement(submodelId, idShortPath);
+
+		if (!(submodelElement instanceof org.eclipse.digitaltwin.aas4j.v3.model.File fileSubmodelElement))
+			throw new ElementNotAFileException(submodelElement.getIdShort());
 
 		String fileName = repository.getOriginalFileNameByPath(submodelId, idShortPath);
+		Resource resource = new InputStreamResource(repository.getFileByPathSubmodelAsStream(submodelId, idShortPath));
 
 		return ResponseEntity.ok()
 				.contentType(BaSyxMediaType.parseOrOctetStream(fileSubmodelElement.getContentType()))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename(fileName).build().toString())
 				.body(resource);
 	}
 

@@ -87,6 +87,13 @@ public class AuthorizedSubmodelService implements SubmodelService {
 	}
 
 	@Override
+	public InputStream getFileByPathAsStream(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(List.of(smId), List.of(idShortPath)));
+		throwExceptionIfInsufficientPermission(isAuthorized);
+		return decorated.getFileByPathAsStream(idShortPath);
+	}
+
+	@Override
 	public SubmodelElement getSubmodelElement(String idShortPath) throws ElementDoesNotExistException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(List.of(smId), List.of(idShortPath)));
 		throwExceptionIfInsufficientPermission(isAuthorized);

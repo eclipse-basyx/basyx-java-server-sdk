@@ -139,6 +139,11 @@ public class CrudAasRepository implements AasRepository {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream(String aasId) {
+		return getService(aasId).getThumbnailInputStream();
+	}
+
+	@Override
 	public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
 		getService(aasId).setThumbnail(fileName, contentType, inputStream);
 	}
