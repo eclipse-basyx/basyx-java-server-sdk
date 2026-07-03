@@ -191,6 +191,11 @@ public class MqttAasService implements AasService {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream() {
+		return decorated.getThumbnailInputStream();
+	}
+
+	@Override
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
 		decorated.setThumbnail(fileName, contentType, inputStream);
 	}

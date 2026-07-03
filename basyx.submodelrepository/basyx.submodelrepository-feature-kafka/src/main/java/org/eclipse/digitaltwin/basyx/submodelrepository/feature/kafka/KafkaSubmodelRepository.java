@@ -175,6 +175,11 @@ public class KafkaSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public InputStream getFileByPathSubmodelAsStream(String submodelId, String idShortPath) {
+		return decorated.getFileByPathSubmodelAsStream(submodelId, idShortPath);
+	}
+
+	@Override
 	public void deleteFileValue(String identifier, String idShortPath) {
 		decorated.deleteFileValue(identifier, idShortPath);
 	}

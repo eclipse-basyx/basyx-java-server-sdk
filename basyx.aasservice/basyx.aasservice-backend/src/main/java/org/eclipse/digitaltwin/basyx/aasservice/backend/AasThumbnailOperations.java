@@ -51,23 +51,97 @@ public class AasThumbnailOperations {
         this.fileRepository = fileRepository;
     }
 
+    /**
+     * Retrieves the AAS thumbnail as a temporary local file.
+     * <p>
+     * The caller owns the returned temporary file and is responsible for deleting
+     * it when it is no longer needed.
+     *
+     * @param aasId
+     *            the id of the AAS
+     * @return the thumbnail file
+     * @throws FileDoesNotExistException
+     *             if no thumbnail is stored
+     */
     public File getThumbnail(String aasId) {
         return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, getThumbnailResourcePathOrThrow(aasOperations.getAssetInformation(aasId)));
     }
 
-    public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
-        String filePath = FileRepositoryHelper.saveOrOverwriteFile(fileRepository, fileName, contentType, inputStream);
-       aasOperations.setAssetInformation(aasId, configureAssetInformationThumbnail(aasOperations.getAssetInformation(aasId), contentType, filePath));
+    /**
+     * Retrieves the AAS thumbnail content as a stream.
+     * <p>
+     * The caller is responsible for closing the returned stream.
+     *
+     * @param aasId
+     *            the id of the AAS
+     * @return the thumbnail content stream
+     * @throws FileDoesNotExistException
+     *             if no thumbnail is stored
+     */
+    public InputStream getThumbnailInputStream(String aasId) {
+        return FileRepositoryHelper.getFileInputStream(fileRepository, getThumbnailResourcePathOrThrow(aasOperations.getAssetInformation(aasId)));
     }
 
+    /**
+     * Stores a new AAS thumbnail and updates the thumbnail resource path.
+     *
+     * @param aasId
+     *            the id of the AAS
+     * @param fileName
+     *            the logical display name of the uploaded thumbnail
+     * @param contentType
+     *            the thumbnail MIME type
+     * @param inputStream
+     *            the thumbnail content stream
+     */
+    public void setThumbnail(String aasId, String fileName, String contentType, InputStream inputStream) {
+        AssetInformation assetInformation = aasOperations.getAssetInformation(aasId);
+        Resource oldThumbnail = assetInformation.getDefaultThumbnail();
+        String oldThumbnailPath = getThumbnailResourcePath(assetInformation).orElse(null);
+
+        FileRepositoryHelper.saveAndUpdateReference(fileRepository, oldThumbnailPath, fileName, contentType, inputStream, filePath -> setThumbnailReference(aasId, assetInformation, oldThumbnail, contentType, filePath));
+    }
+
+    /**
+     * Removes the thumbnail reference and deletes the stored thumbnail content.
+     *
+     * @param aasId
+     *            the id of the AAS
+     * @throws FileDoesNotExistException
+     *             if no thumbnail is stored
+     */
     public void deleteThumbnail(String aasId) {
         AssetInformation assetInformation = aasOperations.getAssetInformation(aasId);
-        FileRepositoryHelper.removeFileIfExists(fileRepository, getThumbnailResourcePathOrThrow(assetInformation));
-        aasOperations.setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, "", ""));
+        Resource oldThumbnail = assetInformation.getDefaultThumbnail();
+        String thumbnailPath = getThumbnailResourcePathOrThrow(assetInformation);
+
+        FileRepositoryHelper.updateReferenceAndDeleteFile(fileRepository, thumbnailPath, () -> clearThumbnailReference(aasId, assetInformation, oldThumbnail));
+    }
+
+    private void setThumbnailReference(String aasId, AssetInformation assetInformation, Resource oldThumbnail, String contentType, String filePath) {
+        try {
+            aasOperations.setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, contentType, filePath));
+        } catch (RuntimeException e) {
+            assetInformation.setDefaultThumbnail(oldThumbnail);
+            throw e;
+        }
+    }
+
+    private void clearThumbnailReference(String aasId, AssetInformation assetInformation, Resource oldThumbnail) {
+        try {
+            aasOperations.setAssetInformation(aasId, configureAssetInformationThumbnail(assetInformation, "", ""));
+        } catch (RuntimeException e) {
+            assetInformation.setDefaultThumbnail(oldThumbnail);
+            throw e;
+        }
     }
 
     private static String getThumbnailResourcePathOrThrow(AssetInformation assetInformation) {
-        return Optional.ofNullable(assetInformation).map(AssetInformation::getDefaultThumbnail).map(Resource::getPath).orElseThrow(FileDoesNotExistException::new);
+        return getThumbnailResourcePath(assetInformation).orElseThrow(FileDoesNotExistException::new);
+    }
+
+    private static Optional<String> getThumbnailResourcePath(AssetInformation assetInformation) {
+        return Optional.ofNullable(assetInformation).map(AssetInformation::getDefaultThumbnail).map(Resource::getPath);
     }
 
     private static AssetInformation configureAssetInformationThumbnail(AssetInformation assetInformation, String contentType, String filePath) {

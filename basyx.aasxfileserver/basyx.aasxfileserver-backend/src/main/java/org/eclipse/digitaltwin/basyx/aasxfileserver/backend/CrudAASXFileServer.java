@@ -40,8 +40,8 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.Package;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.model.PackagesBody;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationSupport;
@@ -96,17 +96,12 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 	@Override
 	public void updateAASXByPackageId(String packageId, List<String> shellIds, InputStream file, String filename) throws ElementDoesNotExistException {
-		deleteAASXByPackageId(packageId);
+		Package existingPackage = packageBackend.findById(packageId).orElseThrow(ElementDoesNotExistException::new);
 
 		PackageDescription packageDescription = createPackageDescription(shellIds, packageId);
+		String oldFilePath = existingPackage.getPackagesBody().getFilePath();
 
-		String filepath = fileRepository.save(new FileMetadata(filename, AASX_CONTENT_TYPE, file));
-
-		PackagesBody packagesBody = createPackagesBody(shellIds, filename, filepath);
-
-		Package pkg = createPackage(packageDescription, packagesBody);
-
-		packageBackend.save(pkg);
+		saveAASXFileAndUpdatePackageReference(shellIds, file, filename, packageDescription, oldFilePath);
 	}
 
 	@Override
@@ -116,13 +111,7 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 		PackageDescription packageDescription = createPackageDescription(shellIds, newpackageId);
 
-		String filepath = fileRepository.save(new FileMetadata(fileName, AASX_CONTENT_TYPE, file));
-
-		PackagesBody packagesBody = createPackagesBody(shellIds, fileName, filepath);
-
-		Package pkg = createPackage(packageDescription, packagesBody);
-
-		packageBackend.save(pkg);
+		saveAASXFileAndUpdatePackageReference(shellIds, file, fileName, packageDescription, null);
 
 		return packageDescription;
 	}
@@ -139,6 +128,13 @@ public class CrudAASXFileServer implements AASXFileServer {
 
 	private InputStream getISFromPackage(Package pkg) {
 		return fileRepository.find(pkg.getPackagesBody().getFilePath());
+	}
+
+	private void saveAASXFileAndUpdatePackageReference(List<String> shellIds, InputStream file, String fileName, PackageDescription packageDescription, String oldFilePath) {
+		FileRepositoryHelper.saveAndUpdateReference(fileRepository, oldFilePath, fileName, AASX_CONTENT_TYPE, file, filePath -> {
+			PackagesBody packagesBody = createPackagesBody(shellIds, fileName, filePath);
+			packageBackend.save(createPackage(packageDescription, packagesBody));
+		});
 	}
 
 	/**

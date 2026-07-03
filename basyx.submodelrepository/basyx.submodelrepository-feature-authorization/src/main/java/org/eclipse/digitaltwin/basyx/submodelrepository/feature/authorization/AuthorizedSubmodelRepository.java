@@ -278,6 +278,15 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public InputStream getFileByPathSubmodelAsStream(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
+
+		throwExceptionIfInsufficientPermission(isAuthorized);
+
+		return decorated.getFileByPathSubmodelAsStream(submodelId, idShortPath);
+	}
+
+	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		boolean isAuthorized = permissionResolver.hasPermission(Action.UPDATE, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(idShortPath)));
 
@@ -306,6 +315,10 @@ public class AuthorizedSubmodelRepository implements SubmodelRepository {
 
 	@Override
 	public InputStream getFileByFilePath(String submodelId, String filePath) {
+		boolean isAuthorized = permissionResolver.hasPermission(Action.READ, new SubmodelTargetInformation(getIdAsList(submodelId), getIdAsList(filePath)));
+
+		throwExceptionIfInsufficientPermission(isAuthorized);
+
 		return decorated.getFileByFilePath(submodelId, filePath);
 	}
 

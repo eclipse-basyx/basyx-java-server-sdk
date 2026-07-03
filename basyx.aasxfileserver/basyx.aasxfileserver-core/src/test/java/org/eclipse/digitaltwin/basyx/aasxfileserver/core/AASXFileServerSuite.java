@@ -27,6 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -93,6 +94,21 @@ public abstract class AASXFileServerSuite {
 		PackageDescription expectedPackageDescription = DummyAASXFileServerFactory.createDummyPackageDescription(actualPackageDescription.getPackageId(), DummyAASXFileServerFactory.FIRST_SHELL_IDS);
 
 		assertEquals(expectedPackageDescription, actualPackageDescription);
+	}
+
+	@Test(expected = SecurityException.class)
+	public void createAASXPackageRejectsPathTraversalFileName() {
+		AASXFileServer server = getAASXFileServer();
+
+		server.createAASXPackage(DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
+	}
+
+	@Test(expected = SecurityException.class)
+	public void updateAASXPackageRejectsPathTraversalFileName() {
+		AASXFileServer server = getAASXFileServer();
+		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
+
+		server.updateAASXByPackageId(packageDescription.getPackageId(), DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
 	}
 
 	@Test
@@ -179,6 +195,10 @@ public abstract class AASXFileServerSuite {
 	private void updateAASXPackage(AASXFileServer server, String packageId, List<String> expectedShellIds, InputStream file, String filename) {
 
 		server.updateAASXByPackageId(packageId, expectedShellIds, file, filename);
+	}
+
+	private static InputStream createAASXFileContent() {
+		return new ByteArrayInputStream("aasx".getBytes());
 	}
 
 	private void assertGetAllAASXPackageIds(List<PackageDescription> expectedPackageDescriptions, List<PackageDescription> actualPackageDescriptions) {

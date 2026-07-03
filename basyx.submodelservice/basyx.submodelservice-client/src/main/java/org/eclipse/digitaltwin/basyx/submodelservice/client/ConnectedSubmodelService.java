@@ -27,7 +27,10 @@
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
 import java.io.File;
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -177,6 +180,11 @@ public class ConnectedSubmodelService implements SubmodelService {
 	}
 
 	@Override
+	public InputStream getFileByPathAsStream(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		return openFileAndDeleteOnClose(getFileByPath(idShortPath));
+	}
+
+	@Override
 	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		try {
 			serviceApi.putFileByPath(idShortPath, fileName, contentType, inputStream);
@@ -206,6 +214,23 @@ public class ConnectedSubmodelService implements SubmodelService {
 	@Override
 	public InputStream getFileByFilePath(String filePath) {
 		throw new NotImplementedException("This Method is not implemented in the Client");
+	}
+
+	private static InputStream openFileAndDeleteOnClose(File file) {
+		try {
+			return new FilterInputStream(Files.newInputStream(file.toPath())) {
+				@Override
+				public void close() throws IOException {
+					try {
+						super.close();
+					} finally {
+						Files.deleteIfExists(file.toPath());
+					}
+				}
+			};
+		} catch (IOException e) {
+			throw new FileHandlingException("Could not open file stream.", e);
+		}
 	}
 
 	private RuntimeException mapExceptionFileAccess(String idShortPath, ApiException e) {

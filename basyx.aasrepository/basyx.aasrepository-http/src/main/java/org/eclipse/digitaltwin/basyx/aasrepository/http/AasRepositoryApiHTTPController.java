@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetAssetAdministrationShellsResult;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.pagination.GetReferencesResult;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.BaSyxMediaType;
@@ -49,7 +50,7 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.PagedResultPagingMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -201,12 +202,20 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 	@Override
 	public ResponseEntity<Resource> getThumbnailAasRepository(Base64UrlEncodedIdentifier aasIdentifier) {
 		String aasId = aasIdentifier.getIdentifier();
-		Resource resource = new FileSystemResource(aasRepository.getThumbnail(aasId));
-		String contentType = aasRepository.getAssetInformation(aasId).getDefaultThumbnail().getContentType();
+		org.eclipse.digitaltwin.aas4j.v3.model.Resource thumbnail = aasRepository.getAssetInformation(aasId).getDefaultThumbnail();
+
+		if (!isThumbnailSet(thumbnail))
+			throw new FileDoesNotExistException();
+
+		Resource resource = new InputStreamResource(aasRepository.getThumbnailInputStream(aasId));
 
 		return ResponseEntity.ok()
-				.contentType(BaSyxMediaType.parseOrOctetStream(contentType))
+				.contentType(BaSyxMediaType.parseOrOctetStream(thumbnail.getContentType()))
 				.body(resource);
+	}
+
+	private static boolean isThumbnailSet(org.eclipse.digitaltwin.aas4j.v3.model.Resource thumbnail) {
+		return thumbnail != null && thumbnail.getPath() != null && !thumbnail.getPath().isBlank();
 	}
 
 	@Override

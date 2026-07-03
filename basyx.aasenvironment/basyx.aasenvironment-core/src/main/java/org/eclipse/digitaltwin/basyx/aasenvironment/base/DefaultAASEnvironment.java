@@ -371,7 +371,9 @@ public class DefaultAASEnvironment implements AasEnvironment {
 
 
 	private byte[] getFileContent(String submodelId, File file) throws IOException {
-		return submodelRepository.getFileByFilePath(submodelId, file.getValue()).readAllBytes();
+		try (InputStream fileContent = submodelRepository.getFileByFilePath(submodelId, file.getValue())) {
+			return fileContent.readAllBytes();
+		}
 	}
 
 	private boolean isFileAlreadyAdded(String filePath){
@@ -386,7 +388,7 @@ public class DefaultAASEnvironment implements AasEnvironment {
 				String newPath = getThumbnailPathInAASX(thumbnail.getPath());
 				relatedFiles.add(
 						new InMemoryFile(
-								Files.readAllBytes(aasRepository.getThumbnail(aasId).toPath()),
+								getThumbnailContent(aasId),
 								newPath
 						)
 				);
@@ -394,6 +396,25 @@ public class DefaultAASEnvironment implements AasEnvironment {
 			} catch (IOException | FileDoesNotExistException e) {
 				logger.error("Thumbnail file {} does not exist in the repository", thumbnail.getPath());
 			}
+		}
+	}
+
+	private byte[] getThumbnailContent(String aasId) throws IOException {
+		try (InputStream thumbnailContent = aasRepository.getThumbnailInputStream(aasId)) {
+			return thumbnailContent.readAllBytes();
+		} catch (UnsupportedOperationException e) {
+			return getThumbnailContentFromFile(aasId);
+		}
+	}
+
+	private byte[] getThumbnailContentFromFile(String aasId) throws IOException {
+		java.io.File thumbnailFile = aasRepository.getThumbnail(aasId);
+
+		try {
+			return Files.readAllBytes(thumbnailFile.toPath());
+		} finally {
+			if (thumbnailFile != null)
+				thumbnailFile.delete();
 		}
 	}
 

@@ -27,7 +27,10 @@
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
 import java.io.File;
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -41,6 +44,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingSubmodelReferenceE
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
+import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
@@ -129,6 +133,11 @@ public class ConnectedAasService implements AasService {
 	}
 
 	@Override
+	public InputStream getThumbnailInputStream() {
+		return openFileAndDeleteOnClose(getThumbnail());
+	}
+
+	@Override
 	public void setThumbnail(String fileName, String contentType, InputStream inputStream) {
 		try {
 			serviceApi.putThumbnail(fileName, contentType, inputStream);
@@ -175,6 +184,23 @@ public class ConnectedAasService implements AasService {
 		}
 
 		return e;
+	}
+
+	private static InputStream openFileAndDeleteOnClose(File file) {
+		try {
+			return new FilterInputStream(Files.newInputStream(file.toPath())) {
+				@Override
+				public void close() throws IOException {
+					try {
+						super.close();
+					} finally {
+						Files.deleteIfExists(file.toPath());
+					}
+				}
+			};
+		} catch (IOException e) {
+			throw new FileHandlingException("Could not open thumbnail stream.", e);
+		}
 	}
 
 }

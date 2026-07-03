@@ -25,20 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.backend;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.File;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
-import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
+import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepositoryHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 
 /**
@@ -55,6 +50,24 @@ public class SubmodelFileOperations  {
         this.submodelOperations = operations;
     }
 
+	/**
+	 * Retrieves a file submodel element's content as a temporary local file.
+	 * <p>
+	 * The caller owns the returned temporary file and is responsible for deleting
+	 * it when it is no longer needed.
+	 *
+	 * @param submodelId
+	 *            the id of the Submodel
+	 * @param idShortPath
+	 *            the idShort path of the file element
+	 * @return the file content materialized as a temporary file
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 * @throws ElementNotAFileException
+	 *             if the SubmodelElement is not a File
+	 * @throws FileDoesNotExistException
+	 *             if the referenced file content does not exist
+	 */
 	public java.io.File getFile(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
 		SubmodelElement submodelElement = submodelOperations.getSubmodelElement(submodelId, idShortPath);
 
@@ -63,36 +76,84 @@ public class SubmodelFileOperations  {
 		File fileSmElement = (File) submodelElement;
 		String filePath = getFilePath(fileSmElement);
 
-		InputStream fileContent = getFileInputStream(filePath);
-
-		return createFile(filePath, fileContent);
+		return FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, filePath);
 	}
 
+	/**
+	 * Retrieves a file submodel element's content as a stream.
+	 * <p>
+	 * The file is resolved by submodel id and element idShort path, not by the
+	 * repository storage id. The caller is responsible for closing the returned
+	 * stream.
+	 *
+	 * @param submodelId
+	 *            the id of the Submodel
+	 * @param idShortPath
+	 *            the idShort path of the file element
+	 * @return the file content stream
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 * @throws ElementNotAFileException
+	 *             if the SubmodelElement is not a File
+	 * @throws FileDoesNotExistException
+	 *             if the referenced file content does not exist
+	 */
+	public InputStream getFileAsStream(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		SubmodelElement submodelElement = submodelOperations.getSubmodelElement(submodelId, idShortPath);
+
+		throwIfSmElementIsNotAFile(submodelElement);
+
+		File fileSmElement = (File) submodelElement;
+		String filePath = getFilePath(fileSmElement);
+
+		return FileRepositoryHelper.getFileInputStream(fileRepository, filePath);
+	}
+
+	/**
+	 * Stores new content for a file submodel element and updates the element value
+	 * with the generated repository id.
+	 *
+	 * @param submodelId
+	 *            the id of the Submodel
+	 * @param idShortPath
+	 *            the idShort path of the file element
+	 * @param fileName
+	 *            the logical display name of the uploaded file
+	 * @param contentType
+	 *            the file MIME type
+	 * @param inputStream
+	 *            the file content stream
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 * @throws ElementNotAFileException
+	 *             if the SubmodelElement is not a File
+	 */
 	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
         SubmodelElement submodelElement = submodelOperations.getSubmodelElement(submodelId, idShortPath);
 
         throwIfSmElementIsNotAFile(submodelElement);
 
         File fileSmElement = (File) submodelElement;
+        String oldFilePath = fileSmElement.getValue();
 
-        if (fileRepository.exists(fileSmElement.getValue()))
-            fileRepository.delete(fileSmElement.getValue());
-
-		String logicalFileName = validateLogicalFileName(fileName);
-		String uniqueFileName = createUniqueFileName(logicalFileName);
-
-		FileMetadata fileMetadata = new FileMetadata(uniqueFileName, logicalFileName, contentType, inputStream);
-
-        if (fileRepository.exists(fileMetadata.getFileName()))
-            fileRepository.delete(fileMetadata.getFileName());
-
-        String filePath = fileRepository.save(fileMetadata);
-
-        FileBlobValue fileValue = new FileBlobValue(contentType, filePath);
-
-        submodelOperations.setSubmodelElementValue(submodelId, idShortPath, fileValue);
+        FileRepositoryHelper.saveAndUpdateReference(fileRepository, oldFilePath, fileName, contentType, inputStream, filePath -> submodelOperations.setSubmodelElementValue(submodelId, idShortPath, new FileBlobValue(contentType, filePath)));
 	}
 
+	/**
+	 * Clears a file submodel element value and deletes the referenced repository
+	 * content.
+	 *
+	 * @param submodelId
+	 *            the id of the Submodel
+	 * @param idShortPath
+	 *            the idShort path of the file element
+	 * @throws ElementDoesNotExistException
+	 *             if the SubmodelElement does not exist
+	 * @throws ElementNotAFileException
+	 *             if the SubmodelElement is not a File
+	 * @throws FileDoesNotExistException
+	 *             if the referenced file content does not exist
+	 */
 	public void deleteFileValue(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
         SubmodelElement submodelElement = submodelOperations.getSubmodelElement(submodelId, idShortPath);
 
@@ -101,17 +162,32 @@ public class SubmodelFileOperations  {
         File fileSubmodelElement = (File) submodelElement;
         String filePath = fileSubmodelElement.getValue();
 
-        fileRepository.delete(filePath);
-
-        FileBlobValue fileValue = new FileBlobValue(" ", " ");
-
-        submodelOperations.setSubmodelElementValue(submodelId, idShortPath, fileValue);
+		FileRepositoryHelper.updateReferenceAndDeleteFile(fileRepository, filePath, () -> submodelOperations.setSubmodelElementValue(submodelId, idShortPath, new FileBlobValue(" ", " ")));
     }
 
-	public InputStream getInputStream(String filePath) throws FileDoesNotExistException{
-		return fileRepository.find(filePath);
+	/**
+	 * Retrieves repository content by repository storage id.
+	 * <p>
+	 * Prefer {@link #getFileAsStream(String, String)} for domain-level file
+	 * downloads. The caller is responsible for closing the returned stream.
+	 *
+	 * @param filePath
+	 *            the repository file id
+	 * @return the repository content stream
+	 * @throws FileDoesNotExistException
+	 *             if the repository file id does not exist
+	 */
+	public InputStream getInputStream(String filePath) throws FileDoesNotExistException {
+		return FileRepositoryHelper.getFileInputStream(fileRepository, filePath);
 	}
 
+	/**
+	 * Resolves the original logical filename for a repository file id.
+	 *
+	 * @param filePath
+	 *            the repository file id
+	 * @return the original logical filename
+	 */
 	public String getOriginalFileName(String filePath) {
 		return fileRepository.getOriginalFileName(filePath);
 	}
@@ -120,74 +196,14 @@ public class SubmodelFileOperations  {
 		return submodelElement instanceof File;
 	}
 
-	private InputStream getFileInputStream(String filePath) {
-		InputStream fileContent;
-
-		try {
-			fileContent = fileRepository.find(filePath);
-		} catch (FileDoesNotExistException e) {
-			throw new FileDoesNotExistException(String.format("File at path '%s' could not be found.", filePath));
-		}
-
-		return fileContent;
-	}
-
-	private static java.io.File createFile(String filePath, InputStream fileIs) {
-
-		try {
-			byte[] content = fileIs.readAllBytes();
-			fileIs.close();
-
-			createOutputStream(filePath, content);
-
-			return new java.io.File(filePath);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating file from the InputStream." + e.getMessage());
-		}
-
-	}
-
 	private static String getFilePath(File fileSubmodelElement) {
 		return fileSubmodelElement.getValue();
-	}
-
-	private static String createUniqueFileName(String logicalFileName) {
-		return UUID.randomUUID() + getFileExtension(logicalFileName);
-	}
-
-	private static String getFileExtension(String fileName) {
-		int extensionStart = fileName.lastIndexOf('.');
-
-		if (extensionStart <= 0 || extensionStart >= fileName.length() - 1)
-			return "";
-
-		return fileName.substring(extensionStart);
-	}
-
-	private static String validateLogicalFileName(String fileName) {
-		if (fileName == null || fileName.isBlank())
-			throw new IllegalArgumentException("File name must not be null or blank.");
-
-		if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\"))
-			throw new SecurityException("Path traversal attempt detected.");
-
-		return fileName.replace("\r", "_").replace("\n", "_").trim();
 	}
 
 	private static void throwIfSmElementIsNotAFile(SubmodelElement submodelElement) {
 
 		if (!isFileSubmodelElement(submodelElement))
 			throw new ElementNotAFileException(submodelElement.getIdShort());
-	}
-
-    private static void createOutputStream(String filePath, byte[] content) throws IOException {
-
-		try (OutputStream outputStream = new FileOutputStream(filePath)) {
-			outputStream.write(content);
-		} catch (IOException e) {
-			throw new FileHandlingException("Exception occurred while creating OutputStream from byte[]." + e.getMessage());
-		}
-
 	}
 
 }

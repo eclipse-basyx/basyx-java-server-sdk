@@ -188,6 +188,11 @@ public class CrudSubmodelRepository implements SubmodelRepository {
 	}
 
 	@Override
+	public InputStream getFileByPathSubmodelAsStream(String submodelId, String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		return getService(submodelId).getFileByPathAsStream(idShortPath);
+	}
+
+	@Override
 	public void setFileValue(String submodelId, String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		getService(submodelId).setFileValue(idShortPath, fileName, contentType, inputStream);
 	}

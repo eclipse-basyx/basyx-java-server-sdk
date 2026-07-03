@@ -125,6 +125,11 @@ public class SubmodelRepositorySubmodelServiceWrapper implements SubmodelService
 	}
 
 	@Override
+	public InputStream getFileByPathAsStream(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		return repoApi.getFileByPathSubmodelAsStream(submodelId, idShortPath);
+	}
+
+	@Override
 	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		repoApi.setFileValue(submodelId, idShortPath, fileName, contentType, inputStream);
 	}
