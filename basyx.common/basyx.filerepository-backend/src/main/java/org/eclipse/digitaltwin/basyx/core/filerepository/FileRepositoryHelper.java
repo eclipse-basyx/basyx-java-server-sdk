@@ -52,9 +52,10 @@ public class FileRepositoryHelper {
     /**
      * Retrieves repository content and materializes it as a temporary local file.
      * <p>
-     * The repository id is never used as a filesystem path. The caller owns the
-     * returned temporary file and is responsible for deleting it when it is no
-     * longer needed.
+     * The repository id is never used as a filesystem path. A conservative file
+     * extension is preserved for compatibility with callers that inspect the
+     * returned file name. The caller owns the returned temporary file and is
+     * responsible for deleting it when it is no longer needed.
      *
      * @param fileRepository
      *            the file repository instance
@@ -68,7 +69,7 @@ public class FileRepositoryHelper {
         Path temporaryFile = null;
 
         try (InputStream fileIs = fileRepository.find(filePath)) {
-            temporaryFile = Files.createTempFile("basyx-file-", ".tmp");
+            temporaryFile = Files.createTempFile("basyx-file-", getSafeTempFileSuffix(filePath));
             Files.copy(fileIs, temporaryFile, StandardCopyOption.REPLACE_EXISTING);
             return temporaryFile.toFile();
         } catch (IOException e) {
@@ -211,6 +212,9 @@ public class FileRepositoryHelper {
     }
 
     private static String getFileExtension(String fileName) {
+        if (fileName == null)
+            return "";
+
         int extensionStart = fileName.lastIndexOf('.');
 
         if (extensionStart <= 0 || extensionStart >= fileName.length() - 1)
@@ -222,6 +226,15 @@ public class FileRepositoryHelper {
             return "";
 
         return "." + extension;
+    }
+
+    private static String getSafeTempFileSuffix(String filePath) {
+        String extension = getFileExtension(filePath);
+
+        if (extension.isEmpty())
+            return ".tmp";
+
+        return extension;
     }
 
     private static boolean isAsciiLetterOrDigit(int character) {

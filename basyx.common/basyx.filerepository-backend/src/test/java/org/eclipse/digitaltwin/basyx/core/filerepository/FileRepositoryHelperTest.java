@@ -115,6 +115,7 @@ public class FileRepositoryHelperTest {
 			java.io.File localFile = FileRepositoryHelper.fetchAndStoreFileLocally(fileRepository, maliciousRepositoryKey);
 
 			assertTrue(localFile.exists());
+			assertTrue(localFile.getName().endsWith(".txt"));
 			assertNotEquals(victimFile.toAbsolutePath().toString(), localFile.toPath().toAbsolutePath().toString());
 			assertFalse(Files.exists(victimFile));
 			assertArrayEquals(attackerPayload, Files.readAllBytes(localFile.toPath()));
