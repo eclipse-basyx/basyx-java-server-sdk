@@ -2,9 +2,6 @@
 
 This tutorial demonstrates how to use **Eclipse BaSyx** to create and manage an **Asset Administration Shell (AAS)** in Java. 
 
->You can find the HelloWorld Java Example Code here:  
->https://wiki.basyx.org/????????????????????????????
-
 ## Overview
 
 In this tutorial you will learn how to:
