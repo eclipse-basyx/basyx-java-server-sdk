@@ -38,6 +38,10 @@ public class RepositoryRegistryUnlinkException extends RuntimeException {
 		super(getMessage(id), th);
 	}
 
+	public RepositoryRegistryUnlinkException(String id, String details, Throwable th) {
+		super(getMessage(id) + " " + details, th);
+	}
+
 	private static String getMessage(String id) {
 		return "Unable to unlink the element with id '" + id + "' from the Registry.";
 	}
