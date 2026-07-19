@@ -27,7 +27,7 @@ package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasservice.AasServiceFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.feature.AasServiceFeature;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +57,7 @@ public class MqttAasServiceFeature implements AasServiceFeature {
 
 	@Override
 	public AasServiceFactory decorate(AasServiceFactory aasServiceFactory) {
-		return new MqttAasServiceFactory(aasServiceFactory, mqttClient, new MqttAasServiceTopicFactory(new URLEncoder()), repoId, objectMapper);
+		return new MqttAasServiceFactory(aasServiceFactory, mqttClient, new MqttAasServiceTopicFactory(new Base64URLEncoder()), repoId, objectMapper);
 	}
 
 	@Override

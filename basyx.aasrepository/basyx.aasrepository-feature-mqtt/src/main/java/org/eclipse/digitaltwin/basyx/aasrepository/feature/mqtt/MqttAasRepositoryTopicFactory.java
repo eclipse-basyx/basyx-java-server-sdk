@@ -108,7 +108,7 @@ public class MqttAasRepositoryTopicFactory extends AbstractMqttTopicFactory {
 				.add(repoId)
 				.add(SHELLS)
 				.add(SUBMODELS)
-				.add(referenceId)
+				.add(encodeId(referenceId))
 				.add(CREATED)
 				.toString();
 	}
@@ -126,7 +126,7 @@ public class MqttAasRepositoryTopicFactory extends AbstractMqttTopicFactory {
 				.add(repoId)
 				.add(SHELLS)
 				.add(SUBMODELS)
-				.add(referenceId)
+				.add(encodeId(referenceId))
 				.add(DELETED)
 				.toString();
 	}

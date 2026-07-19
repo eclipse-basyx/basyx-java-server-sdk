@@ -32,6 +32,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttEventPublisher;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
@@ -39,12 +40,10 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +120,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	public void setSubmodelElementValue(String submodelId, String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		decorated.setSubmodelElementValue(submodelId, idShortPath, value);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
-		submodelElementUpdated(submodelElement, getName(), submodelId, idShortPath);
+		submodelElementValueUpdated(submodelElement, getName(), submodelId, idShortPath);
 	}
 
 	@Override
@@ -134,8 +133,10 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	@Override
 	public void createSubmodelElement(String submodelId, String idShortPath, SubmodelElement smElement) throws ElementDoesNotExistException {
 		decorated.createSubmodelElement(submodelId, idShortPath, smElement);
-		SubmodelElement submodelElement = decorated.getSubmodelElement(submodelId, idShortPath);
-		submodelElementCreated(submodelElement, getName(), submodelId, idShortPath);
+		SubmodelElement parent = decorated.getSubmodelElement(submodelId, idShortPath);
+		String createdElementPath = SubmodelElementIdShortHelper.buildChildIdShortPath(idShortPath, parent, smElement);
+		SubmodelElement createdElement = decorated.getSubmodelElement(submodelId, createdElementPath);
+		submodelElementCreated(createdElement, getName(), submodelId, createdElementPath);
 	}
 	
 	@Override
@@ -228,6 +229,10 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
+	private void submodelElementValueUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
+		sendMqttMessage(topicFactory.createUpdateSubmodelElementValueTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+	}
+
 	private void submodelElementUpdated(SubmodelElement submodelElement, String repoId, String submodelId, String submodelElementId) {
 		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(repoId, submodelId, submodelElementId), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
@@ -257,24 +262,7 @@ public class MqttSubmodelRepository implements SubmodelRepository {
 	 *            the actual message
 	 */
 	private void sendMqttMessage(String topic, String payload) {
-		MqttMessage msg = createMqttMessage(payload);
-
-		try {
-			logger.debug("Send MQTT message to " + topic + ": " + payload);
-			mqttClient.publish(topic, msg);
-		} catch (MqttPersistenceException e) {
-			logger.error("Could not persist mqtt message", e);
-		} catch (MqttException e) {
-			logger.error("Could not send mqtt message", e);
-		}
-	}
-
-	private MqttMessage createMqttMessage(String payload) {
-		if (payload == null) {
-			return new MqttMessage();
-		} else {
-			return new MqttMessage(payload.getBytes());
-		}
+		MqttEventPublisher.publish(mqttClient, topic, payload, logger);
 	}
 
 }

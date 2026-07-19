@@ -42,10 +42,13 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
+	private static final String PATCHED = "patched";
 	private static final String SUBMODEL_ELEMENTS = "submodelElements";
+	private static final String VALUE = "value";
+	private static final String ATTACHMENT = "attachment";
 
 	/**
-	 * Used for encoding the idShort
+	 * Used for encoding the submodel identifier
 	 * 
 	 * @param encoder
 	 */
@@ -56,28 +59,54 @@ public class MqttSubmodelServiceTopicFactory extends AbstractMqttTopicFactory {
 	/**
 	 * Creates the hierarchical topic for the create event of submodelElements
 	 * 
-	 * @param idShort
+	 * @param submodelId
+	 * @param idShortPath
 	 */
-	public String createCreateSubmodelElementTopic(String idShort) {
-		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(CREATED).toString();
+	public String createCreateSubmodelElementTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(CREATED).toString();
 	}
 
 	/**
 	 * Creates the hierarchical topic for the update event of submodelElements
 	 * 
-	 * @param idShort
+	 * @param submodelId
+	 * @param idShortPath
 	 */
-	public String createUpdateSubmodelElementTopic(String idShort) {
+	public String createUpdateSubmodelElementTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(UPDATED).toString();
+	}
 
-		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(UPDATED).toString();
+	public String createUpdateSubmodelElementValueTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(VALUE).add(UPDATED).toString();
 	}
 
 	/**
 	 * Creates the hierarchical topic for the delete event of submodelElements
 	 * 
-	 * @param idShort
+	 * @param submodelId
+	 * @param idShortPath
 	 */
-	public String createDeleteSubmodelElementTopic(String idShort) {
-		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(SUBMODEL_ELEMENTS).add(idShort).add(DELETED).toString();
+	public String createDeleteSubmodelElementTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(DELETED).toString();
+	}
+
+	public String createPatchSubmodelElementsTopic(String submodelId) {
+		return createSubmodelTopic(submodelId).add(SUBMODEL_ELEMENTS).add(PATCHED).toString();
+	}
+
+	public String createUpdateFileValueTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(ATTACHMENT).add(UPDATED).toString();
+	}
+
+	public String createDeleteFileValueTopic(String submodelId, String idShortPath) {
+		return createElementTopic(submodelId, idShortPath).add(ATTACHMENT).add(DELETED).toString();
+	}
+
+	private StringJoiner createElementTopic(String submodelId, String idShortPath) {
+		return createSubmodelTopic(submodelId).add(SUBMODEL_ELEMENTS).add(idShortPath);
+	}
+
+	private StringJoiner createSubmodelTopic(String submodelId) {
+		return new StringJoiner("/", "", "").add(SUBMODEL_SERVICE).add(SUBMODELS).add(encodeId(submodelId));
 	}
 }

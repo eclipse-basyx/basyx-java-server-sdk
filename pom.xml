@@ -381,11 +381,11 @@
 			<dependency>
 				<groupId>io.moquette</groupId>
 				<artifactId>moquette-broker</artifactId>
-				<version>0.16</version>
+				<version>0.17</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
+						<artifactId>slf4j-reload4j</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

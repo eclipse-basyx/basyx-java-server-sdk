@@ -189,6 +189,11 @@ public class SearchSubmodelRepository implements SubmodelRepository {
 		return decorated.getOriginalFileNameByPath(submodelId, idShortPath);
 	}
 
+	@Override
+	public String getName() {
+		return decorated.getName();
+	}
+
 	private void indexSM(Submodel submodel) {
 		try {
 			JsonNode normalizedSubmodel = IndexNormalizer.toIndexable(submodel);

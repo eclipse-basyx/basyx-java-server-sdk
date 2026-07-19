@@ -35,14 +35,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttEventPublisher;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,24 +168,7 @@ public class MqttAasRepository implements AasRepository {
 	 *            the actual message
 	 */
 	private void sendMqttMessage(String topic, String payload) {
-		MqttMessage msg = createMqttMessage(payload);
-
-		try {
-			logger.debug("Send MQTT message to " + topic + ": " + payload);
-			mqttClient.publish(topic, msg);
-		} catch (MqttPersistenceException e) {
-			logger.error("Could not persist mqtt message", e);
-		} catch (MqttException e) {
-			logger.error("Could not send mqtt message", e);
-		}
-	}
-
-	private MqttMessage createMqttMessage(String payload) {
-		if (payload == null) {
-			return new MqttMessage();
-		} else {
-			return new MqttMessage(payload.getBytes());
-		}
+		MqttEventPublisher.publish(mqttClient, topic, payload, logger);
 	}
 
 	@Override

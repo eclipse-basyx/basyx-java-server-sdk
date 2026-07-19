@@ -32,6 +32,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttEventPublisher;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementNotAFileException;
@@ -39,11 +40,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
+import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,11 +57,17 @@ public class MqttSubmodelService implements SubmodelService {
 	private MqttSubmodelServiceTopicFactory topicFactory;
 	private SubmodelService decorated;
 	private IMqttClient mqttClient;
+	private String submodelId;
 
-	public MqttSubmodelService(SubmodelService decorated, IMqttClient mqttClient, MqttSubmodelServiceTopicFactory topicFactory) {
+	public MqttSubmodelService(SubmodelService decorated, IMqttClient mqttClient, MqttSubmodelServiceTopicFactory topicFactory, String submodelId) {
 		this.topicFactory = topicFactory;
 		this.decorated = decorated;
 		this.mqttClient = mqttClient;
+		this.submodelId = submodelId;
+	}
+
+	public MqttSubmodelService(SubmodelService decorated, IMqttClient mqttClient, MqttSubmodelServiceTopicFactory topicFactory) {
+		this(decorated, mqttClient, topicFactory, decorated.getSubmodel().getId());
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class MqttSubmodelService implements SubmodelService {
 	public void setSubmodelElementValue(String idShortPath, SubmodelElementValue value) throws ElementDoesNotExistException {
 		decorated.setSubmodelElementValue(idShortPath, value);
 		SubmodelElement submodelElement = decorated.getSubmodelElement(idShortPath);
-		submodelElementUpdated(submodelElement, idShortPath);
+		submodelElementValueUpdated(submodelElement, idShortPath);
 	}
 
 	@Override
@@ -101,19 +106,19 @@ public class MqttSubmodelService implements SubmodelService {
 
 	@Override
 	public void createSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
-
 		decorated.createSubmodelElement(idShortPath, submodelElement);
-
-		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
-		submodelElementCreated(smElement, idShortPath);
+		SubmodelElement parent = decorated.getSubmodelElement(idShortPath);
+		String createdElementPath = SubmodelElementIdShortHelper.buildChildIdShortPath(idShortPath, parent, submodelElement);
+		SubmodelElement createdElement = decorated.getSubmodelElement(createdElementPath);
+		submodelElementCreated(createdElement, createdElementPath);
 	}
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, SubmodelElement submodelElement) throws ElementDoesNotExistException {
 
 		decorated.updateSubmodelElement(idShortPath, submodelElement);
-		SubmodelElement smElement = decorated.getSubmodelElement(submodelElement.getIdShort());
-		submodelElementUpdated(smElement, submodelElement.getIdShort());
+		SubmodelElement smElement = decorated.getSubmodelElement(idShortPath);
+		submodelElementUpdated(smElement, idShortPath);
 	}
 
 	@Override
@@ -127,6 +132,7 @@ public class MqttSubmodelService implements SubmodelService {
 	@Override
 	public void patchSubmodelElements(List<SubmodelElement> submodelElementList) {
 		decorated.patchSubmodelElements(submodelElementList);
+		sendMqttMessage(topicFactory.createPatchSubmodelElementsTopic(submodelId), SubmodelElementSerializer.serializeSubmodelElements(submodelElementList));
 	}
 
 	@Override
@@ -147,11 +153,15 @@ public class MqttSubmodelService implements SubmodelService {
 	@Override
 	public void setFileValue(String idShortPath, String fileName, String contentType, InputStream inputStream) throws ElementDoesNotExistException, ElementNotAFileException {
 		decorated.setFileValue(idShortPath, fileName, contentType, inputStream);
+		SubmodelElement submodelElement = decorated.getSubmodelElement(idShortPath);
+		sendMqttMessage(topicFactory.createUpdateFileValueTopic(submodelId, idShortPath), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	@Override
 	public void deleteFileValue(String idShortPath) throws ElementDoesNotExistException, ElementNotAFileException, FileDoesNotExistException {
+		SubmodelElement submodelElement = decorated.getSubmodelElement(idShortPath);
 		decorated.deleteFileValue(idShortPath);
+		sendMqttMessage(topicFactory.createDeleteFileValueTopic(submodelId, idShortPath), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	@Override
@@ -160,15 +170,19 @@ public class MqttSubmodelService implements SubmodelService {
 	}
 
 	private void submodelElementCreated(SubmodelElement submodelElement, String idShort) {
-		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(idShort), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+		sendMqttMessage(topicFactory.createCreateSubmodelElementTopic(submodelId, idShort), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	private void submodelElementUpdated(SubmodelElement submodelElement, String idShortPath) {
-		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(idShortPath), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+		sendMqttMessage(topicFactory.createUpdateSubmodelElementTopic(submodelId, idShortPath), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+	}
+
+	private void submodelElementValueUpdated(SubmodelElement submodelElement, String idShortPath) {
+		sendMqttMessage(topicFactory.createUpdateSubmodelElementValueTopic(submodelId, idShortPath), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	private void submodelElementDeleted(SubmodelElement submodelElement, String idShort) {
-		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(idShort), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
+		sendMqttMessage(topicFactory.createDeleteSubmodelElementTopic(submodelId, idShort), SubmodelElementSerializer.serializeSubmodelElement(submodelElement));
 	}
 
 	/**
@@ -180,23 +194,6 @@ public class MqttSubmodelService implements SubmodelService {
 	 *            the actual message
 	 */
 	private void sendMqttMessage(String topic, String payload) {
-		MqttMessage msg = createMqttMessage(payload);
-
-		try {
-			logger.debug("Send MQTT message to " + topic + ": " + payload);
-			mqttClient.publish(topic, msg);
-		} catch (MqttPersistenceException e) {
-			logger.error("Could not persist mqtt message", e);
-		} catch (MqttException e) {
-			logger.error("Could not send mqtt message", e);
-		}
-	}
-
-	private MqttMessage createMqttMessage(String payload) {
-		if (payload == null) {
-			return new MqttMessage();
-		} else {
-			return new MqttMessage(payload.getBytes());
-		}
+		MqttEventPublisher.publish(mqttClient, topic, payload, logger);
 	}
 }

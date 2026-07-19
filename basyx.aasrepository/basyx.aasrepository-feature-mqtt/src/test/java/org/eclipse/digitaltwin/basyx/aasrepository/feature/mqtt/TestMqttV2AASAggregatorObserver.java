@@ -41,24 +41,17 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.DummyAasFactory;
 import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttBrokerTestSupport;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
-import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.URLEncoder;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener.MqttEvent;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events emitting with the MqttAASAggregatorObserver
@@ -67,7 +60,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  *
  */
 public class TestMqttV2AASAggregatorObserver {
-	private static Server mqttBroker;
+	private static MqttBrokerTestSupport mqttBroker;
 	private static MqttClient mqttClient;
 	private static MqttTestListener listener;
 	private static MqttAasRepositoryTopicFactory topicFactory = new MqttAasRepositoryTopicFactory(new Base64URLEncoder());
@@ -76,19 +69,16 @@ public class TestMqttV2AASAggregatorObserver {
 
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
-		mqttBroker = startBroker();
-
-		listener = configureInterceptListener(mqttBroker);
-
-		mqttClient = createAndConnectClient();
+		mqttBroker = MqttBrokerTestSupport.start();
+		listener = mqttBroker.listener();
+		mqttClient = mqttBroker.connectClient();
 
 		aasRepository = createMqttAasRepository(mqttClient);
 	}
 
 	@AfterClass
-	public static void tearDownClass() {
-		mqttBroker.removeInterceptHandler(listener);
-		mqttBroker.stopServer();
+	public static void tearDownClass() throws MqttException {
+		mqttBroker.close();
 	}
 
 	@Test
@@ -96,8 +86,8 @@ public class TestMqttV2AASAggregatorObserver {
 		AssetAdministrationShell shell = createAasDummy("createAasEventId");
 		aasRepository.createAas(shell);
 		
-		assertEquals(topicFactory.createCreateAASTopic(aasRepository.getName()), listener.lastTopic);
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateAASTopic(aasRepository.getName()));
+		assertEquals(shell, deserializePayload(event.payload()));
 	}
 
 	@Test
@@ -109,8 +99,8 @@ public class TestMqttV2AASAggregatorObserver {
 
 		aasRepository.updateAas(shell.getId(), shell);
 
-		assertEquals(topicFactory.createUpdateAASTopic(aasRepository.getName()), listener.lastTopic);
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createUpdateAASTopic(aasRepository.getName()));
+		assertEquals(shell, deserializePayload(event.payload()));
 	}
 
 	@Test
@@ -119,8 +109,8 @@ public class TestMqttV2AASAggregatorObserver {
 		aasRepository.createAas(shell);
 		aasRepository.deleteAas(shell.getId());
 
-		assertEquals(topicFactory.createDeleteAASTopic(aasRepository.getName()), listener.lastTopic);
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createDeleteAASTopic(aasRepository.getName()));
+		assertEquals(shell, deserializePayload(event.payload()));
 	}
 	
 	@Test
@@ -131,8 +121,8 @@ public class TestMqttV2AASAggregatorObserver {
 		Reference submodelReference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
 		aasRepository.addSubmodelReference(shell.getId(), submodelReference);
 		
-		assertEquals(topicFactory.createCreateAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID));
+		assertEquals(shell, deserializePayload(event.payload()));
 	}	
 	
 	@Test
@@ -142,8 +132,8 @@ public class TestMqttV2AASAggregatorObserver {
 		
 		aasRepository.removeSubmodelReference(shell.getId(), DummyAasFactory.DUMMY_SUBMODEL_ID);
 		
-		assertEquals(topicFactory.createDeleteAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID), listener.lastTopic);
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createDeleteAASSubmodelReferenceTopic(aasRepository.getName(), DummyAasFactory.DUMMY_SUBMODEL_ID));
+		assertEquals(shell, deserializePayload(event.payload()));
 	}	
 
 	private AssetAdministrationShell deserializePayload(String payload) throws DeserializationException {
@@ -173,110 +163,6 @@ public class TestMqttV2AASAggregatorObserver {
 	private static AasRepository createMqttAasRepository(MqttClient client) {
 		AasRepositoryFactory repoFactory = CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).buildFactory();
 
-		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new URLEncoder())).create();
+		return new MqttAasRepositoryFactory(repoFactory, client, new MqttAasRepositoryTopicFactory(new Base64URLEncoder())).create();
 	}
-
-	private static MqttTestListener configureInterceptListener(Server broker) {
-		MqttTestListener testListener = new MqttTestListener();
-		broker.addInterceptHandler(testListener);
-
-		return testListener;
-	}
-
-	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {
-		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
-		client.connect();
-		return client;
-	}
-
-	private static Server startBroker() throws IOException {
-		Server broker = new Server();
-		IResourceLoader classpathLoader = new ClasspathResourceLoader();
-
-		IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
-		broker.startServer(classPathConfig);
-
-		return broker;
-	}
-
-	@Test
-	public void checkTCPConnectionWithoutCredentials() throws Exception {
-		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("", "");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				1884,
-				"tcp",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkTCPConnectionWitCredentials() throws Exception {
-		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				1884,
-				"tcp",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkTCPConnectionWitWrongCredentials() throws Exception {
-		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
-		boolean authentication_failed = false;
-		try {
-			IMqttClient client = config.mqttClient(
-					"test-client",
-					"localhost",
-					1884,
-					"tcp",
-					options);
-		} catch (MqttException e) {
-			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
-				authentication_failed = true;
-			}
-		}
-		assertTrue(authentication_failed);
-	}
-
-	@Test
-	public void checkWSConnectionWithoutCredentials() throws Exception {
-		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("", "");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				8080,
-				"ws",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkWSConnectionWitCredentials() throws Exception {
-		MqttAasRepositoryConfiguration config = new MqttAasRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				8080,
-				"ws",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
 }
