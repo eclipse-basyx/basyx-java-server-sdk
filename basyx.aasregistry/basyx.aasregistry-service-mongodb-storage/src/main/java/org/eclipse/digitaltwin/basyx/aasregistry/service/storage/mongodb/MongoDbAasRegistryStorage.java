@@ -143,7 +143,7 @@ public class MongoDbAasRegistryStorage implements AasRegistryStorage {
 			if (criteria == null) {
 				criteria = Criteria.where(ASSET_TYPE).is(assetType);
 			} else {
-				criteria.and(ASSET_TYPE).is(assetType);
+				criteria = criteria.and(ASSET_TYPE).is(assetType);
 			}
 		}
 		return Optional.of(criteria);
