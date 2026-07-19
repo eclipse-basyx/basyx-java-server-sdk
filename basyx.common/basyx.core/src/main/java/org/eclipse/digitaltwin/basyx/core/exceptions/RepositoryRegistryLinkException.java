@@ -39,8 +39,16 @@ public class RepositoryRegistryLinkException extends RuntimeException {
 		super(getMessage(id), th);
 	}
 
+	public RepositoryRegistryLinkException(String id, String details, Throwable th) {
+		super(getMessage(id, details), th);
+	}
+
 	private static String getMessage(String id) {
 		return "Unable to link the element with id '" + id + "' with the Registry.";
+	}
+
+	private static String getMessage(String id, String details) {
+		return getMessage(id) + " " + details;
 	}
 
 }

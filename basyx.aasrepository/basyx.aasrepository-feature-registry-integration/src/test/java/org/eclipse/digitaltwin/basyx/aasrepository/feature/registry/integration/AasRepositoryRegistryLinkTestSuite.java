@@ -32,9 +32,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
+import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetKind;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetAssetAdministrationShellDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.DummyAasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
@@ -93,6 +95,64 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 		assertDescriptionDeletionAtRegistry();
 	}
 
+	@Test
+	public void updateAasUpdatesDescriptor() throws FileNotFoundException, IOException, ApiException {
+		String updatedAas = getAas1JSONString()
+				.replace("\"ExampleMotor\"", "\"UpdatedMotor\"")
+				.replace("\"Instance\"", "\"Type\"");
+
+		try (CloseableHttpResponse creationResponse = createAasOnRepo(getAas1JSONString())) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
+
+		try {
+			try (CloseableHttpResponse updateResponse = updateAasOnRepo(updatedAas)) {
+				assertEquals(HttpStatus.NO_CONTENT.value(), updateResponse.getCode());
+			}
+
+			AssetAdministrationShellDescriptor descriptor = retrieveDescriptorFromRegistry();
+			assertEquals("UpdatedMotor", descriptor.getIdShort());
+			assertEquals(AssetKind.TYPE, descriptor.getAssetKind());
+		} finally {
+			resetRepository();
+		}
+	}
+
+	@Test
+	public void updateAssetInformationUpdatesDescriptor() throws FileNotFoundException, IOException, ApiException {
+		try (CloseableHttpResponse creationResponse = createAasOnRepo(getAas1JSONString())) {
+			assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
+		}
+
+		try {
+			try (CloseableHttpResponse updateResponse = updateAssetInformationOnRepo("{\"assetKind\":\"Type\",\"globalAssetId\":\"globalAssetId\"}")) {
+				assertEquals(HttpStatus.NO_CONTENT.value(), updateResponse.getCode());
+			}
+
+			assertEquals(AssetKind.TYPE, retrieveDescriptorFromRegistry().getAssetKind());
+		} finally {
+			resetRepository();
+		}
+	}
+
+	@Test
+	public void preExistingDescriptorReturnsRegistryFailureDetailsAndRollsBackAas() throws IOException, ApiException, ParseException {
+		getAasRegistryApi().postAssetAdministrationShellDescriptor(DUMMY_DESCRIPTOR);
+
+		try {
+			try (CloseableHttpResponse creationResponse = createAasOnRepo(getAas1JSONString())) {
+				assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), creationResponse.getCode());
+				assertTrue(BaSyxHttpTestUtils.getResponseAsString(creationResponse).contains(Integer.toString(HttpStatus.CONFLICT.value())));
+			}
+
+			try (CloseableHttpResponse retrievalResponse = BaSyxHttpTestUtils.executeGetOnURL(getSpecificAasAccessURL(DUMMY_AAS_ID))) {
+				assertEquals(HttpStatus.NOT_FOUND.value(), retrievalResponse.getCode());
+			}
+		} finally {
+			getAasRegistryApi().deleteAssetAdministrationShellDescriptorById(DUMMY_AAS_ID);
+		}
+	}
+
 	private AssetAdministrationShellDescriptor retrieveDescriptorFromRegistry() throws ApiException {
 		RegistryAndDiscoveryInterfaceApi api = getAasRegistryApi();
 
@@ -125,8 +185,15 @@ public abstract class AasRepositoryRegistryLinkTestSuite {
 	}
 
 	private CloseableHttpResponse createAasOnRepo(String aasJsonContent) throws IOException {
-		String url = RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH);
 		return BaSyxHttpTestUtils.executePostOnURL(RepositoryUrlHelper.createRepositoryUrl(getFirstAasRepoBaseUrl(), AAS_REPOSITORY_PATH), aasJsonContent);
+	}
+
+	private CloseableHttpResponse updateAasOnRepo(String aasJsonContent) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(DUMMY_AAS_ID), aasJsonContent);
+	}
+
+	private CloseableHttpResponse updateAssetInformationOnRepo(String assetInformationJson) throws IOException {
+		return BaSyxHttpTestUtils.executePutOnURL(getSpecificAasAccessURL(DUMMY_AAS_ID) + "/asset-information", assetInformationJson);
 	}
 
 	private String getSpecificAasAccessURL(String aasId) {

@@ -79,7 +79,7 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void createAas(AssetAdministrationShell shell) throws CollidingIdentifierException {
-		AssetAdministrationShellDescriptor descriptor = new AasDescriptorFactory(aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create(shell);
+		AssetAdministrationShellDescriptor descriptor = createDescriptor(shell);
 
 		decorated.createAas(shell);
 
@@ -96,7 +96,16 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void updateAas(String shellId, AssetAdministrationShell shell) {
+		AssetAdministrationShell previousShell = decorated.getAas(shellId);
+
 		decorated.updateAas(shellId, shell);
+
+		try {
+			updateDescriptor(shellId, shell);
+		} catch (RuntimeException e) {
+			rollbackAasUpdate(shellId, previousShell, e);
+			throw e;
+		}
 	}
 
 	@Override
@@ -128,7 +137,16 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 	@Override
 	public void setAssetInformation(String shellId, AssetInformation shellInfo) throws ElementDoesNotExistException {
+		AssetInformation previousAssetInformation = decorated.getAssetInformation(shellId);
+
 		decorated.setAssetInformation(shellId, shellInfo);
+
+		try {
+			updateDescriptor(shellId, decorated.getAas(shellId));
+		} catch (RuntimeException e) {
+			rollbackAssetInformationUpdate(shellId, previousAssetInformation, e);
+			throw e;
+		}
 	}
 
 	@Override
@@ -144,7 +162,61 @@ public class RegistryIntegrationAasRepository implements AasRepository {
 
 			logger.info("Shell '{}' has been automatically linked with the Registry", descriptor.getId());
 		} catch (ApiException e) {
-			throw new RepositoryRegistryLinkException(descriptor.getId(), e);
+			throw createRegistryLinkException(descriptor.getId(), "creation", e);
+		}
+	}
+
+	private void updateDescriptor(String shellId, AssetAdministrationShell shell) {
+		RegistryAndDiscoveryInterfaceApi registryApi = aasRepositoryRegistryLink.getRegistryApi();
+
+		try {
+			AssetAdministrationShellDescriptor existingDescriptor = registryApi.getAssetAdministrationShellDescriptorById(shellId);
+			AssetAdministrationShellDescriptor updatedDescriptor = createDescriptor(shell);
+			updatedDescriptor.setSubmodelDescriptors(existingDescriptor.getSubmodelDescriptors());
+
+			registryApi.putAssetAdministrationShellDescriptorById(shellId, updatedDescriptor);
+
+			logger.info("Shell descriptor '{}' has been automatically updated in the Registry", shellId);
+		} catch (ApiException e) {
+			throw createRegistryLinkException(shellId, "update", e);
+		}
+	}
+
+	private AssetAdministrationShellDescriptor createDescriptor(AssetAdministrationShell shell) {
+		return new AasDescriptorFactory(aasRepositoryRegistryLink.getAasRepositoryBaseURLs(), attributeMapper).create(shell);
+	}
+
+	private RepositoryRegistryLinkException createRegistryLinkException(String shellId, String operation, ApiException cause) {
+		StringBuilder details = new StringBuilder("Registry descriptor ").append(operation).append(" failed");
+
+		if (cause.getCode() > 0)
+			details.append(" with HTTP status ").append(cause.getCode());
+
+		String responseDetails = cause.getResponseBody();
+		if (responseDetails == null || responseDetails.isBlank())
+			responseDetails = cause.getMessage();
+
+		if (responseDetails != null && !responseDetails.isBlank())
+			details.append(": ").append(responseDetails);
+
+		return new RepositoryRegistryLinkException(shellId, details.toString(), cause);
+	}
+
+	private void rollbackAasUpdate(String shellId, AssetAdministrationShell previousShell, RuntimeException updateException) {
+		try {
+			decorated.updateAas(shellId, previousShell);
+		} catch (RuntimeException rollbackException) {
+			updateException.addSuppressed(rollbackException);
+			logger.error("Unable to restore AAS '{}' after Registry synchronization failed.", shellId, rollbackException);
+		}
+	}
+
+	private void rollbackAssetInformationUpdate(String shellId, AssetInformation previousAssetInformation, RuntimeException updateException) {
+		try {
+			decorated.setAssetInformation(shellId, previousAssetInformation);
+		} catch (RuntimeException rollbackException) {
+			updateException.addSuppressed(rollbackException);
+			logger.error("Unable to restore Asset Information for AAS '{}' after Registry synchronization failed.", shellId, rollbackException);
 		}
 	}
 
