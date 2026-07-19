@@ -11,7 +11,6 @@ basyx:
           # enabled by default
           enabled: true
           defaultMapping: org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.DefaultInvokableOperation
-          mappings: {}
           java:
             sources:
             classes: classes
