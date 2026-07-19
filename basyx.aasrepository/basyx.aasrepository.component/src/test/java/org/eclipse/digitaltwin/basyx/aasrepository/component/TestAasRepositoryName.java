@@ -26,11 +26,21 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import java.util.Map;
+
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 
 /**
  * 
@@ -72,6 +82,22 @@ public class TestAasRepositoryName {
 		assertEquals(CONFIGURED_AAS_REPO_NAME, repo.getName());
 		
 		resetRepoNamePropertyAndCloseContext();
+	}
+
+	@Test
+	public void environmentStyleRepositoryNameReachesMqttTopic() throws Exception {
+		IMqttClient mqttClient = mock(IMqttClient.class);
+		SpringApplication application = new SpringApplication(AasRepositoryComponent.class);
+		application.addInitializers(context -> {
+			context.getEnvironment().getPropertySources().addFirst(new SystemEnvironmentPropertySource("test-environment",
+					Map.of("BASYX_AASREPO_NAME", CONFIGURED_AAS_REPO_NAME, "BASYX_FEATURE_MQTT_ENABLED", "true")));
+			context.getBeanFactory().registerSingleton("mqttTestClient", mqttClient);
+		});
+
+		try (ConfigurableApplicationContext context = application.run()) {
+			context.getBean(AasRepository.class).createAas(new DefaultAssetAdministrationShell.Builder().id("mqtt-name-test-aas").build());
+			verify(mqttClient).publish(eq("aas-repository/" + CONFIGURED_AAS_REPO_NAME + "/shells/created"), any(MqttMessage.class));
+		}
 	}
 
 	private void resetRepoNamePropertyAndCloseContext() {

@@ -25,16 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.springframework.beans.factory.annotation.Value;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttClientConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -43,39 +35,5 @@ import org.springframework.context.annotation.Configuration;
  */
 @ConditionalOnExpression("#{${" + MqttSubmodelRepositoryFeature.FEATURENAME + ".enabled:false} or ${basyx.feature.mqtt.enabled:false}}")
 @Configuration
-public class MqttSubmodelRepositoryConfiguration {
-
-	@ConditionalOnMissingBean
-	@Bean
-	public IMqttClient mqttClient(
-			@Value("${mqtt.clientId}") String clientId,
-			@Value("${mqtt.hostname}") String hostname,
-			@Value("${mqtt.port}") int port,
-			@Value("${mqtt.protocol:tcp}") String protocol,
-			MqttConnectOptions mqttConnectOptions) throws MqttException {
-		IMqttClient mqttClient = new MqttClient(protocol + "://" + hostname + ":" + port, clientId,
-				new MemoryPersistence());
-
-		mqttClient.connect(mqttConnectOptions);
-
-		return mqttClient;
-	}
-
-	@ConditionalOnMissingBean
-	@Bean
-	@ConfigurationProperties(prefix = "mqtt")
-	public MqttConnectOptions mqttConnectOptions(
-			@Value("${mqtt.username:}") String username,
-			@Value("${mqtt.password:}") String password) {
-		MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-		mqttConnectOptions.setAutomaticReconnect(true);
-
-		if (username.isBlank() || password.isBlank())
-			return mqttConnectOptions;
-
-		mqttConnectOptions.setUserName(username);
-		mqttConnectOptions.setPassword(password.toCharArray());
-
-		return mqttConnectOptions;
-	}
+public class MqttSubmodelRepositoryConfiguration extends MqttClientConfiguration {
 }

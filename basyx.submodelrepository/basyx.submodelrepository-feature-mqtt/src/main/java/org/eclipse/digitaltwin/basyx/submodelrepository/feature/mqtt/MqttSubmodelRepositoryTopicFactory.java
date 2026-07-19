@@ -44,6 +44,7 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	private static final String PATCHED = "patched";
 	private static final String SUBMODELELEMENTS = "submodelElements";
 	private static final String ATTACHMENT = "attachment";
+	private static final String VALUE = "value";
 
 	/**
 	 * @param encoder
@@ -96,6 +97,13 @@ public class MqttSubmodelRepositoryTopicFactory extends AbstractMqttTopicFactory
 	 */
 	public String createUpdateSubmodelElementTopic(String repoId, String submodelId, String submodelElementId) {
 		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(UPDATED).toString();
+	}
+
+	/**
+	 * Creates the hierarchical topic for a submodel element value update.
+	 */
+	public String createUpdateSubmodelElementValueTopic(String repoId, String submodelId, String submodelElementId) {
+		return new StringJoiner("/", "", "").add(SUBMODELREPOSITORY).add(repoId).add(SUBMODELS).add(encodeId(submodelId)).add(SUBMODELELEMENTS).add(submodelElementId).add(VALUE).add(UPDATED).toString();
 	}
 
 	/**

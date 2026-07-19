@@ -7,9 +7,37 @@ on:
 env:
   DOCKER_NAMESPACE: eclipsebasyx
 
+permissions: {}
+
 jobs:
-  build-and-push-milestone-release:
+  guard:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should-run: ${{ steps.check.outputs.should-run }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - id: check
+        env:
+          EVENT_REPOSITORY_FORK: ${{ github.event.repository.fork }}
+        run: |
+          should_run=$(bash .github/workflows/scripts/check_docker_publication.sh "${GITHUB_REPOSITORY}" "${EVENT_REPOSITORY_FORK}")
+          echo "should-run=${should_run}" >> "$GITHUB_OUTPUT"
+          if [[ "${should_run}" == "true" ]]; then
+            echo "Running Docker publication in the upstream repository"
+          else
+            echo "Skipping Docker publication for ${GITHUB_REPOSITORY}"
+          fi
+
+  build-and-push-milestone-release:
+    needs: guard
+    if: ${{ needs.guard.outputs.should-run == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:

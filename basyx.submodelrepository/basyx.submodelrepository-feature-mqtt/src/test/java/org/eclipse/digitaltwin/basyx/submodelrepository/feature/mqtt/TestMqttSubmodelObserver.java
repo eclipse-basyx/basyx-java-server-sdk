@@ -27,7 +27,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -48,7 +47,12 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultFile;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultQualifier;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.MqttBrokerTestSupport;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
+import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener.MqttEvent;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.serializer.SubmodelElementSerializer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
@@ -60,11 +64,8 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepo
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,17 +73,12 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events for submodels and submodelElements
  */
 public class TestMqttSubmodelObserver {
-	private static Server mqttBroker;
+	private static MqttBrokerTestSupport mqttBroker;
 	private static MqttClient mqttClient;
 	private static MqttTestListener listener;
 	private static MqttSubmodelRepositoryTopicFactory topicFactory = new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder());
@@ -97,19 +93,16 @@ public class TestMqttSubmodelObserver {
 	
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
-		mqttBroker = startBroker();
-
-		listener = configureInterceptListener(mqttBroker);
-
-		mqttClient = createAndConnectClient();
+		mqttBroker = MqttBrokerTestSupport.start();
+		listener = mqttBroker.listener();
+		mqttClient = mqttBroker.connectClient();
 
 		submodelRepository = createMqttSubmodelRepository(mqttClient);
 	}
 
 	@AfterClass
-	public static void tearDownClass() {
-		mqttBroker.removeInterceptHandler(listener);
-		mqttBroker.stopServer();
+	public static void tearDownClass() throws MqttException {
+		mqttBroker.close();
 	}
 
 	@Test
@@ -117,8 +110,8 @@ public class TestMqttSubmodelObserver {
 		Submodel submodel = createSubmodelDummy("createSubmodelEventId");
 		submodelRepository.createSubmodel(submodel);
 
-		assertEquals(topicFactory.createCreateSubmodelTopic(submodelRepository.getName()), listener.lastTopic);
-		assertEquals(submodel, deserializeSubmodelPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateSubmodelTopic(submodelRepository.getName()));
+		assertEquals(submodel, deserializeSubmodelPayload(event.payload()));
 	}
 
 	@Test
@@ -128,8 +121,8 @@ public class TestMqttSubmodelObserver {
 		submodel.setSubmodelElements(Arrays.asList(createSubmodelElementDummy("submodelElementForUpdateSubmodelEventId")));
 		submodelRepository.updateSubmodel(submodel.getId(), submodel);
 
-		assertEquals(topicFactory.createUpdateSubmodelTopic(submodelRepository.getName()), listener.lastTopic);
-		assertEquals(submodel, deserializeSubmodelPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createUpdateSubmodelTopic(submodelRepository.getName()));
+		assertEquals(submodel, deserializeSubmodelPayload(event.payload()));
 	}
 
 	@Test
@@ -138,8 +131,8 @@ public class TestMqttSubmodelObserver {
 		submodelRepository.createSubmodel(submodel);
 		submodelRepository.deleteSubmodel(submodel.getId());
 
-		assertEquals(topicFactory.createDeleteSubmodelTopic(submodelRepository.getName()), listener.lastTopic);
-		assertEquals(submodel, deserializeSubmodelPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createDeleteSubmodelTopic(submodelRepository.getName()));
+		assertEquals(submodel, deserializeSubmodelPayload(event.payload()));
 	}
 
 	@Test
@@ -149,8 +142,37 @@ public class TestMqttSubmodelObserver {
 		SubmodelElement submodelElement = createSubmodelElementDummy("createSubmodelElementEventId");
 		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
+	}
+
+	@Test
+	public void createNestedSubmodelElementInCollectionEvent() throws DeserializationException {
+		String collectionIdShort = "nestedCollection";
+		Submodel submodel = new DefaultSubmodel.Builder().id("nestedCollectionSubmodel").submodelElements(new DefaultSubmodelElementCollection.Builder().idShort(collectionIdShort).build()).build();
+		submodelRepository.createSubmodel(submodel);
+		SubmodelElement child = createSubmodelElementDummy("nestedCollectionChild");
+		String childPath = collectionIdShort + "." + child.getIdShort();
+
+		submodelRepository.createSubmodelElement(submodel.getId(), collectionIdShort, child);
+
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), childPath));
+		assertEquals(child, deserializeSubmodelElementPayload(event.payload()));
+	}
+
+	@Test
+	public void createNestedSubmodelElementInListEvent() throws DeserializationException {
+		String listIdShort = "nestedList";
+		SubmodelElement existingElement = createSubmodelElementDummy("existingListElement");
+		Submodel submodel = new DefaultSubmodel.Builder().id("nestedListSubmodel").submodelElements(new DefaultSubmodelElementList.Builder().idShort(listIdShort).value(existingElement).build()).build();
+		submodelRepository.createSubmodel(submodel);
+		SubmodelElement child = createSubmodelElementDummy("nestedListChild");
+		String childPath = listIdShort + "[1]";
+
+		submodelRepository.createSubmodelElement(submodel.getId(), listIdShort, child);
+
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), childPath));
+		assertEquals(child, deserializeSubmodelElementPayload(event.payload()));
 	}
 
 	@Test
@@ -162,8 +184,20 @@ public class TestMqttSubmodelObserver {
 		SubmodelElementValue value = new PropertyValue("updatedValue");
 		submodelRepository.setSubmodelElementValue(submodel.getId(), submodelElement.getIdShort(), value);
 
-		assertEquals(topicFactory.createUpdateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createUpdateSubmodelElementValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
+	}
+
+	@Test
+	public void replaceSubmodelElementEvent() throws DeserializationException {
+		Submodel submodel = createSubmodelDummyWithSubmodelElement("replaceSubmodelForElementEventId", "replaceSubmodelElementEventId");
+		submodelRepository.createSubmodel(submodel);
+		SubmodelElement replacement = createSubmodelElementDummy("replaceSubmodelElementEventId");
+
+		submodelRepository.updateSubmodelElement(submodel.getId(), replacement.getIdShort(), replacement);
+
+		MqttEvent event = listener.awaitEvent(topicFactory.createUpdateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), replacement.getIdShort()));
+		assertEquals(replacement, deserializeSubmodelElementPayload(event.payload()));
 	}
 
 	@Test
@@ -175,8 +209,8 @@ public class TestMqttSubmodelObserver {
 		
 		submodelRepository.deleteSubmodelElement(submodel.getId(), submodelElement.getIdShort());
 
-		assertEquals(topicFactory.createDeleteSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createDeleteSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
 	}
 
 	@Test
@@ -188,12 +222,12 @@ public class TestMqttSubmodelObserver {
 		submodelElement.setQualifiers(qualifierList);
 		submodelRepository.createSubmodelElement(submodel.getId(), submodelElement);
 
-		assertEquals(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createCreateSubmodelElementTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertNotEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
 
 		// remove value for equality check
 		((Property) submodelElement).setValue(null);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
 	}
 
 	@Test
@@ -210,8 +244,8 @@ public class TestMqttSubmodelObserver {
 
 		submodelRepository.patchSubmodelElements(submodel.getId(), submodelElements);
 		
-		assertEquals(topicFactory.createPatchSubmodelElementsTopic(submodelRepository.getName(), submodel.getId()), listener.lastTopic);
-		assertEquals(submodelElements, deserializeSubmodelElementsListPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createPatchSubmodelElementsTopic(submodelRepository.getName(), submodel.getId()));
+		assertEquals(submodelElements, deserializeSubmodelElementsListPayload(event.payload()));
 	}
 	
 	@Test
@@ -223,8 +257,8 @@ public class TestMqttSubmodelObserver {
 		
 		submodelRepository.setFileValue(submodel.getId(), submodelElement.getIdShort(), FILE_SUBMODEL_ELEMENT_NAME, "application/octet-stream", getInputStreamOfDummyFile(FILE_SUBMODEL_ELEMENT_CONTENT));
 		
-		assertEquals(topicFactory.createUpdateFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createUpdateFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
 	}
 	
 	@Test
@@ -236,8 +270,8 @@ public class TestMqttSubmodelObserver {
 		
 		submodelRepository.deleteFileValue(submodel.getId(), submodelElement.getIdShort());
 
-		assertEquals(topicFactory.createDeleteFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()), listener.lastTopic);
-		assertEquals(submodelElement, deserializeSubmodelElementPayload(listener.lastPayload));
+		MqttEvent event = listener.awaitEvent(topicFactory.createDeleteFileValueTopic(submodelRepository.getName(), submodel.getId(), submodelElement.getIdShort()));
+		assertEquals(submodelElement, deserializeSubmodelElementPayload(event.payload()));
 	}
 	
 	private List<Qualifier> createNoValueQualifierList() {
@@ -317,106 +351,4 @@ public class TestMqttSubmodelObserver {
 		return new MqttSubmodelRepositoryFactory(repoFactory, client, new MqttSubmodelRepositoryTopicFactory(new Base64URLEncoder())).create();
 	}
 
-	private static MqttTestListener configureInterceptListener(Server broker) {
-		MqttTestListener testListener = new MqttTestListener();
-		broker.addInterceptHandler(testListener);
-
-		return testListener;
-	}
-
-	private static MqttClient createAndConnectClient() throws MqttException, MqttSecurityException {
-		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
-		client.connect();
-		return client;
-	}
-
-	private static Server startBroker() throws IOException {
-		Server broker = new Server();
-		IResourceLoader classpathLoader = new ClasspathResourceLoader();
-
-		IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
-		broker.startServer(classPathConfig);
-
-		return broker;
-	}
-
-	@Test
-	public void checkTCPConnectionWithoutCredentials() throws Exception {
-		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("", "");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				1884,
-				"tcp",
-				options);
-		// assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkTCPConnectionWitCredentials() throws Exception {
-		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				1884,
-				"tcp",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkTCPConnectionWitWrongCredentials() throws Exception {
-		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "false");
-		boolean authentication_failed = false;
-		try {
-			IMqttClient client = config.mqttClient(
-					"test-client",
-					"localhost",
-					1884,
-					"tcp",
-					options);
-		} catch (MqttException e) {
-			if (MqttException.REASON_CODE_FAILED_AUTHENTICATION == e.getReasonCode()) {
-				authentication_failed = true;
-			}
-		}
-		assertTrue(authentication_failed);
-	}
-
-	@Test
-	public void checkWSConnectionWithoutCredentials() throws Exception {
-		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("", "");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				8080,
-				"ws",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
-
-	@Test
-	public void checkWSConnectionWitCredentials() throws Exception {
-		MqttSubmodelRepositoryConfiguration config = new MqttSubmodelRepositoryConfiguration();
-		MqttConnectOptions options = config.mqttConnectOptions("testuser", "passwd");
-		IMqttClient client = config.mqttClient(
-				"test-client",
-				"localhost",
-				8080,
-				"ws",
-				options);
-		assertTrue(client.isConnected());
-		client.disconnect();
-		client.close();
-	}
 }

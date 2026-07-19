@@ -25,6 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.pathparsing;
 
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
+import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
+
 public class SubmodelElementIdShortHelper {
 	
 	/**
@@ -78,6 +81,25 @@ public class SubmodelElementIdShortHelper {
 		}
 		if(hasOpeningBrackets(idShortPath)) return true;
 		return false;
+	}
+
+	/**
+	 * Builds the path of a child that has just been added to a parent element.
+	 *
+	 * @param parentIdShortPath
+	 *            path of the parent element
+	 * @param parent
+	 *            parent element after the child was added
+	 * @param child
+	 *            added child element
+	 * @return path of the added child
+	 */
+	public static String buildChildIdShortPath(String parentIdShortPath, SubmodelElement parent, SubmodelElement child) {
+		if (parent instanceof SubmodelElementList list) {
+			return parentIdShortPath + "[" + (list.getValue().size() - 1) + "]";
+		}
+
+		return parentIdShortPath + "." + child.getIdShort();
 	}
 
 	private static boolean hasDot(String idShortPath) {

@@ -23,6 +23,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.digitaltwin.basyx</groupId>
+			<artifactId>basyx.mqttcore</artifactId>
+			<version>${revision}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.digitaltwin.basyx</groupId>
 			<artifactId>basyx.aasrepository-core</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
