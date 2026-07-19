@@ -1,6 +1,6 @@
 # AssetAdministrationShell Repository - Registry Integration
-This feature automatically integrates the Descriptor with the Registry while creation of the Shell at Repository. <br>
-It also automatically removes the Descriptor from the Registry when the Shell is removed from the Repository. 
+This feature automatically creates and updates the Descriptor in the Registry when a Shell or its Asset Information changes in the Repository. <br>
+It also automatically removes the Descriptor from the Registry when the Shell is removed from the Repository.
 
 To enable this feature, the following two properties should be configured:
 
@@ -32,3 +32,13 @@ basyx.aasrepository.feature.registryintegration.authorization.username=test
 basyx.aasrepository.feature.registryintegration.authorization.password=test
 basyx.aasrepository.feature.registryintegration.authorization.scopes=[]
 ```
+
+The Registry permissions required by the integration are:
+
+- `CREATE` when a Shell is created
+- `READ` and `UPDATE` when a Shell or its Asset Information is updated
+- `DELETE` when a Shell is deleted
+
+`READ` is required during updates because the Registry API replaces complete descriptors. The integration reads the existing descriptor first so that Registry-managed endpoint metadata and Submodel Descriptors are retained.
+
+The Registry API currently provides neither conditional updates nor a partial update operation for Shell Descriptors. Consequently, descriptor changes made directly in the Registry by another client must not run concurrently with an AAS update if both changes need to be retained.
