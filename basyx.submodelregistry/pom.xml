@@ -20,7 +20,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.75</swagger.codegen.version>
+		<swagger.codegen.version>3.0.81</swagger.codegen.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
 			Plattform_i40-SubmodelRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml</openapi.base.name>
