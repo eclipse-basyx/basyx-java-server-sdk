@@ -21,7 +21,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<generated.folder>src/generated</generated.folder>
-		<swagger.codegen.version>3.0.75</swagger.codegen.version>
+		<swagger.codegen.version>3.0.81</swagger.codegen.version>
 		<openapi.folder.name>open-api</openapi.folder.name>
 		<openapi.base.name>
 			Plattform_i40-AssetAdministrationShellRegistryServiceSpecification-V3.0.1_SSP-001-resolved.yaml
