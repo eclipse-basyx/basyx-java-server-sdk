@@ -35,7 +35,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -96,10 +98,22 @@ public class BaSyxHTTPConfiguration {
 	public WebMvcConfigurer resourceHttpMessageConverterConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
-			public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-				moveResourceHttpMessageConverterToFront(converters);
+			public void configureMessageConverters(HttpMessageConverters.ServerBuilder builder) {
+				builder.configureMessageConvertersList(converters -> {
+					moveResourceHttpMessageConverterToFront(converters);
+					moveByteArrayHttpMessageConverterToFront(converters);
+				});
 			}
 		};
+	}
+
+	private static void moveByteArrayHttpMessageConverterToFront(List<HttpMessageConverter<?>> converters) {
+		for (int i = 0; i < converters.size(); i++) {
+			if (converters.get(i) instanceof ByteArrayHttpMessageConverter) {
+				converters.add(0, converters.remove(i));
+				return;
+			}
+		}
 	}
 
 	private static void moveResourceHttpMessageConverterToFront(List<HttpMessageConverter<?>> converters) {
