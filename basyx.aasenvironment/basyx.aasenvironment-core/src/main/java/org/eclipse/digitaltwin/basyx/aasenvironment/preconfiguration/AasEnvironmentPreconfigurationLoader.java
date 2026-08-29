@@ -41,6 +41,7 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException
 import org.eclipse.digitaltwin.basyx.aasenvironment.AasEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment;
 import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEnvironment.EnvironmentType;
+import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.slf4j.Logger;
@@ -89,7 +90,16 @@ public class AasEnvironmentPreconfigurationLoader {
 
 		for (File file : files) {
 			logLoadingProcess(currenFileIndex++, filesCount, file.getName());
-			aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
+			try {
+				aasEnvironment.loadEnvironment(CompleteEnvironment.fromFile(file));
+			} catch (IOException | DeserializationException | InvalidFormatException | ZipBombException e) {
+				logger.warn("Could not load preconfigured AAS Environment from file '{}'. Skipping this file.", file.getAbsolutePath(), e);
+			} catch (RuntimeException e) {
+				if (e instanceof CollidingIdentifierException) {
+					throw e;
+				}
+				logger.warn("Could not load preconfigured AAS Environment from file '{}'. Skipping this file.", file.getAbsolutePath(), e);
+			}
 		}
 	}
 
