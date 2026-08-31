@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -51,7 +51,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -100,7 +100,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -122,7 +122,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -149,7 +149,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -171,7 +171,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -193,7 +193,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -215,7 +215,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -237,7 +237,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
@@ -264,7 +264,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Build BaSyx Example Images
