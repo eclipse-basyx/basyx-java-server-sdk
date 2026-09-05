@@ -29,6 +29,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.deserialization
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.serialization.EnumSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.util.ReflectionHelper;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.internal.ReflectionAnnotationIntrospector;
+import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
+import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 import org.eclipse.digitaltwin.basyx.core.StandardizedLiteralEnum;
 import org.eclipse.digitaltwin.basyx.http.description.Profile;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -61,6 +63,8 @@ public class Aas4JHTTPSerializationExtension implements SerializationExtension {
         .annotationIntrospector(new ReflectionAnnotationIntrospector())
         .modulesToInstall(buildEnumModule(), buildImplementationModule());
     ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.mixIn(x.getKey(), x.getValue()));
+    builder.mixIn(SpecificAssetId.class, SpecificAssetIdMixin.class);
+    builder.mixIn(DefaultSpecificAssetId.class, SpecificAssetIdMixin.class);
   }
 
   @SuppressWarnings("unchecked")

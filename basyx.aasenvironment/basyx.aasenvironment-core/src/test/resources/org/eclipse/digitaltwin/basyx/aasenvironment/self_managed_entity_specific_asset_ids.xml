@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment xmlns="https://admin-shell.io/aas/3/0">
+  <submodels>
+    <submodel>
+      <idShort>HierarchicalStructures</idShort>
+      <id>https://admin-shell.io/idta/SubmodelTemplate/HierarchicalStructuresBoM/1/1</id>
+      <submodelElements>
+        <entity>
+          <idShort>EntryNode</idShort>
+          <entityType>SelfManagedEntity</entityType>
+          <globalAssetId>https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0</globalAssetId>
+          <specificAssetIds>
+            <specificAssetId>
+              <semanticId>
+                <type>ExternalReference</type>
+                <keys>
+                  <key>
+                    <type>GlobalReference</type>
+                    <value>https://admin-shell.io/idta/test</value>
+                  </key>
+                </keys>
+              </semanticId>
+              <name>https://admin-shell.io/idta/test</name>
+              <value>Value1</value>
+            </specificAssetId>
+          </specificAssetIds>
+        </entity>
+      </submodelElements>
+    </submodel>
+  </submodels>
+</environment>
