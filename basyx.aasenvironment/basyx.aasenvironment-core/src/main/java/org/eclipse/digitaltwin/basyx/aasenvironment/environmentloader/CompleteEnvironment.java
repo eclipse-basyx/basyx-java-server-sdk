@@ -106,12 +106,12 @@ public class CompleteEnvironment {
 			environment = deserializer.read(inputStream, Environment.class);
 		}
 		if(envType == EnvironmentType.XML) {
-			XmlDeserializer deserializer = new XmlDeserializer();
+			XmlDeserializer deserializer = new BasyxXmlDeserializer();
 			environment = deserializer.read(inputStream);
 		}
 		if(envType == EnvironmentType.AASX) {
 			try {
-				AASXDeserializer deserializer = new AASXDeserializer(inputStream);
+				AASXDeserializer deserializer = new AASXDeserializer(new BasyxXmlDeserializer(), inputStream);
 				relatedFiles = deserializer.getRelatedFiles();
 				environment = deserializer.read();
 			} catch (Exception e) {
