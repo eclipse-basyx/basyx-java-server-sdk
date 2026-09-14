@@ -1,7 +1,10 @@
 # Eclipse BaSyx Java V2 SDK [![Docker Pulls](https://img.shields.io/docker/pulls/eclipsebasyx/aas-server?style=plastic)](https://hub.docker.com/search?q=eclipsebasyx)
+
 [![BaSyx Logo](https://www.eclipse.org/basyx/img/basyxlogo.png)](https://www.eclipse.org/basyx/)
- 
-In this repository, the BaSyx Java V2 components fully compatible with *Details of the Asset Administration Shell V3* are as well as their respective Clients are contained. For each component, a multitude of backends (e.g., InMemory, MongoDB) as well as further features (MQTT, ...) are provided. All components are available on [DockerHub](https://hub.docker.com/search?q=eclipsebasyx) as off-the-shelf components and can be easily configured and extended. Additionally, the server SDK of this repository can be used for implementation of further components.
+
+BaSyx Java V2 is a server and client SDK for building Java applications compatible with *Details of the Asset Administration Shell V3*. It provides reusable components, client libraries, integrations such as MQTT, and backends including InMemory and MongoDB.
+
+For up-to-date, ready-to-run server components, use [BaSyx Go](https://go.basyx.org/) on [Docker Hub](https://hub.docker.com/search?q=eclipsebasyx). See [why BaSyx Go?](https://go.basyx.org/#why) for a comparison with BaSyx Java.
 
 ## Get started with our off-the-shelf components
 
@@ -13,6 +16,7 @@ In this repository, the BaSyx Java V2 components fully compatible with *Details 
 > If you need a minimal example, we also provide one [here](examples/BaSyxMinimal) in our collection of [BaSyx examples](examples).
 
 ## Server SDK
+
 The following off-the-shelf components are available:
 
 * [AAS Repository](basyx.aasrepository)
@@ -25,10 +29,13 @@ The following off-the-shelf components are available:
 * [AASX File Server](basyx.aasxfileserver)
 
 In addition, a blueprint for a Type 2/ Type 3 standalone submodel is provided:
+
 * [Type 2/Type 3 Submodel](basyx.submodelservice)
 
 ## Client SDK
+
 In addition, the following Clients are available:
+
 * [AAS Repository Client](basyx.aasrepository/basyx.aasrepository-client)
 * [Submodel Repository Client](basyx.submodelrepository/basyx.submodelrepository-client)
 * [AAS Service Client](basyx.aasservice/basyx.aasservice-client)
@@ -38,14 +45,16 @@ In addition, the following Clients are available:
 * [Submodel Registry Client](basyx.submodelregistry/basyx.submodelregistry-client-native)
 
 ## Documentation, Roadmap & Examples
+
 In addition to the [general documentation](https://github.com/eclipse-basyx/basyx-java-server-sdk/tree/main/docs), each component has its own specific documentation that can be found in the respective folders. Additionally, we provide a general documentation on [readthedocs](https://wiki.basyx.org/en/latest/).
 Furthermore, we are providing easy to use [examples](examples) that can be leveraged for setting up your own AAS infrastructure.
 The future roadmap of BaSyx is described [here](https://github.com/eclipse-basyx/basyx-java-server-sdk/blob/main/docs/Roadmap.md).
 
 ## Snapshot Releases
+
 We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For using the snapshots from Maven Central, add the following part to your project's POM:
 
-```
+```xml
 <repositories>
   <repository>
     <name>Central Portal Snapshots</name>
@@ -62,6 +71,7 @@ We're distributing our SNAPSHOT releases via DockerHub and Maven Central. For us
 ```
 
 ## Getting Involved & Contributing
+
 If you would like to get involved with the BaSyx Community, the [BaSyx Open Hour](https://www.iese.fraunhofer.de/en/customers_industries/digitalisierung-produktion/industrie40/basyx_open_hour.html) (every first Friday of the month) is an excellent starting point.
 
 We encourage you to contribute to BaSyx! Please check out the [Contributing to BaSyx guide](./.github/CONTRIBUTING.md) for guidelines about how to proceed.
