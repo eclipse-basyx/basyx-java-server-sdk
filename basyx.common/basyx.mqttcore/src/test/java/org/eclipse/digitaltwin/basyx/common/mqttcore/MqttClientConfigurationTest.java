@@ -65,7 +65,7 @@ public class MqttClientConfigurationTest {
 	public void acceptsValidAndRejectsInvalidTcpCredentials() throws Exception {
 		Path passwordFile = Files.createTempFile("moquette-passwords-", ".conf");
 		Files.writeString(passwordFile, USERNAME + ":" + PASSWORD_HASH + System.lineSeparator(), StandardCharsets.UTF_8);
-		try (MqttBrokerTestSupport fixture = MqttBrokerTestSupport.start(new FluentConfig().host("localhost").port(0).disallowAnonymous()
+		try (MqttBrokerTestSupport fixture = MqttBrokerTestSupport.start(new FluentConfig().host("localhost").disallowAnonymous()
 				.passwordFile(passwordFile.toAbsolutePath().toString()).disablePersistence().disableTelemetry().build())) {
 			IMqttClient validClient = fixture.trackClient(
 					configuration.mqttClient(uniqueClientId(), "localhost", fixture.port(), "tcp", configuration.mqttConnectOptions(USERNAME, PASSWORD)));
