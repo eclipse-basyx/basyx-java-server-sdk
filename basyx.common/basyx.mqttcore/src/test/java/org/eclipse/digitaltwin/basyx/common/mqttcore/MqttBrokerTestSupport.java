@@ -25,13 +25,12 @@
 package org.eclipse.digitaltwin.basyx.common.mqttcore;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.time.Duration;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.IntSupplier;
 
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -47,8 +46,8 @@ import io.moquette.broker.config.IConfig;
  * Isolated, in-memory Moquette fixture shared by MQTT feature tests.
  */
 public final class MqttBrokerTestSupport implements AutoCloseable {
-	private static final Duration PORT_BIND_TIMEOUT = Duration.ofSeconds(10);
-	private static final String WEBSOCKET_TRANSPORT_NAME = "Websocket MQTT";
+	private static final String BROKER_HOST = "localhost";
+	private static final int MAX_START_ATTEMPTS = 5;
 	/**
 	 * Paho wakes a synchronous QoS 1 publish when the PUBACK arrives, but only
 	 * releases the in-flight slot later on its callback thread. On slow machines
@@ -58,39 +57,91 @@ public final class MqttBrokerTestSupport implements AutoCloseable {
 	 * through a single client.
 	 */
 	private static final int TEST_CLIENT_MAX_INFLIGHT = 1000;
-	private final MqttTestListener listener = new MqttTestListener();
+	private final MqttTestListener listener;
 	private final Server broker;
 	private final List<IMqttClient> clients = new ArrayList<>();
 	private final int port;
 	private final int websocketPort;
 
-	private MqttBrokerTestSupport(IConfig config, boolean websocketEnabled) throws IOException {
-		broker = new Server();
-		try {
-			broker.startServer(config, List.of(listener));
-			port = awaitBoundPort(broker::getPort, "TCP");
-			websocketPort = websocketEnabled ? awaitBoundPort(() -> readTransportPort(broker, WEBSOCKET_TRANSPORT_NAME), "WebSocket") : -1;
-		} catch (IOException | RuntimeException | Error startupError) {
-			try {
-				broker.stopServer();
-			} catch (Throwable cleanupError) {
-				startupError.addSuppressed(cleanupError);
-			}
-			throw startupError;
-		}
+	private MqttBrokerTestSupport(Server broker, MqttTestListener listener, int port, int websocketPort) {
+		this.broker = broker;
+		this.listener = listener;
+		this.port = port;
+		this.websocketPort = websocketPort;
 	}
 
 	public static MqttBrokerTestSupport start() throws IOException {
-		return start(new FluentConfig().host("localhost").port(0).allowAnonymous().disablePersistence().disableTelemetry().build());
+		return start(new FluentConfig().host(BROKER_HOST).allowAnonymous().disablePersistence().disableTelemetry().build());
 	}
 
+	/**
+	 * Starts a broker with the given configuration. The TCP port is always
+	 * assigned by the fixture and overrides any port in {@code config}.
+	 */
 	public static MqttBrokerTestSupport start(IConfig config) throws IOException {
-		return new MqttBrokerTestSupport(config, false);
+		return startOnFreePorts(config, false);
 	}
 
 	public static MqttBrokerTestSupport startWithWebSocket() throws IOException {
-		IConfig config = new FluentConfig().host("localhost").port(0).websocketPort(0).allowAnonymous().disablePersistence().disableTelemetry().build();
-		return new MqttBrokerTestSupport(config, true);
+		return startOnFreePorts(new FluentConfig().host(BROKER_HOST).allowAnonymous().disablePersistence().disableTelemetry().build(), true);
+	}
+
+	/**
+	 * Moquette 0.17 cannot reliably report ephemeral ports: the acceptor stores
+	 * them in a plain HashMap from a Netty thread, while Server#getPort() writes a
+	 * 0 placeholder into the same map from the caller thread. Under contention the
+	 * real port is lost and getPort() keeps returning 0. The fixture therefore
+	 * reserves concrete ports up front and retries if another process grabs one
+	 * before Moquette binds it.
+	 */
+	private static MqttBrokerTestSupport startOnFreePorts(IConfig config, boolean websocketEnabled) throws IOException {
+		RuntimeException lastBindFailure = null;
+		for (int attempt = 0; attempt < MAX_START_ATTEMPTS; attempt++) {
+			int port = reserveFreePort();
+			int websocketPort = websocketEnabled ? reserveFreePort() : -1;
+			if (port == websocketPort) {
+				continue;
+			}
+			config.setProperty(IConfig.PORT_PROPERTY_NAME, Integer.toString(port));
+			if (websocketEnabled) {
+				config.setProperty(IConfig.WEB_SOCKET_PORT_PROPERTY_NAME, Integer.toString(websocketPort));
+			}
+			MqttTestListener listener = new MqttTestListener();
+			Server broker = new Server();
+			try {
+				broker.startServer(config, List.of(listener));
+				return new MqttBrokerTestSupport(broker, listener, port, websocketPort);
+			} catch (IOException | RuntimeException | Error startupError) {
+				try {
+					broker.stopServer();
+				} catch (Throwable cleanupError) {
+					startupError.addSuppressed(cleanupError);
+				}
+				if (!(startupError instanceof RuntimeException runtimeError) || !isBindFailure(runtimeError)) {
+					throw startupError;
+				}
+				if (lastBindFailure != null) {
+					runtimeError.addSuppressed(lastBindFailure);
+				}
+				lastBindFailure = runtimeError;
+			}
+		}
+		throw new IOException("Could not bind Moquette to a free port after " + MAX_START_ATTEMPTS + " attempts", lastBindFailure);
+	}
+
+	private static int reserveFreePort() throws IOException {
+		try (ServerSocket socket = new ServerSocket(0, 0, InetAddress.getByName(BROKER_HOST))) {
+			return socket.getLocalPort();
+		}
+	}
+
+	private static boolean isBindFailure(Throwable error) {
+		for (Throwable cause = error; cause != null; cause = cause.getCause()) {
+			if (cause instanceof BindException) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public MqttClient connectClient() throws MqttException {
@@ -108,7 +159,7 @@ public final class MqttBrokerTestSupport implements AutoCloseable {
 	}
 
 	public String serverUri() {
-		return "tcp://localhost:" + port;
+		return "tcp://" + BROKER_HOST + ":" + port;
 	}
 
 	public int port() {
@@ -128,38 +179,6 @@ public final class MqttBrokerTestSupport implements AutoCloseable {
 
 	private static String uniqueClientId() {
 		return "mqtt-" + UUID.randomUUID().toString().substring(0, 16);
-	}
-
-	private static int awaitBoundPort(IntSupplier portSupplier, String transport) throws IOException {
-		long deadline = System.nanoTime() + PORT_BIND_TIMEOUT.toNanos();
-		do {
-			int boundPort = portSupplier.getAsInt();
-			if (boundPort > 0) {
-				return boundPort;
-			}
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new IOException("Interrupted while awaiting Moquette " + transport + " port", e);
-			}
-		} while (System.nanoTime() < deadline);
-		throw new IOException("Timed out awaiting Moquette " + transport + " port");
-	}
-
-	@SuppressWarnings("unchecked")
-	private static int readTransportPort(Server broker, String transportName) {
-		try {
-			Field acceptorField = Server.class.getDeclaredField("acceptor");
-			acceptorField.setAccessible(true);
-			Object acceptor = acceptorField.get(broker);
-			Field portsField = acceptor.getClass().getDeclaredField("ports");
-			portsField.setAccessible(true);
-			Map<String, Integer> ports = (Map<String, Integer>) portsField.get(acceptor);
-			return ports.getOrDefault(transportName, -1);
-		} catch (ReflectiveOperationException e) {
-			throw new IllegalStateException("Could not read Moquette's bound " + transportName + " port", e);
-		}
 	}
 
 	@Override
