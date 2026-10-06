@@ -36,6 +36,7 @@ import java.util.function.IntSupplier;
 import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import io.moquette.broker.Server;
@@ -48,6 +49,15 @@ import io.moquette.broker.config.IConfig;
 public final class MqttBrokerTestSupport implements AutoCloseable {
 	private static final Duration PORT_BIND_TIMEOUT = Duration.ofSeconds(10);
 	private static final String WEBSOCKET_TRANSPORT_NAME = "Websocket MQTT";
+	/**
+	 * Paho wakes a synchronous QoS 1 publish when the PUBACK arrives, but only
+	 * releases the in-flight slot later on its callback thread. On slow machines
+	 * these unreleased slots pile up and exceed Paho's default window of 10, which
+	 * fails the next publish with "Too many publishes in progress (32202)". The
+	 * window is therefore sized above the number of messages any test publishes
+	 * through a single client.
+	 */
+	private static final int TEST_CLIENT_MAX_INFLIGHT = 1000;
 	private final MqttTestListener listener = new MqttTestListener();
 	private final Server broker;
 	private final List<IMqttClient> clients = new ArrayList<>();
@@ -86,7 +96,9 @@ public final class MqttBrokerTestSupport implements AutoCloseable {
 	public MqttClient connectClient() throws MqttException {
 		MqttClient client = new MqttClient(serverUri(), uniqueClientId());
 		clients.add(client);
-		client.connect();
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setMaxInflight(TEST_CLIENT_MAX_INFLIGHT);
+		client.connect(options);
 		return client;
 	}
 
