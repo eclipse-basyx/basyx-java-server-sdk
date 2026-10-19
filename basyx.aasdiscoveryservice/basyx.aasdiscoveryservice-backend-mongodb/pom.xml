@@ -60,6 +60,13 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-mongodb</artifactId>
 			<version>${querydsl-version}</version>
+			<exclusions>
+				<!-- Spring Boot supplies the MongoDB driver; the legacy bundled driver conflicts with it. -->
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongo-java-driver</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.persistence</groupId>
