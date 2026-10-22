@@ -17,7 +17,8 @@ services:
       mongo:
         condition: service_healthy
   mongo:
-    image: mongo:8
+    # mongo:8 (8.3) and 8.0 refuse to start on Linux kernel 6.19+, see https://jira.mongodb.org/browse/SERVER-121912
+    image: mongo:8.2.12
     container_name: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoAdmin
