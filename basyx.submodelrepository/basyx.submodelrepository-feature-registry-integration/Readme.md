@@ -1,6 +1,6 @@
 # Submodel Repository - Registry Integration
 This feature automatically integrates the Descriptor with the Registry while creation of the Submodel at the Repository. <br>
-It also automatically removes the Descriptor from the Registry when the Submodel is removed from the Repository.
+It also automatically removes the Descriptor from the Registry when the Submodel is removed from the Repository. If the Registry cannot be reached or rejects the deletion, the Submodel is kept and the request fails; a Descriptor that is already absent from the Registry does not block the deletion.
 
 To enable this feature, the following two properties should be configured:
 

@@ -202,30 +202,35 @@ public class RegistryIntegrationSubmodelRepository implements SubmodelRepository
 
 	private void deleteFromRegistry(String submodelId) {
 		SubmodelRegistryApi registryApi = submodelRepositoryRegistryLink.getRegistryApi();
-		
-		if (!submodelExistsOnRegistry(submodelId, registryApi)) {
-			logger.error("Unable to un-link the Submodel descriptor '{}' from the Registry because it does not exist on the Registry.", submodelId);
-			
-			return;
-		}
 
 		try {
 			registryApi.deleteSubmodelDescriptorById(submodelId);
 
 			logger.info("Submodel '{}' has been automatically un-linked from the Registry.", submodelId);
 		} catch (ApiException e) {
-			throw new RepositoryRegistryUnlinkException(submodelId, e);
+			if (e.getCode() == 404) {
+				logger.info("Submodel descriptor '{}' was already absent from the Registry.", submodelId);
+				return;
+			}
+
+			throw new RepositoryRegistryUnlinkException(submodelId, createRegistryFailureDetails("deletion", e), e);
 		}
 	}
-	
-	private boolean submodelExistsOnRegistry(String submodelId, SubmodelRegistryApi registryApi) {
-		try {
-			registryApi.getSubmodelDescriptorById(submodelId);
-			
-			return true;
-		} catch (ApiException e) {
-			return false;
-		}
+
+	private String createRegistryFailureDetails(String operation, ApiException cause) {
+		StringBuilder details = new StringBuilder("Registry descriptor ").append(operation).append(" failed");
+
+		if (cause.getCode() > 0)
+			details.append(" with HTTP status ").append(cause.getCode());
+
+		String responseDetails = cause.getResponseBody();
+		if (responseDetails == null || responseDetails.isBlank())
+			responseDetails = cause.getMessage();
+
+		if (responseDetails != null && !responseDetails.isBlank())
+			details.append(": ").append(responseDetails);
+
+		return details.toString();
 	}
 
 	@Override
