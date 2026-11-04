@@ -202,6 +202,22 @@ public class ApiClient {
    * @param baseUri Base URI
    */
   public ApiClient(HttpClient.Builder builder, ObjectMapper mapper, String baseUri) {
+    this(builder, builder.build(), mapper, baseUri);
+  }
+
+  /**
+   * Create an instance of ApiClient that sends its requests through an existing
+   * {@link HttpClient}, so that several ApiClients share its connections and threads.
+   *
+   * @param httpClient Http client to share.
+   * @param mapper Object mapper.
+   * @param baseUri Base URI
+   */
+  public ApiClient(HttpClient httpClient, ObjectMapper mapper, String baseUri) {
+    this(HttpClient.newBuilder(), httpClient, mapper, baseUri);
+  }
+
+  private ApiClient(HttpClient.Builder builder, HttpClient httpClient, ObjectMapper mapper, String baseUri) {
     this.builder = builder;
     this.mapper = mapper;
     updateBaseUri(baseUri != null ? baseUri : getDefaultBaseUri());
@@ -210,7 +226,7 @@ public class ApiClient {
     connectTimeout = null;
     responseInterceptor = null;
     asyncResponseInterceptor = null;
-    this.httpClient = this.builder.build();
+    this.httpClient = httpClient;
   }
 
   protected ObjectMapper createDefaultObjectMapper() {

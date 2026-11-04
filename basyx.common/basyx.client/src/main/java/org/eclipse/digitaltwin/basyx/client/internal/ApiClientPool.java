@@ -26,22 +26,37 @@
 
 package org.eclipse.digitaltwin.basyx.client.internal;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import java.net.URI;
 import java.net.http.HttpClient;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Thread-safe pool for reusing ApiClient instances per URI.
- * This avoids creating new HttpClient instances for each operation.
+ * All ApiClients that target the same scheme, host and port share one
+ * {@link HttpClient}, so the number of HTTP connection pools and selector
+ * threads is bounded by the number of servers rather than by the number of
+ * AAS or submodels that are accessed.
+ * Clearing or removing ApiClients releases the HttpClient of a server once
+ * no cached ApiClient uses it. HttpClients are never closed by the pool, so
+ * previously returned ApiClients keep working.
  * 
  * @author koort
  */
 public class ApiClientPool {
 
   private static final ApiClientPool INSTANCE = new ApiClientPool();
+
+  private static final int DEFAULT_HTTP_PORT = 80;
+  private static final int DEFAULT_HTTPS_PORT = 443;
+
+  private final Map<String, HttpClient> httpClientsByOrigin = new ConcurrentHashMap<>();
 
   private final Map<String, ApiClient> aasRepoApiClients = new ConcurrentHashMap<>();
   private final Map<String, ApiClient> aasServiceApiClients = new ConcurrentHashMap<>();
@@ -69,13 +84,7 @@ public class ApiClientPool {
    * @return cached or new ApiClient for AAS operations
    */
   public ApiClient getOrCreateAasRepoApiClient(String baseUri, ObjectMapper mapper) {
-    return aasRepoApiClients.compute(baseUri, (uri, existingApiClient) -> {
-      if (existingApiClient != null) {
-        existingApiClient.setObjectMapper(mapper);
-        return existingApiClient;
-      }
-      return new ApiClient(HttpClient.newBuilder(), mapper, uri);
-    });
+    return getOrCreateApiClient(aasRepoApiClients, baseUri, mapper);
   }
 
   /**
@@ -86,13 +95,7 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateAasServiceApiClient(String serviceUrl, ObjectMapper mapper) {
-    return aasServiceApiClients.compute(serviceUrl, (uri, existingApiClient) -> {
-      if (existingApiClient != null) {
-        existingApiClient.setObjectMapper(mapper);
-        return existingApiClient;
-      }
-      return new ApiClient(HttpClient.newBuilder(), mapper, uri);
-    });
+    return getOrCreateApiClient(aasServiceApiClients, serviceUrl, mapper);
   }
 
   /**
@@ -103,13 +106,7 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateSubmodelRepoApiClient(String baseUri, ObjectMapper mapper) {
-    return submodelRepoApiClients.compute(baseUri, (uri, existingApiClient) -> {
-      if (existingApiClient != null) {
-        existingApiClient.setObjectMapper(mapper);
-        return existingApiClient;
-      }
-      return new ApiClient(HttpClient.newBuilder(), mapper, uri);
-    });
+    return getOrCreateApiClient(submodelRepoApiClients, baseUri, mapper);
   }
 
   /**
@@ -120,13 +117,38 @@ public class ApiClientPool {
    * @return cached or new ApiClient for Submodel operations
    */
   public ApiClient getOrCreateSubmodelServiceApiClient(String serviceUrl, ObjectMapper mapper) {
-    return submodelServiceApiClients.compute(serviceUrl, (uri, existingApiClient) -> {
+    return getOrCreateApiClient(submodelServiceApiClients, serviceUrl, mapper);
+  }
+
+  private ApiClient getOrCreateApiClient(Map<String, ApiClient> apiClients, String url, ObjectMapper mapper) {
+    return apiClients.compute(url, (uri, existingApiClient) -> {
       if (existingApiClient != null) {
         existingApiClient.setObjectMapper(mapper);
         return existingApiClient;
       }
-      return new ApiClient(HttpClient.newBuilder(), mapper, uri);
+      return new ApiClient(getOrCreateHttpClient(uri), mapper, uri);
     });
+  }
+
+  private HttpClient getOrCreateHttpClient(String url) {
+    return httpClientsByOrigin.computeIfAbsent(toOrigin(url), origin -> HttpClient.newHttpClient());
+  }
+
+  private static String toOrigin(String url) {
+    URI uri = URI.create(url);
+    String scheme = toLowerCase(uri.getScheme());
+    return scheme + "://" + toLowerCase(uri.getHost()) + ":" + resolvePort(scheme, uri.getPort());
+  }
+
+  private static int resolvePort(String scheme, int port) {
+    if (port != -1) {
+      return port;
+    }
+    return "https".equals(scheme) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
+  }
+
+  private static String toLowerCase(String value) {
+    return value == null ? "" : value.toLowerCase(Locale.ROOT);
   }
 
   /**
@@ -134,6 +156,7 @@ public class ApiClientPool {
    */
   public void clearAasRepoApiClients() {
     aasRepoApiClients.clear();
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -141,6 +164,7 @@ public class ApiClientPool {
    */
   public void clearAasServiceApiClients() {
     aasServiceApiClients.clear();
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -148,6 +172,7 @@ public class ApiClientPool {
    */
   public void clearSubmodelRepoApiClients() {
     submodelRepoApiClients.clear();
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -155,16 +180,19 @@ public class ApiClientPool {
    */
   public void clearSubmodelServiceApiClients() {
     submodelServiceApiClients.clear();
+    releaseUnusedHttpClients();
   }
 
   /**
-   * Clears all cached ApiClients.
+   * Clears all cached ApiClients and releases all cached HttpClients.
+   * Previously returned ApiClients keep working with their HttpClient.
    */
   public void clearAll() {
     aasRepoApiClients.clear();
     aasServiceApiClients.clear();
     submodelRepoApiClients.clear();
     submodelServiceApiClients.clear();
+    httpClientsByOrigin.clear();
   }
 
   /**
@@ -174,6 +202,7 @@ public class ApiClientPool {
    */
   public void removeAasRepoApiClient(String baseUri) {
     aasRepoApiClients.remove(baseUri);
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -183,6 +212,7 @@ public class ApiClientPool {
    */
   public void removeAasServiceApiClient(String serviceUrl) {
     aasServiceApiClients.remove(serviceUrl);
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -192,6 +222,7 @@ public class ApiClientPool {
    */
   public void removeSubmodelRepoApiClient(String baseUri) {
     submodelRepoApiClients.remove(baseUri);
+    releaseUnusedHttpClients();
   }
 
   /**
@@ -201,5 +232,14 @@ public class ApiClientPool {
    */
   public void removeSubmodelServiceApiClient(String serviceUrl) {
     submodelServiceApiClients.remove(serviceUrl);
+    releaseUnusedHttpClients();
+  }
+
+  private void releaseUnusedHttpClients() {
+    Set<String> originsInUse = Stream.of(aasRepoApiClients, aasServiceApiClients, submodelRepoApiClients, submodelServiceApiClients)
+        .flatMap(apiClients -> apiClients.keySet().stream())
+        .map(ApiClientPool::toOrigin)
+        .collect(Collectors.toSet());
+    httpClientsByOrigin.keySet().retainAll(originsInUse);
   }
 }
