@@ -87,4 +87,36 @@ public class ApiClientPoolTest {
 
     assertEquals(1, httpClients.size());
   }
+
+  @Test
+  public void clearAllReleasesCachedHttpClients() {
+    String serviceUrl = "http://clear-all.test:8081/submodels/c20";
+    HttpClient beforeClear = pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper).getHttpClient();
+
+    pool.clearAll();
+
+    assertNotSame(beforeClear, pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper).getHttpClient());
+  }
+
+  @Test
+  public void removeReleasesHttpClientOfServerWithoutRemainingClients() {
+    String serviceUrl = "http://remove-last.test:8081/submodels/c20";
+    HttpClient beforeRemove = pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper).getHttpClient();
+
+    pool.removeSubmodelServiceApiClient(serviceUrl);
+
+    assertNotSame(beforeRemove, pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper).getHttpClient());
+  }
+
+  @Test
+  public void removeKeepsHttpClientOfServerWithRemainingClients() {
+    HttpClient repositoryClient = pool.getOrCreateSubmodelRepoApiClient("http://remove-shared.test:8081", mapper).getHttpClient();
+    String serviceUrl = "http://remove-shared.test:8081/submodels/c20";
+    pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper);
+
+    pool.removeSubmodelServiceApiClient(serviceUrl);
+    pool.clearAasServiceApiClients();
+
+    assertSame(repositoryClient, pool.getOrCreateSubmodelServiceApiClient(serviceUrl, mapper).getHttpClient());
+  }
 }
