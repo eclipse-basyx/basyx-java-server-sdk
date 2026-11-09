@@ -41,8 +41,8 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Utility class for retrieving access token
@@ -95,7 +95,7 @@ public class AccessTokenProvider {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final JsonNode responseNode = objectMapper.readTree(responseString);
 
-		return responseNode.get("access_token").asText();
+		return responseNode.get("access_token").asString();
 	}
 	
 	private String getResponseAsString(CloseableHttpResponse retrievalResponse) throws IOException, ParseException {

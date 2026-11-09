@@ -1,18 +1,15 @@
 package org.eclipse.digitaltwin.basyx.http;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 import org.eclipse.digitaltwin.basyx.core.StandardizedLiteralEnum;
 
-import java.io.IOException;
-
-public class StandardizedLiteralEnumSerializer<T extends StandardizedLiteralEnum> extends JsonSerializer<T> {
+public class StandardizedLiteralEnumSerializer<T extends StandardizedLiteralEnum> extends ValueSerializer<T> {
 
   @Override
-  public void serialize(T value, JsonGenerator jgen, SerializerProvider provider)
-      throws IOException, JsonProcessingException {
+  public void serialize(T value, JsonGenerator jgen, SerializationContext provider)
+      {
     jgen.writeString(value.getValue());
   }
 }

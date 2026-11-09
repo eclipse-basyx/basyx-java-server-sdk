@@ -29,9 +29,9 @@ package org.eclipse.digitaltwin.basyx.serialization;
 import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a {@link PropertyValue} as described in DotAAS Part 2
@@ -39,10 +39,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author danish
  *
  */
-public class PropertyValueSerializer extends JsonSerializer<PropertyValue> {
+public class PropertyValueSerializer extends ValueSerializer<PropertyValue> {
 
 	@Override
-	public void serialize(PropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(PropertyValue value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeString(value.getValue());
 	}
 

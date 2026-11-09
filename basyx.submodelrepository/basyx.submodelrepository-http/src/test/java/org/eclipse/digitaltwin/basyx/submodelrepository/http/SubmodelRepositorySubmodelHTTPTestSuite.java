@@ -63,8 +63,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 import com.google.common.collect.Lists;
 
 /**
@@ -461,7 +461,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 	    return null;
 	}
 	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+	private String getJSONWithoutCursorInfo(String response) throws DatabindException, JacksonException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
@@ -521,7 +521,7 @@ public abstract class SubmodelRepositorySubmodelHTTPTestSuite {
 		return BaSyxSubmodelHttpTestUtils.getSpecificSubmodelAccessPath(getURL(), submodelId) + "/submodel-elements/" + submodelElementIdShort + "/attachment?fileName=" + fileName;
 	}
 
-	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
+	private void assertSubmodelCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JacksonException, DatabindException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);

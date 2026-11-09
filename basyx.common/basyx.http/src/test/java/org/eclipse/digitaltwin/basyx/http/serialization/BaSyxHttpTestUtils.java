@@ -56,11 +56,11 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.springframework.core.io.ClassPathResource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Supports the tests working with the HTTP/REST API of AAS, Submodels, etc.
@@ -104,19 +104,19 @@ public class BaSyxHttpTestUtils {
 	 * 
 	 * @param expected
 	 * @param actual
-	 * @throws JsonProcessingException
-	 * @throws JsonMappingException
+	 * @throws JacksonException
+	 * @throws DatabindException
 	 */
-	public static void assertSameJSONContent(String expected, String actual) throws JsonProcessingException, JsonMappingException {
+	public static void assertSameJSONContent(String expected, String actual) throws JacksonException, DatabindException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		assertEquals(mapper.readTree(expected), mapper.readTree(actual));
 	}
 
-	public static void assertJSONValueEquals(String actual, String jsonPointer, String expectedValue) throws JsonProcessingException {
+	public static void assertJSONValueEquals(String actual, String jsonPointer, String expectedValue) throws JacksonException {
 		ObjectMapper mapper = new ObjectMapper();
 
-		assertEquals(expectedValue, mapper.readTree(actual).at(jsonPointer).asText());
+		assertEquals(expectedValue, mapper.readTree(actual).at(jsonPointer).asString());
 	}
 
 	/**
@@ -270,10 +270,10 @@ public class BaSyxHttpTestUtils {
 	 * @param inputJSON
 	 * @return
 	 * 
-	 * @throws JsonMappingException
-	 * @throws JsonProcessingException
+	 * @throws DatabindException
+	 * @throws JacksonException
 	 */
-	public static String removeCursorFromJSON(String inputJSON) throws JsonMappingException, JsonProcessingException {
+	public static String removeCursorFromJSON(String inputJSON) throws DatabindException, JacksonException {
 		ObjectMapper mapper = new ObjectMapper();
 
         JsonNode rootNode = mapper.readTree(inputJSON);

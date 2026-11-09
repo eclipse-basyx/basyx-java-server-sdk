@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import com.sun.net.httpserver.HttpServer;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperationVariable;
@@ -49,8 +49,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.codec.json.JacksonJsonDecoder;
+import org.springframework.http.codec.json.JacksonJsonEncoder;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -76,7 +76,7 @@ public class TestOperationDelegationFeature {
 	private static SubmodelRepository submodelRepository;
 	private static HTTPMockServer httpMockServer = new HTTPMockServer(2020);
 	private static WebClient webClient;
-	private ObjectMapper mapper = configureObjectMapper();
+	private JsonMapper mapper = configureObjectMapper();
 
 	@BeforeClass
 	public static void setUp() throws IOException {
@@ -216,11 +216,11 @@ public class TestOperationDelegationFeature {
 		return square(inputOperationVariable);
 	}
 
-	private String getRequestBody(OperationVariable[] inputOperationVariable) throws JsonProcessingException {
+	private String getRequestBody(OperationVariable[] inputOperationVariable) throws JacksonException {
 		return mapper.writeValueAsString(inputOperationVariable);
 	}
 
-	private String getExpectedOutputResponse(OperationVariable[] inputOperationVariable) throws JsonProcessingException {
+	private String getExpectedOutputResponse(OperationVariable[] inputOperationVariable) throws JacksonException {
 		OperationVariable[] output = getOutputVariable(inputOperationVariable);
 
 		return mapper.writeValueAsString(output);
@@ -242,8 +242,8 @@ public class TestOperationDelegationFeature {
 
 	private static WebClient createWebClient(OperationDelegationSecurityProperties securityProperties) {
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
-			configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(configureObjectMapper()));
-			configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(configureObjectMapper()));
+			configurer.defaultCodecs().jacksonJsonEncoder(new JacksonJsonEncoder(configureObjectMapper()));
+			configurer.defaultCodecs().jacksonJsonDecoder(new JacksonJsonDecoder(configureObjectMapper()));
 		}).build();
 
 		OperationDelegationTargetValidator targetValidator = new OperationDelegationTargetValidator(securityProperties);
@@ -303,10 +303,10 @@ public class TestOperationDelegationFeature {
 		return new DefaultOperationVariable.Builder().value(new DefaultProperty.Builder().idShort(idShort).valueType(DataTypeDefXsd.INT).value("5").build()).build();
 	}
 
-	private static ObjectMapper configureObjectMapper() {
+	private static JsonMapper configureObjectMapper() {
 		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension(), new SubmodelRepositoryHTTPSerializationExtension());
 
-		return new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
+		return BaSyxHTTPConfiguration.createJsonMapperBuilder(extensions).build();
 	}
 
 }

@@ -26,16 +26,14 @@
 
 package org.eclipse.digitaltwin.basyx.deserialization;
 
-import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.deserialization.factory.SubmodelElementValueDeserializationFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Deserializes a SubmodelElementValue as described in DotAAS Part 2
@@ -43,19 +41,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  *
  */
-public class SubmodelElementValueJsonDeserializer extends JsonDeserializer<SubmodelElementValue> {
+public class SubmodelElementValueJsonDeserializer extends ValueDeserializer<SubmodelElementValue> {
 	
 	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
 
 	@Override
-	public SubmodelElementValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
+	public SubmodelElementValue deserialize(JsonParser p, DeserializationContext ctxt) {
+		JsonNode node = ctxt.readTree(p);
 
-			return submodelElementValueDeserializationFactory.create(mapper, node);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		return submodelElementValueDeserializationFactory.create(ctxt, node);
 	}
 }

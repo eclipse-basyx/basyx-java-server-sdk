@@ -31,11 +31,10 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.factory.AasDescriptorFactory;
 import org.eclipse.digitaltwin.basyx.aasregistry.main.client.mapper.AttributeMapper;
 import org.eclipse.digitaltwin.basyx.http.Aas4JHTTPSerializationExtension;
+import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.factory.SubmodelDescriptorFactory;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Provides builder methods for {@link ConnectedAasManager} dependencies
@@ -51,10 +50,7 @@ class ConnectedAasManagerHelper {
 	}
 
 	static ObjectMapper buildObjectMapper() {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder().serializationInclusion(JsonInclude.Include.NON_NULL);
-		Aas4JHTTPSerializationExtension extension = new Aas4JHTTPSerializationExtension();
-		extension.extend(builder);
-		return builder.build();
+		return BaSyxHTTPConfiguration.createJsonMapperBuilder(List.of(new Aas4JHTTPSerializationExtension())).build();
 	}
 
 	static AasDescriptorFactory buildAasDescriptorFactory(String... aasRepositoryBaseUrls) {

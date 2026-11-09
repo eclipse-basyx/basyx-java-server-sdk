@@ -31,13 +31,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.codec.json.JacksonJsonDecoder;
+import org.springframework.http.codec.json.JacksonJsonEncoder;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Configuration for the {@link SubmodelRepository} with Operation Delegation
@@ -57,15 +57,15 @@ public class OperationDelegationSubmodelRepositoryConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public OperationDelegation getOperationDelegation(ObjectMapper mapper, OperationDelegationTargetValidator targetValidator) {
+	public OperationDelegation getOperationDelegation(JsonMapper mapper, OperationDelegationTargetValidator targetValidator) {
 
 		return new HTTPOperationDelegation(createWebClient(mapper, targetValidator));
 	}
 
-	private WebClient createWebClient(ObjectMapper mapper, OperationDelegationTargetValidator targetValidator) {
+	private WebClient createWebClient(JsonMapper mapper, OperationDelegationTargetValidator targetValidator) {
 		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
-			configurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(mapper));
-			configurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper));
+			configurer.defaultCodecs().jacksonJsonEncoder(new JacksonJsonEncoder(mapper));
+			configurer.defaultCodecs().jacksonJsonDecoder(new JacksonJsonDecoder(mapper));
 		}).build();
 
 		return WebClient.builder().exchangeStrategies(strategies).filter(validateTargetFilter(targetValidator)).build();

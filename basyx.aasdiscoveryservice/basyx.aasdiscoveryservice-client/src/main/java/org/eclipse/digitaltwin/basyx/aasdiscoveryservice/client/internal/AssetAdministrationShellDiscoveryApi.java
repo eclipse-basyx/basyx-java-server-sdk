@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.internal;
 
+import tools.jackson.core.JacksonException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -49,8 +51,8 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Generated;
 
@@ -123,7 +125,7 @@ public class AssetAdministrationShellDiscoveryApi {
             try {
                 String assetLinkJson = objectMapper.writeValueAsString(assetLink);
                 encodedAssetIds.add(new Base64UrlEncodedIdentifier(assetLinkJson).getEncodedIdentifier());
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ApiException(e);
             }
         });
@@ -185,7 +187,7 @@ public class AssetAdministrationShellDiscoveryApi {
         try {
             byte[] body = objectMapper.writeValueAsBytes(assetIds);
             builder.method("POST", HttpRequest.BodyPublishers.ofByteArray(body));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ApiException(e);
         }
 

@@ -25,13 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +38,11 @@ import java.util.List;
  * 
  * @author danish
  */
-public class RbacRuleDeserializer extends JsonDeserializer<HashMap<String, RbacRule>> {
+public class RbacRuleDeserializer extends ValueDeserializer<HashMap<String, RbacRule>> {
 
 	@Override
-	public HashMap<String, RbacRule> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		ObjectMapper mapper = (ObjectMapper) p.getCodec();
-		List<RbacRule> rbacRules = mapper.readValue(p, new TypeReference<List<RbacRule>>() {
-		});
+	public HashMap<String, RbacRule> deserialize(JsonParser p, DeserializationContext ctxt) {
+		List<RbacRule> rbacRules = ctxt.readValue(p, ctxt.getTypeFactory().constructCollectionType(List.class, RbacRule.class));
 		HashMap<String, RbacRule> result = new HashMap<>();
 
 		for (RbacRule rule : rbacRules) {

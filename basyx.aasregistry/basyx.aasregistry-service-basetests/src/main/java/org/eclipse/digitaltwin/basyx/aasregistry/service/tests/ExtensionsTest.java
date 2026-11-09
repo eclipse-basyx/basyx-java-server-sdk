@@ -47,7 +47,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 
 public abstract class ExtensionsTest extends BaseInterfaceTest {
@@ -256,8 +256,8 @@ public abstract class ExtensionsTest extends BaseInterfaceTest {
 		ShellDescriptorSearchRequest request = new ShellDescriptorSearchRequest().query(query);
 		List<AssetAdministrationShellDescriptor> expected = testResourcesLoader.loadList(AssetAdministrationShellDescriptor.class, suffix);
 		ShellDescriptorSearchResponse result = storage.searchAasDescriptors(request);
-		String resultStr = new ObjectMapper().setSerializationInclusion(Include.NON_NULL).writerWithDefaultPrettyPrinter().writeValueAsString(result.getHits());
-		String expectedStr = new ObjectMapper().setSerializationInclusion(Include.NON_NULL).writerWithDefaultPrettyPrinter().writeValueAsString(expected);
+		String resultStr = JsonMapper.builder().changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(Include.NON_NULL)).build().writerWithDefaultPrettyPrinter().writeValueAsString(result.getHits());
+		String expectedStr = JsonMapper.builder().changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(Include.NON_NULL)).build().writerWithDefaultPrettyPrinter().writeValueAsString(expected);
 		assertThat(resultStr).isEqualTo(expectedStr);
 		assertThat(result.getHits()).asList().isEqualTo(expected);
 		assertThat(result.getTotal()).isEqualTo(expected.size());

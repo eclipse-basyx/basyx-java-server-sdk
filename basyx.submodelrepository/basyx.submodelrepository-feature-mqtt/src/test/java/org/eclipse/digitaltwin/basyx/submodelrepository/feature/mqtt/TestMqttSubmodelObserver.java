@@ -70,8 +70,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 
 
 /**
@@ -231,7 +231,7 @@ public class TestMqttSubmodelObserver {
 	}
 
 	@Test
-	public void patchSubmodelElementsEvent() throws DeserializationException, JsonMappingException, JsonProcessingException {
+	public void patchSubmodelElementsEvent() throws DeserializationException, DatabindException, JacksonException {
 		Submodel submodel = createSubmodelDummyWithSubmodelElements("patchSubmodelForElementEventId");
 		submodelRepository.createSubmodel(submodel);
 		
@@ -287,7 +287,7 @@ public class TestMqttSubmodelObserver {
 		return new JsonDeserializer().read(payload, SubmodelElement.class);
 	}
 	 
-	private List<SubmodelElement> deserializeSubmodelElementsListPayload(String payload) throws DeserializationException, JsonMappingException, JsonProcessingException {			
+	private List<SubmodelElement> deserializeSubmodelElementsListPayload(String payload) throws DeserializationException, DatabindException, JacksonException {			
 		return deserializer.readList(payload, SubmodelElement.class);
 	}
 

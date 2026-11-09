@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Base interface for extending the default serialization with further
@@ -40,5 +40,5 @@ public interface SerializationExtension {
 	 * 
 	 * @param builder
 	 */
-	void extend(Jackson2ObjectMapperBuilder builder);
+	void extend(JsonMapper.Builder builder);
 }

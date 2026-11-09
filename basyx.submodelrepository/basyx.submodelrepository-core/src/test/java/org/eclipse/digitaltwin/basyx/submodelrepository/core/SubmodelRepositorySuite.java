@@ -58,8 +58,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Testsuite for implementations of the SubmodelRepository interface
@@ -276,7 +276,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	}
 
 	@Test
-	public void getSubmodelByIdMetadata() throws JsonProcessingException {
+	public void getSubmodelByIdMetadata() throws JacksonException {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel expectedSubmodel = buildDummySubmodelWithNoSmElement(ID);
 		expectedSubmodel.setSubmodelElements(null);
@@ -289,7 +289,7 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	}
 
 	@Test
-	public void getSubmodelByIdValueOnly() throws JsonProcessingException {
+	public void getSubmodelByIdValueOnly() throws JacksonException {
 		SubmodelRepository repo = getSubmodelRepository();
 		Submodel submodel = buildDummySubmodelWithNoSmElement(ID);
 

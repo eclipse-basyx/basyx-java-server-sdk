@@ -44,8 +44,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 
 /**
  * Tests the ConceptDescription specific parts of the
@@ -224,11 +224,11 @@ public abstract class ConceptDescriptionRepositoryHTTPSuite {
 		assertEquals(HttpStatus.NOT_FOUND.value(), deletionResponse.getCode());
 	}
 	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+	private String getJSONWithoutCursorInfo(String response) throws DatabindException, JacksonException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 
-	private void assertConceptDescriptionCreationReponse(String conceptDescriptionJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
+	private void assertConceptDescriptionCreationReponse(String conceptDescriptionJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JacksonException, DatabindException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
 		BaSyxHttpTestUtils.assertSameJSONContent(conceptDescriptionJSON, response);

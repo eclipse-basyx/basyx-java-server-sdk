@@ -28,11 +28,10 @@ import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -42,15 +41,14 @@ import lombok.extern.log4j.Log4j2;
 public class RegistryEventLogSink implements RegistryEventSink {
 
 	@Autowired
-	private MappingJackson2HttpMessageConverter converter;
+	private ObjectMapper objectMapper;
 
 	@Override
 	public void consumeEvent(RegistryEvent evt) {
 		try {
-			ObjectMapper objectMapper = converter.getObjectMapper();
 			String msg = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(evt);
 			log.debug("Event sent -> " + msg);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error(Marker.ANY_MARKER, "Failed to process json ", e);
 		}
 	}

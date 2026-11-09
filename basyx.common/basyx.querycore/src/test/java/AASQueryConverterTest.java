@@ -24,9 +24,9 @@
  ******************************************************************************/
 
 import co.elastic.clients.json.JsonpMapper;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.AASQueryToElasticSearchConverter;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
@@ -82,7 +82,7 @@ public class AASQueryConverterTest {
         }
     }
 
-    private AASQuery loadStringAsQuery(String queryString) throws JsonProcessingException {
+    private AASQuery loadStringAsQuery(String queryString) throws JacksonException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(queryString, AASQuery.class);
     }

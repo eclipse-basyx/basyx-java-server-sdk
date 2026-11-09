@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import com.fasterxml.jackson.databind.util.StdDateFormat;
+import tools.jackson.databind.util.StdDateFormat;
 
 public class RFC3339DateFormat extends DateFormat {
   private static final long serialVersionUID = 1L;

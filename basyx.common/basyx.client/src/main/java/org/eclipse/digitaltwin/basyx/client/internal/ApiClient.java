@@ -46,13 +46,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.openapitools.jackson.nullable.JsonNullableModule;
+import org.openapitools.jackson.nullable.JsonNullableJackson3Module;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import jakarta.annotation.Generated;
 
@@ -230,17 +232,17 @@ public class ApiClient {
   }
 
   protected ObjectMapper createDefaultObjectMapper() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    mapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-    mapper.registerModule(new JavaTimeModule());
-    mapper.registerModule(new JsonNullableModule());
-    return mapper;
+    return JsonMapper.builder()
+        .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+        .disable(MapperFeature.DETECT_PARAMETER_NAMES)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
+        .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .addModule(new JsonNullableJackson3Module())
+        .build();
   }
 
   protected String getDefaultBaseUri() {
@@ -299,12 +301,13 @@ public class ApiClient {
   }
 
   /**
-   * Get a copy of the current {@link ObjectMapper}.
+   * Get the current {@link ObjectMapper}. Jackson 3 mappers are immutable, so
+   * no defensive copy is needed.
    *
-   * @return A copy of the current object mapper.
+   * @return The current object mapper.
    */
   public ObjectMapper getObjectMapper() {
-    return mapper.copy();
+    return mapper;
   }
 
   /**

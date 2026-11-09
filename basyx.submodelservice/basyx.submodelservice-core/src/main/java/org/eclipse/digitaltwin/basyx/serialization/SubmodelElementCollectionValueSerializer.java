@@ -33,9 +33,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollec
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a {@link SubmodelElementCollectionValue} as described in DotAAS Part 2
@@ -43,14 +43,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author danish
  *
  */
-public class SubmodelElementCollectionValueSerializer extends JsonSerializer<SubmodelElementCollectionValue> {
+public class SubmodelElementCollectionValueSerializer extends ValueSerializer<SubmodelElementCollectionValue> {
 
 	@Override
-	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SubmodelElementCollectionValue value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartObject();
 
 		for (Map.Entry<String, SubmodelElementValue> valueOnly : value.getValue().entrySet()) {
-			gen.writeObjectField(valueOnly.getKey(),valueOnly.getValue());
+			gen.writePOJOProperty(valueOnly.getKey(),valueOnly.getValue());
 		}
 
 		gen.writeEndObject();

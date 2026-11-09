@@ -37,8 +37,9 @@ import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Handles internal model mapping for {@link HierarchicalAasRegistryStorage}
@@ -48,7 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 final class AasRegistryModelMapper {
 
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
 	private AasRegistryModelMapper() {
 	}

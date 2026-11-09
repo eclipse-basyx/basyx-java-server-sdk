@@ -47,10 +47,10 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Test Suite for {@link AuthorizedAasDiscoveryService} feature
@@ -218,7 +218,7 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath(fileName);
 	}
 
-	private static List<SpecificAssetId> createSpecificAssetIdsFromJson(ObjectMapper objectMapper, String json) throws JsonMappingException, JsonProcessingException {
+	private static List<SpecificAssetId> createSpecificAssetIdsFromJson(ObjectMapper objectMapper, String json) throws DatabindException, JacksonException {
 		return objectMapper.readValue(json, new TypeReference<List<SpecificAssetId>>() {});
 	}
 

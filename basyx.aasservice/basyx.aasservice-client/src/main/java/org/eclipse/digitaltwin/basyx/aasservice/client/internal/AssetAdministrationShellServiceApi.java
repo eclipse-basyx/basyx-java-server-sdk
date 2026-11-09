@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.client.internal;
 
+import tools.jackson.core.JacksonException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,8 +66,8 @@ import org.eclipse.digitaltwin.basyx.http.description.ServiceDescription;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 import org.springframework.util.MimeTypeUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-02-08T19:43:45.125130100+01:00[Europe/Berlin]")
 public class AssetAdministrationShellServiceApi {
@@ -837,7 +839,7 @@ public class AssetAdministrationShellServiceApi {
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(reference);
       localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-    } catch (IOException e) {
+    } catch (JacksonException e) {
       throw new ApiException(e);
     }
     if (memberVarReadTimeout != null) {
@@ -925,7 +927,7 @@ public class AssetAdministrationShellServiceApi {
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetAdministrationShell);
       localVarRequestBuilder.method("PUT", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-    } catch (IOException e) {
+    } catch (JacksonException e) {
       throw new ApiException(e);
     }
     if (memberVarReadTimeout != null) {
@@ -1013,7 +1015,7 @@ public class AssetAdministrationShellServiceApi {
     try {
       byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(assetInformation);
       localVarRequestBuilder.method("PUT", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-    } catch (IOException e) {
+    } catch (JacksonException e) {
       throw new ApiException(e);
     }
     if (memberVarReadTimeout != null) {

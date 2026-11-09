@@ -35,8 +35,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNot
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Handles internal model mapping for

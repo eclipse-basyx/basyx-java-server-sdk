@@ -40,7 +40,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.core.io.DefaultResourceLoader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class RbacRuleInitializerTest {
 	@Rule

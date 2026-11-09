@@ -30,10 +30,9 @@ import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Factory class to create deserialized {@link SubmodelElementListValue} based on
@@ -44,11 +43,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class SubmodelElementListValueDeserializationFactory {
 	
-	private ObjectMapper objectMapper;
+	private DeserializationContext ctxt;
 	private JsonNode node;
 	
-	public SubmodelElementListValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
-		this.objectMapper = objectMapper;
+	public SubmodelElementListValueDeserializationFactory(DeserializationContext ctxt, JsonNode node) {
+		this.ctxt = ctxt;
 		this.node = node;
 	}
 	
@@ -59,8 +58,8 @@ public class SubmodelElementListValueDeserializationFactory {
 	 * @return {@link SubmodelElementListValue}
 	 * 
 	 */
-	public SubmodelElementListValue create() throws JsonProcessingException {
-		List<SubmodelElementValue> submodelElementValues = objectMapper.readValue(node.toString(), new TypeReference<List<SubmodelElementValue>>() {});
+	public SubmodelElementListValue create() throws JacksonException {
+		List<SubmodelElementValue> submodelElementValues = ctxt.readTreeAsValue(node, ctxt.getTypeFactory().constructCollectionType(List.class, SubmodelElementValue.class));
 		
 		return new SubmodelElementListValue(submodelElementValues);
 	}

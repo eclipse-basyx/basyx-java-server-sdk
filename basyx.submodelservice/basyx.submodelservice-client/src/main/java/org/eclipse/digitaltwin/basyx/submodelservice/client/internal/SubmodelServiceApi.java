@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.client.internal;
 
+import tools.jackson.core.JacksonException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,8 +65,8 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResul
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.springframework.util.MimeTypeUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("unused")
 @Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-02-08T10:09:10.597431+01:00[Europe/Berlin]")
@@ -632,7 +634,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(getSubmodelElementsValueResult);
 			localVarRequestBuilder.method("PATCH", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-		} catch (IOException e) {
+		} catch (JacksonException e) {
 			throw new ApiException(e);
 		}
 		if (memberVarReadTimeout != null) {
@@ -723,7 +725,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 	    try {
 	      byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
 	      localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-	    } catch (IOException e) {
+	    } catch (JacksonException e) {
 	      throw new ApiException(e);
 	    }
 	    if (memberVarReadTimeout != null) {
@@ -828,7 +830,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
 				localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-			} catch (IOException e) {
+			} catch (JacksonException e) {
 				throw new ApiException(e);
 			}
 			if (memberVarReadTimeout != null) {
@@ -953,7 +955,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodelElement);
 				localVarRequestBuilder.method("PUT", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-			} catch (IOException e) {
+			} catch (JacksonException e) {
 				throw new ApiException(e);
 			}
 			if (memberVarReadTimeout != null) {
@@ -1473,7 +1475,7 @@ public SubmodelServiceApi(ApiClient apiClient) {
 			try {
 				byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(operationRequest);
 				localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-			} catch (IOException e) {
+			} catch (JacksonException e) {
 				throw new ApiException(e);
 			}
 			if (memberVarReadTimeout != null) {

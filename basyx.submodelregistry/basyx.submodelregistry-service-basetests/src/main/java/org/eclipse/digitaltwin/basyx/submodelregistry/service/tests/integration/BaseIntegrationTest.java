@@ -81,8 +81,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -113,7 +114,7 @@ public abstract class BaseIntegrationTest {
 	@Value("${local.server.port}")
 	private int port;
 
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 	
 	@Rule
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
@@ -293,7 +294,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JsonProcessingException, InterruptedException, DeserializationException {
+	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JacksonException, InterruptedException, DeserializationException {
 		LangStringTextType dType = new LangStringTextType().language(LANG_DE_DE).text("description");
 		LangStringNameType nType = new LangStringNameType().language(LANG_DE_DE).text("display");
 		ProtocolInformation protInfo = new ProtocolInformation();
@@ -318,7 +319,7 @@ public abstract class BaseIntegrationTest {
 		assertThatEventWasSend(new RegistryEvent(descr.getId(), EventType.SUBMODEL_REGISTERED, convert(sm)));
 	}
 
-	private org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor convert(SubmodelDescriptor sm) throws JsonProcessingException {
+	private org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor convert(SubmodelDescriptor sm) throws JacksonException {
 		String data = mapper.writerFor(SubmodelDescriptor.class).writeValueAsString(sm);
 		return mapper.readerFor(org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor.class).readValue(data);
 	}

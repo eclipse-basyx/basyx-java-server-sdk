@@ -32,9 +32,10 @@ import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryPaging;
@@ -82,7 +83,7 @@ public class ESQueryExecutor {
             boolean hasMore = topHits.size() > pageSize;
             List<Hit<Object>> pageHits = hasMore ? topHits.subList(0, pageSize) : topHits;
 
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
             List<Object> objectHits = pageHits.stream()
                     .map(Hit::source)
@@ -220,7 +221,7 @@ public class ESQueryExecutor {
             move(obj, "langContent", "value");
 
             List<String> names = new ArrayList<>();
-            obj.fieldNames().forEachRemaining(names::add);
+            names.addAll(obj.propertyNames());
 
             for (String name : names) {
                 JsonNode child = obj.get(name);

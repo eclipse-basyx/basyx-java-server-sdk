@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Maps the models defined in AAS4J to the AasRegistry client models

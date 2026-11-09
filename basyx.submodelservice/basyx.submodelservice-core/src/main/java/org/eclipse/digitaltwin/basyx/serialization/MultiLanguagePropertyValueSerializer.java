@@ -31,9 +31,9 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a MultiLanguagePropertyValue as described in DotAAS Part 2
@@ -41,10 +41,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author schnicke
  *
  */
-public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLanguagePropertyValue> {
+public class MultiLanguagePropertyValueSerializer extends ValueSerializer<MultiLanguagePropertyValue> {
 
 	@Override
-	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(MultiLanguagePropertyValue value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartArray();
 
 		for (LangStringTextType langString : value.getValue()) {
@@ -54,9 +54,9 @@ public class MultiLanguagePropertyValueSerializer extends JsonSerializer<MultiLa
 		gen.writeEndArray();
 	}
 
-	private void writeLangString(JsonGenerator gen, LangStringTextType langString) throws IOException {
+	private void writeLangString(JsonGenerator gen, LangStringTextType langString) {
 		gen.writeStartObject();
-		gen.writeObjectField(langString.getLanguage(), langString.getText());
+		gen.writePOJOProperty(langString.getLanguage(), langString.getText());
 		gen.writeEndObject();
 	}
 

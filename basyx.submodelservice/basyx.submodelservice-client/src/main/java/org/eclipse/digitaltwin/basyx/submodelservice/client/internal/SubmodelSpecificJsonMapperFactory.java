@@ -49,9 +49,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Factory providing a JsonMapper that (a) is using AAS4J and (b) is using the
@@ -62,13 +63,19 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class SubmodelSpecificJsonMapperFactory {
 	public JsonMapper create() {
 		JsonMapper mapper = new JsonMapperFactory().create(new SimpleAbstractTypeResolverFactory().create());
-		mapper.registerModule(createValueOnlyModule());
 
-		mapper.addMixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
-		return mapper;
+		// Jackson 3 detects constructor parameter names by default, which turns
+		// single-argument constructors (e.g. PropertyValue(String value)) into
+		// properties-based creators. Disable it to keep the Jackson 2 behavior of
+		// deserializing such value types from scalars.
+		return mapper.rebuild()
+				.disable(MapperFeature.DETECT_PARAMETER_NAMES)
+				.addModule(createValueOnlyModule())
+				.addMixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class)
+				.build();
 	}
 
-	private static Module createValueOnlyModule() {
+	private static JacksonModule createValueOnlyModule() {
 		SimpleModule module = new SimpleModule("valueOnly");
 
 		module.addSerializer(MultiLanguagePropertyValue.class, new MultiLanguagePropertyValueSerializer());

@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import tools.jackson.databind.exc.InvalidFormatException;
 import org.apache.commons.lang3.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.basyx.core.MessageType;

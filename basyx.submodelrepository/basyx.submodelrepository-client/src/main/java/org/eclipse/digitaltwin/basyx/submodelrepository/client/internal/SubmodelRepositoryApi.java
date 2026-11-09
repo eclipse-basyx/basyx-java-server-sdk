@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.client.internal;
 
+import tools.jackson.core.JacksonException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -47,8 +49,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.AccessTokenRetrievalExcepti
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursorResult;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Generated;
 
@@ -431,7 +433,7 @@ public class SubmodelRepositoryApi {
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
 			localVarRequestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-		} catch (IOException e) {
+		} catch (JacksonException e) {
 			throw new ApiException(e);
 		}
 		if (memberVarReadTimeout != null) {
@@ -530,7 +532,7 @@ public class SubmodelRepositoryApi {
 		try {
 			byte[] localVarPostBody = memberVarObjectMapper.writeValueAsBytes(submodel);
 			localVarRequestBuilder.method("PUT", HttpRequest.BodyPublishers.ofByteArray(localVarPostBody));
-		} catch (IOException e) {
+		} catch (JacksonException e) {
 			throw new ApiException(e);
 		}
 		if (memberVarReadTimeout != null) {

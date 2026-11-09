@@ -40,8 +40,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * An utility class to check and validate the type for Deserialization
@@ -56,7 +56,7 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	public static boolean isTypeOfPropertyValue(JsonNode node) {
-		return node.isValueNode() && node.isTextual();
+		return node.isValueNode() && node.isString();
 	}
 
 	public static boolean isTypeOfBasicEventValue(JsonNode node) {
@@ -163,7 +163,7 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	private static boolean hasStructureOfSubmodelElementCollectionValue(JsonNode node) {
-		Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+		Iterator<Map.Entry<String, JsonNode>> fields = node.properties().iterator();
 		while (fields.hasNext()) {
 			Map.Entry<String, JsonNode> field = fields.next();
 			if (!isInstanceOfSubmodelElementValue(field.getValue())) {
@@ -184,7 +184,7 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	private static boolean isValidValueOnly(JsonNode element) {
-		String idShort = element.fieldNames().next();
+		String idShort = element.propertyNames().iterator().next();
 
 		return isInstanceOfSubmodelElementValue(element.get(idShort));
 	}
@@ -202,9 +202,9 @@ public class SubmodelElementValueDeserializationUtil {
 	}
 
 	private static boolean isLanguageTextOfTypeText(JsonNode element) {
-		String language = element.fieldNames().next();
+		String language = element.propertyNames().iterator().next();
 
-		return element.get(language).isTextual();
+		return element.get(language).isString();
 	}
 
 }

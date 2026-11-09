@@ -38,7 +38,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlr
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Decorator for Hierarchical {@link SubmodelRegistryStorage}
@@ -51,7 +52,7 @@ public class HierarchicalSubmodelRegistryStorage implements SubmodelRegistryStor
 
 	private final DelegationStrategy delegationStrategy;
 
-	private final SubmodelRegistryModelMapper mapper = new SubmodelRegistryModelMapper(new ObjectMapper());
+	private final SubmodelRegistryModelMapper mapper = new SubmodelRegistryModelMapper(JsonMapper.builderWithJackson2Defaults().build());
 
 	public HierarchicalSubmodelRegistryStorage(SubmodelRegistryStorage decorated, DelegationStrategy delegationStrategy) {
 		this.decorated = decorated;

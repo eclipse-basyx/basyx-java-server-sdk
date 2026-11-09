@@ -25,9 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.persistence.AttributeConverter;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSpecificAssetId;
 
@@ -36,13 +37,13 @@ import java.util.List;
 
 public class SpecificAssetIdsConverter implements AttributeConverter<List<DefaultSpecificAssetId>, String> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
     public String convertToDatabaseColumn(List<DefaultSpecificAssetId> specificAssetIds) {
         try {
             return objectMapper.writeValueAsString(specificAssetIds);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("Error converting SpecificAssetId set to JSON", e);
         }
     }
@@ -51,7 +52,7 @@ public class SpecificAssetIdsConverter implements AttributeConverter<List<Defaul
     public List<DefaultSpecificAssetId> convertToEntityAttribute(String dbData) {
         try {
             return objectMapper.readValue(dbData, new TypeReference<List<DefaultSpecificAssetId>>() {});
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("Error converting JSON to SpecificAssetId List", e);
         }
     }

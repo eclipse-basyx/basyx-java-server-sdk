@@ -25,11 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.jsontype.NamedType;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,12 +57,13 @@ public class RbacRuleInitializer {
 	private ResourceLoader resourceLoader;
 
 	public RbacRuleInitializer(ObjectMapper objectMapper, String filePath, ResourceLoader resourceLoader) {
-		this.objectMapper = objectMapper.copy()
+		MapperBuilder<?, ?> builder = objectMapper.rebuild()
 				.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		registerTargetInformationSubtypes(builder);
+		this.objectMapper = builder.build();
 		this.rbacJsonFilePath = filePath;
 		this.resourceLoader = resourceLoader;
-		registerTargetInformationSubtypes();
 	}
 
 	/**
@@ -107,11 +109,11 @@ public class RbacRuleInitializer {
 		return RbacRuleKeyGenerator.generateKey(rbacRule.getRole(), rbacRule.getAction().get(0).toString(), rbacRule.getTargetInformation().getClass().getName());
 	}
 
-	private void registerTargetInformationSubtypes() {
+	private void registerTargetInformationSubtypes(MapperBuilder<?, ?> builder) {
 		Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
 		Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
 
-		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(objectMapper::registerSubtypes);
+		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(builder::registerSubtypes);
 	}
 
 	private NamedType createNamedType(Class<?> subType) {

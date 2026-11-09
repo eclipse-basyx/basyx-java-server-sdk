@@ -49,9 +49,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RelationshipElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Factory class to create deserialized {@link SubmodelElementValue} based on
@@ -68,32 +68,32 @@ public class SubmodelElementValueDeserializationFactory {
 	 * 
 	 * @return SubmodelELementValue
 	 * 
-	 * @throws JsonProcessingException 
+	 * @throws JacksonException 
 	 * @throws SubmodelElementValueDeserializationException
 	 */
-	public SubmodelElementValue create(ObjectMapper mapper, JsonNode node) throws JsonProcessingException {
+	public SubmodelElementValue create(DeserializationContext ctxt, JsonNode node) throws JacksonException {
 		if (isTypeOfRangeValue(node)) {
-			return mapper.convertValue(node, RangeValue.class);
+			return ctxt.readTreeAsValue(node, RangeValue.class);
 		} else if (isTypeOfMultiLanguagePropertyValue(node)) {
 			return new MultiLanguagePropertyValueDeserializationFactory(node).create();
 		} else if (isTypeOfFileBlobValue(node)) {
-			return mapper.convertValue(node, FileBlobValue.class);
+			return ctxt.readTreeAsValue(node, FileBlobValue.class);
 		} else if (isTypeOfPropertyValue(node)) {
-			return mapper.convertValue(node, PropertyValue.class);
+			return ctxt.readTreeAsValue(node, PropertyValue.class);
 		} else if (isTypeOfEntityValue(node)) {
-			return mapper.convertValue(node, EntityValue.class);
+			return ctxt.readTreeAsValue(node, EntityValue.class);
 		} else if (isTypeOfReferenceElementValue(node)) {
-			return new ReferenceElementValue(mapper.convertValue(node, ReferenceValue.class));
+			return new ReferenceElementValue(ctxt.readTreeAsValue(node, ReferenceValue.class));
 		} else if (isTypeOfRelationshipElementValue(node)) {
-			return mapper.convertValue(node, RelationshipElementValue.class);
+			return ctxt.readTreeAsValue(node, RelationshipElementValue.class);
 		} else if (isTypeOfAnnotatedRelationshipElementValue(node)) {
-			return mapper.convertValue(node, AnnotatedRelationshipElementValue.class);
+			return ctxt.readTreeAsValue(node, AnnotatedRelationshipElementValue.class);
 		} else if (isTypeOfBasicEventValue(node)) {
-			return mapper.convertValue(node, BasicEventValue.class);
+			return ctxt.readTreeAsValue(node, BasicEventValue.class);
 		} else if (isTypeOfSubmodelElementListValue(node)) {
-			return new SubmodelElementListValueDeserializationFactory(mapper, node).create();
+			return new SubmodelElementListValueDeserializationFactory(ctxt, node).create();
 		} else if (isTypeOfSubmodelElementCollectionValue(node)) {
-			return new SubmodelElementCollectionValueDeserializationFactory(mapper, node).create();
+			return new SubmodelElementCollectionValueDeserializationFactory(ctxt, node).create();
 		}
 
 		throw new SubmodelElementValueDeserializationException();

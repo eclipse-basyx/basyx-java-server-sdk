@@ -41,8 +41,8 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Decorator for the AasService that triggers MQTT events for different
@@ -72,7 +72,7 @@ public class MqttAasService implements AasService {
 	public String serialize(Object obj) {
 		try {
 			return objectMapper.writeValueAsString(obj);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			throw new RuntimeException("MqttAasService serialization");
 		}
 	}

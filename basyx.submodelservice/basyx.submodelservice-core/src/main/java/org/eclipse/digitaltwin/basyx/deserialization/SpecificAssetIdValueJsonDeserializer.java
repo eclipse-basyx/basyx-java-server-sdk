@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.deserialization;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -33,53 +32,44 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.JsonNode;
 
 /**
  * @author jungjan, witt
  */
-public class SpecificAssetIdValueJsonDeserializer extends JsonDeserializer<SpecificAssetIdValue> {
+public class SpecificAssetIdValueJsonDeserializer extends ValueDeserializer<SpecificAssetIdValue> {
 	private final String EXTERNAL_SUBJECT_ID_KEY = "externalSubjectId";
 
 	@Override
-	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
+	public SpecificAssetIdValue deserialize(JsonParser p, DeserializationContext ctxt) {
+		JsonNode node = ctxt.readTree(p);
 
-			Iterator<Entry<String, JsonNode>> jsnonFields = node.fields();
-			Entry<String, JsonNode> nameValueMap = jsnonFields.next();
+		Iterator<Entry<String, JsonNode>> jsnonFields = node.properties().iterator();
+		Entry<String, JsonNode> nameValueMap = jsnonFields.next();
 
-			String name = nameValueMap.getKey();
-			String value = nameValueMap.getValue()
-					.asText();
-			ReferenceValue externalSubjectIdValue = null;
+		String name = nameValueMap.getKey();
+		String value = nameValueMap.getValue()
+				.asString();
+		ReferenceValue externalSubjectIdValue = null;
 
-			if (jsonContainsExternalSubjectId(node)) {
-				externalSubjectIdValue = handleExternalSubjectId(mapper, node);
-			}
-
-			return new SpecificAssetIdValue(name, value, externalSubjectIdValue);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (jsonContainsExternalSubjectId(node)) {
+			externalSubjectIdValue = handleExternalSubjectId(ctxt, node);
 		}
+
+		return new SpecificAssetIdValue(name, value, externalSubjectIdValue);
 	}
 
 	private boolean jsonContainsExternalSubjectId(JsonNode node) {
 		return node.get(EXTERNAL_SUBJECT_ID_KEY) != null;
 	}
 
-	private ReferenceValue handleExternalSubjectId(ObjectMapper mapper, JsonNode node) throws JsonProcessingException, JsonMappingException {
+	private ReferenceValue handleExternalSubjectId(DeserializationContext ctxt, JsonNode node) throws JacksonException {
 		JsonNode externalSubjectIdNode = node.get(EXTERNAL_SUBJECT_ID_KEY);
-		Reference externalSubjectId = mapper.readValue(externalSubjectIdNode.toString(), new TypeReference<Reference>() {
-		});
+		Reference externalSubjectId = ctxt.readTreeAsValue(externalSubjectIdNode, Reference.class);
 		return new ReferenceValue(externalSubjectId.getType(), externalSubjectId.getKeys());
 	}
 }
