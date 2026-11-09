@@ -34,7 +34,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.LangStringTextType;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultLangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Factory class to create deserialized {@link MultiLanguagePropertyValue} based on
@@ -75,9 +75,9 @@ public class MultiLanguagePropertyValueDeserializationFactory {
 	}
 
 	private static DefaultLangStringTextType createLangString(JsonNode arrayNode) {
-		Iterator<String> fieldNames = arrayNode.fieldNames();
+		Iterator<String> fieldNames = arrayNode.propertyNames().iterator();
 		String language = fieldNames.next();
-		String text = arrayNode.get(language).asText();
+		String text = arrayNode.get(language).asString();
 
 		return new DefaultLangStringTextType.Builder().text(text).language(language).build();
 	}

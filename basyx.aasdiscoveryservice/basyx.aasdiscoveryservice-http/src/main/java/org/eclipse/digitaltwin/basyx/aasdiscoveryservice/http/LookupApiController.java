@@ -45,8 +45,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -88,7 +88,7 @@ public class LookupApiController implements LookupApi {
 		List<AssetLink> decodedAssetLinks;
 		try {
 			decodedAssetLinks = getDecodedAssetLinks(assetIds);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
 
@@ -113,7 +113,7 @@ public class LookupApiController implements LookupApi {
         return new ResponseEntity<List<SpecificAssetId>>(assetIDs, HttpStatus.CREATED);
     }
 
-	private List<AssetLink> getDecodedAssetLinks(List<Base64UrlEncodedIdentifier> assetIds) throws JsonProcessingException {
+	private List<AssetLink> getDecodedAssetLinks(List<Base64UrlEncodedIdentifier> assetIds) throws JacksonException {
 		List<AssetLink> result = new ArrayList<>();
 
 		if (assetIds == null)

@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.search;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -77,7 +77,7 @@ public class SearchAasRegistryApiHTTPController implements SearchAasRegistryHTTP
                 queryResponse.paging_metadata.resulType = "AssetAdministrationShellDescriptor";
                 List<AssetAdministrationShellDescriptor> aasDescs = new ArrayList<>();
                 for (Object id : queryResponse.result) {
-                    String identifier = ((ObjectNode) id).get("id").asText();
+                    String identifier = ((ObjectNode) id).get("id").asString();
                     AssetAdministrationShellDescriptor aasDesc = backend.getAasDescriptor(identifier);
                     aasDescs.add(aasDesc);
 

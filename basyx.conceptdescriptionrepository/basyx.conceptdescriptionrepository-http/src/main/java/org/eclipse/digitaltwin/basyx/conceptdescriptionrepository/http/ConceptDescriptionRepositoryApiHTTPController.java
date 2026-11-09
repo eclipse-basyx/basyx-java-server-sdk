@@ -1,7 +1,7 @@
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -104,7 +104,7 @@ public class ConceptDescriptionRepositoryApiHTTPController implements ConceptDes
 
 		try {
 			return objectMapper.readValue(serializedReference, DefaultReference.class);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			throw new IllegalArgumentException("Passed reference string " + serializedReference + " is not a valid serialized reference");
 		}
 	}

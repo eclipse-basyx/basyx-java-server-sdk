@@ -98,8 +98,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -133,7 +134,7 @@ public abstract class BaseIntegrationTest {
 	@Value("${local.server.port}")
 	private int port;
 
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 	
 
 	private final KafkaAdapter<RegistryEvent> adapter = KafkaAdapters.getAdapter("aas-registry", RegistryEvent.class);
@@ -174,7 +175,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenWritingParallel_transactionManagementWorks() throws ApiException, JsonProcessingException {
+	public void whenWritingParallel_transactionManagementWorks() throws ApiException, JacksonException {
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 		descriptor.setId("descr");
 		api.postAssetAdministrationShellDescriptor(descriptor);
@@ -548,7 +549,7 @@ public abstract class BaseIntegrationTest {
 	}
 
 	@Test
-	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JsonProcessingException {
+	public void whenSendFullObjectStructure_ItemIsProcessedProperly() throws ApiException, JacksonException {
 		LangStringTextType dType = new LangStringTextType().language(LANG_DE_DE).text("description");
 		LangStringNameType nType = new LangStringNameType().language(LANG_DE_DE).text("display");
 		ProtocolInformation protInfo = new ProtocolInformation();
@@ -665,16 +666,16 @@ public abstract class BaseIntegrationTest {
 		}
 	}
 
-	private  org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor convert(SubmodelDescriptor clientSm) throws JsonProcessingException {
+	private  org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor convert(SubmodelDescriptor clientSm) throws JacksonException {
 		return convert(clientSm, SubmodelDescriptor.class, org.eclipse.digitaltwin.basyx.aasregistry.model.SubmodelDescriptor.class);
 	}
 	
-	private  org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor convert(AssetAdministrationShellDescriptor clientShellDescr) throws JsonProcessingException {
+	private  org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor convert(AssetAdministrationShellDescriptor clientShellDescr) throws JacksonException {
 		return convert(clientShellDescr, AssetAdministrationShellDescriptor.class, org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor.class);
 	}
 	
 	
-	private <O,I> O convert(I in, Class<I> inCls, Class<O> outCls) throws JsonProcessingException {
+	private <O,I> O convert(I in, Class<I> inCls, Class<O> outCls) throws JacksonException {
 		String data = mapper.writerFor(inCls).writeValueAsString(in);
 		return mapper.readerFor(outCls).readValue(data);
 	}

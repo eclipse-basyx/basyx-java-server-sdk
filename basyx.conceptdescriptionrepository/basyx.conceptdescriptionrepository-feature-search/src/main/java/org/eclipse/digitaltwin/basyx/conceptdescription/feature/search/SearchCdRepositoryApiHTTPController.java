@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.conceptdescription.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -74,7 +74,7 @@ public class SearchCdRepositoryApiHTTPController implements SearchCdRepositoryHT
 				queryResponse.paging_metadata.resulType = "ConceptDescription";
 				List<ConceptDescription> cds = new ArrayList<>();
 				for (Object id : queryResponse.result) {
-					String identifier = ((ObjectNode) id).get("id").asText();
+					String identifier = ((ObjectNode) id).get("id").asString();
 					ConceptDescription cd = backend.getConceptDescription(identifier);
 					cds.add(cd);
 

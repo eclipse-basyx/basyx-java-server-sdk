@@ -35,7 +35,7 @@ import org.eclipse.digitaltwin.basyx.http.testmodels.CloneFactoryFirstTestModel;
 import org.eclipse.digitaltwin.basyx.http.testmodels.CloneFactorySecondTestModel;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Unit tests for {@link CustomTypeCloneFactory}

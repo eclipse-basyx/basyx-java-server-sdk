@@ -30,8 +30,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -83,7 +84,7 @@ public class ConnectedAasRepository implements AasRepository {
 	@Override
 	public CursorResult<List<AssetAdministrationShell>> getAllAas(List<SpecificAssetId> assetIds, String idShort, PaginationInfo pInfo) {
 		String encodedCursor = pInfo.getCursor() == null ? null : Base64UrlEncoder.encode(pInfo.getCursor());
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 		if(assetIds == null || assetIds.isEmpty()) {
 			return repoApi.getAllAssetAdministrationShells(null, idShort, pInfo.getLimit(), encodedCursor);
 		}
@@ -92,7 +93,7 @@ public class ConnectedAasRepository implements AasRepository {
 					try {
 						String value = mapper.writeValueAsString(assetId);
 						return Base64UrlEncoder.encode(value);
-					} catch (JsonProcessingException e) {
+					} catch (JacksonException e) {
 						throw new RuntimeException(e);
 					}
 				}).toList();

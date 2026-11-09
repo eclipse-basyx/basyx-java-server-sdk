@@ -32,7 +32,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiClient;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.ApiClientPool;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Factory class for creating instances of {@link AssetAdministrationShellServiceApi} using an {@link ApiClientPool}.

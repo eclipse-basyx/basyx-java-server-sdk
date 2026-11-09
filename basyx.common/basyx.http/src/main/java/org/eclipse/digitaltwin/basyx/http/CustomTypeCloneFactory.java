@@ -30,8 +30,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Factory for creating clones for the defined Input and Output type
@@ -66,13 +66,13 @@ public class CustomTypeCloneFactory<I, O> {
 	    
 	    try {
 	        serializedLangString = mapper.writeValueAsString(input);
-	    } catch (JsonProcessingException e) {
+	    } catch (JacksonException e) {
 	        e.printStackTrace();
 	    }
 
 	    try {
 	        return mapper.readValue(serializedLangString, mapper.getTypeFactory().constructCollectionType(List.class, elementType));
-	    } catch (JsonProcessingException e) {
+	    } catch (JacksonException e) {
 	        e.printStackTrace();
 	        
 	        logger.error("Failure occurred while creating the clone");
@@ -92,13 +92,13 @@ public class CustomTypeCloneFactory<I, O> {
 		String serializedLangString = "";
 		try {
 			serializedLangString = mapper.writeValueAsString(input);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			return mapper.readValue(serializedLangString, elementType);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			e.printStackTrace();
 			
 			logger.error("Failure occurred while creating the clone");

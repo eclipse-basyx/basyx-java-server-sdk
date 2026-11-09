@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTex
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Unit tests for {@link AttributeMapper}
@@ -112,7 +112,7 @@ public class TestAttributeMapper {
 	private static ObjectMapper configureObjectMapper() {
 		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
 
-		return new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
+		return BaSyxHTTPConfiguration.createJsonMapperBuilder(extensions).build();
 	}
 
 }

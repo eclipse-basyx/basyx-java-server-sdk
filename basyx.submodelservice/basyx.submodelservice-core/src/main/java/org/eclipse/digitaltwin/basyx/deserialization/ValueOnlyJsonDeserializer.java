@@ -26,16 +26,14 @@
 
 package org.eclipse.digitaltwin.basyx.deserialization;
 
-import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.deserialization.factory.SubmodelElementValueDeserializationFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Deserializes the ValueOnly as described in DotAAS Part 2
@@ -43,21 +41,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author danish
  *
  */
-public class ValueOnlyJsonDeserializer extends JsonDeserializer<ValueOnly> {
+public class ValueOnlyJsonDeserializer extends ValueDeserializer<ValueOnly> {
 	
 	private SubmodelElementValueDeserializationFactory submodelElementValueDeserializationFactory = new SubmodelElementValueDeserializationFactory();
 
 	@Override
-	public ValueOnly deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-		try {
-			ObjectMapper mapper = (ObjectMapper) p.getCodec();
-			JsonNode node = mapper.readTree(p);
-			
-			String idShort = node.fieldNames().next();
-			
-			return new ValueOnly(idShort, submodelElementValueDeserializationFactory.create(mapper, node.get(idShort)));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public ValueOnly deserialize(JsonParser p, DeserializationContext ctxt) {
+		JsonNode node = ctxt.readTree(p);
+		
+		String idShort = node.propertyNames().iterator().next();
+		
+		return new ValueOnly(idShort, submodelElementValueDeserializationFactory.create(ctxt, node.get(idShort)));
 	}
 }

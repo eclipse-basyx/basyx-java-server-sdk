@@ -31,9 +31,9 @@ import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a {@link SubmodelElementListValue} as described in DotAAS Part 2
@@ -41,14 +41,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author danish
  *
  */
-public class SubmodelElementListValueSerializer extends JsonSerializer<SubmodelElementListValue> {
+public class SubmodelElementListValueSerializer extends ValueSerializer<SubmodelElementListValue> {
 
 	@Override
-	public void serialize(SubmodelElementListValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SubmodelElementListValue value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartArray();
 		
         for (SubmodelElementValue element : value.getSubmodelElementValues()) {
-            gen.writeObject(element);
+            gen.writePOJO(element);
         }
         
         gen.writeEndArray();

@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Tests that {@link ApiClientPool} shares one {@link HttpClient} per origin

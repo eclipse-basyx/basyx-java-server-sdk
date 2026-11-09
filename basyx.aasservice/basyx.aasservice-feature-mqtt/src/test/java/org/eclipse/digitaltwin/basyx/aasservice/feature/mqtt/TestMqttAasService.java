@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.DeserializationException;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetInformation;
@@ -141,7 +141,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	}
 
 	@Test
-	public void addSubmodelReferenceEvent() throws DeserializationException, JsonProcessingException {
+	public void addSubmodelReferenceEvent() throws DeserializationException, JacksonException {
 		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
 		AasService aasService = getAasService(shell);
 
@@ -156,14 +156,14 @@ public class TestMqttAasService extends AasServiceSuite {
 	private String serialize(Object obj) {
 		try {
 			return objectMapper.writeValueAsString(obj);
-		} catch (JsonProcessingException ignore) {
+		} catch (JacksonException ignore) {
 			ignore.printStackTrace();
 			throw new RuntimeException();
 		}
 	}
 
 	@Test
-	public void removeSubmodelReferenceEvent() throws DeserializationException, JsonProcessingException {
+	public void removeSubmodelReferenceEvent() throws DeserializationException, JacksonException {
 		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
 
 		AasService aasService = getAasService(shell);
@@ -179,7 +179,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	private static ObjectMapper configureObjectMapper() {
 		List<SerializationExtension> extensions = Arrays.asList(new Aas4JHTTPSerializationExtension());
 
-		return new BaSyxHTTPConfiguration().jackson2ObjectMapperBuilder(extensions).build();
+		return BaSyxHTTPConfiguration.createJsonMapperBuilder(extensions).build();
 	}
 
 	private static AasRepository createMqttAasRepository() {

@@ -6,9 +6,9 @@ import java.util.Map;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a {@link SubmodelValueOnly}
@@ -16,14 +16,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author damm
  *
  */
-public class SubmodelValueOnlySerializer extends JsonSerializer<SubmodelValueOnly> {
+public class SubmodelValueOnlySerializer extends ValueSerializer<SubmodelValueOnly> {
 	@Override
-	public void serialize(SubmodelValueOnly values, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SubmodelValueOnly values, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartObject();
 		Map<String, SubmodelElementValue> vMap = values.getValuesOnlyMap();
 
 		for (String id : vMap.keySet()) {
-			gen.writePOJOField(id, vMap.get(id));
+			gen.writePOJOProperty(id, vMap.get(id));
 		}
 		gen.writeEndObject();
 	}

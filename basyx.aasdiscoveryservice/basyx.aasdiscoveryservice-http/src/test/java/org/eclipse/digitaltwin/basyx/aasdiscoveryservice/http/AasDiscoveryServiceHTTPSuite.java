@@ -41,8 +41,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 
 /**
  * Tests the Aas Discovery specific parts of the {@link AasDiscoveryService}
@@ -169,7 +169,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		return BaSyxHttpTestUtils.executeDeleteOnURL(getURL() + "/" + Base64UrlEncodedIdentifier.encodeIdentifier(shellId));
 	}
 
-	private void assertAssetLinkCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JsonProcessingException, JsonMappingException {
+	private void assertAssetLinkCreationReponse(String submodelJSON, CloseableHttpResponse creationResponse) throws IOException, ParseException, JacksonException, DatabindException {
 		assertEquals(HttpStatus.CREATED.value(), creationResponse.getCode());
 
 		String response = BaSyxHttpTestUtils.getResponseAsString(creationResponse);
@@ -177,7 +177,7 @@ public abstract class AasDiscoveryServiceHTTPSuite {
 		BaSyxHttpTestUtils.assertSameJSONContent(submodelJSON, response);
 	}
 	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+	private String getJSONWithoutCursorInfo(String response) throws DatabindException, JacksonException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 

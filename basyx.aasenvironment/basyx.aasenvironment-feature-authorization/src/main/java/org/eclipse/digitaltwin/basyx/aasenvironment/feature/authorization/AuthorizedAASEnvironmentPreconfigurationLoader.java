@@ -45,8 +45,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -186,11 +187,11 @@ public class AuthorizedAASEnvironmentPreconfigurationLoader extends AasEnvironme
         RestTemplate restTemplate = new RestTemplate();
         String response = restTemplate.getForObject(openIdConfigUrl, String.class);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
         JsonNode jsonNode = objectMapper.readTree(response);
 
         if (jsonNode.has(JWKS_ISSUER_URI))
-            return jsonNode.get(JWKS_ISSUER_URI).asText();
+            return jsonNode.get(JWKS_ISSUER_URI).asString();
 
         throw new RuntimeException("Failed to retrieve JWKS URI from OpenID Configuration");
     }

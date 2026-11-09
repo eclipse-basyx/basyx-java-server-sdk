@@ -40,7 +40,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.AuthorizedConnectedSubmodelService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

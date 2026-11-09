@@ -31,13 +31,13 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.util.Reflection
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.internal.ReflectionAnnotationIntrospector;
 import org.eclipse.digitaltwin.basyx.core.StandardizedLiteralEnum;
 import org.eclipse.digitaltwin.basyx.http.description.Profile;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleAbstractTypeResolver;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * SerializationExtension integrating the AAS4J serialization in BaSyx
@@ -54,13 +54,13 @@ public class Aas4JHTTPSerializationExtension implements SerializationExtension {
   }
 
   @Override
-  public void extend(Jackson2ObjectMapperBuilder builder) {
-    builder.featuresToEnable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-        .serializationInclusion(JsonInclude.Include.NON_NULL)
-        .featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+  public void extend(JsonMapper.Builder builder) {
+    builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+        .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .annotationIntrospector(new ReflectionAnnotationIntrospector())
-        .modulesToInstall(buildEnumModule(), buildImplementationModule());
-    ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.mixIn(x.getKey(), x.getValue()));
+        .addModules(buildEnumModule(), buildImplementationModule());
+    ReflectionHelper.JSON_MIXINS.entrySet().forEach(x -> builder.addMixIn(x.getKey(), x.getValue()));
   }
 
   @SuppressWarnings("unchecked")

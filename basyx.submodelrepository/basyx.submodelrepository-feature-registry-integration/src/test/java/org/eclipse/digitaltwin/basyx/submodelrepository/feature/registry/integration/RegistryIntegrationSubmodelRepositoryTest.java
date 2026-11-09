@@ -51,7 +51,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Unit tests for registry synchronization in

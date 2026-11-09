@@ -46,8 +46,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementListVa
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
+
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * SerializationExtension integrating the additional SubmodelRepository
@@ -60,18 +62,20 @@ import org.springframework.stereotype.Component;
 public class SubmodelServiceHTTPSerializationExtension implements SerializationExtension {
 
 	@Override
-	public void extend(Jackson2ObjectMapperBuilder builder) {
-		builder.serializerByType(MultiLanguagePropertyValue.class, new MultiLanguagePropertyValueSerializer());
-		builder.deserializerByType(SubmodelElementValue.class, new SubmodelElementValueJsonDeserializer());
-		builder.deserializerByType(ValueOnly.class, new ValueOnlyJsonDeserializer());
-		builder.serializerByType(ValueOnly.class, new ValueOnlySerializer());
-		builder.serializerByType(PropertyValue.class, new PropertyValueSerializer());
-		builder.serializerByType(SubmodelElementCollectionValue.class, new SubmodelElementCollectionValueSerializer());
-		builder.serializerByType(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
-		builder.mixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
-		builder.serializerByType(SubmodelValueOnly.class, new SubmodelValueOnlySerializer());
-		builder.deserializerByType(SpecificAssetIdValue.class, new SpecificAssetIdValueJsonDeserializer());
-		builder.serializerByType(SpecificAssetIdValue.class, new SpecificAssetIdValueSerializer());
+	public void extend(JsonMapper.Builder builder) {
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(MultiLanguagePropertyValue.class, new MultiLanguagePropertyValueSerializer());
+		module.addDeserializer(SubmodelElementValue.class, new SubmodelElementValueJsonDeserializer());
+		module.addDeserializer(ValueOnly.class, new ValueOnlyJsonDeserializer());
+		module.addSerializer(ValueOnly.class, new ValueOnlySerializer());
+		module.addSerializer(PropertyValue.class, new PropertyValueSerializer());
+		module.addSerializer(SubmodelElementCollectionValue.class, new SubmodelElementCollectionValueSerializer());
+		module.addSerializer(SubmodelElementListValue.class, new SubmodelElementListValueSerializer());
+		builder.addMixIn(ReferenceElementValue.class, ReferenceElementValueMixIn.class);
+		module.addSerializer(SubmodelValueOnly.class, new SubmodelValueOnlySerializer());
+		module.addDeserializer(SpecificAssetIdValue.class, new SpecificAssetIdValueJsonDeserializer());
+		module.addSerializer(SpecificAssetIdValue.class, new SpecificAssetIdValueSerializer());
+		builder.addModule(module);
 	}
 
 }

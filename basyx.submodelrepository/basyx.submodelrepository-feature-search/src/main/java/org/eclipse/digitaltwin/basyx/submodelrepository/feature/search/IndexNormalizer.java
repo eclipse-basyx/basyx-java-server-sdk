@@ -25,9 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.search;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.SerializationException;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonSerializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.*;
@@ -43,7 +44,7 @@ import java.util.List;
 public final class IndexNormalizer {
     private static final Logger logger = LoggerFactory.getLogger(IndexNormalizer.class);
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     /**
      * Represents a node and its corresponding source object for iterative processing
@@ -88,7 +89,7 @@ public final class IndexNormalizer {
             ObjectNode obj = (ObjectNode) node;
 
             // Get the idShort to build path
-            String idShort = obj.has("idShort") && !(sourceObject instanceof Submodel) ? obj.get("idShort").asText() : null;
+            String idShort = obj.has("idShort") && !(sourceObject instanceof Submodel) ? obj.get("idShort").asString() : null;
             String currentPath = "";
             if (current.parentObject instanceof SubmodelElementList) {
                 currentPath = current.pathPrefix.endsWith(".") ?  current.pathPrefix.substring(0, current.pathPrefix.length() - 1) :  current.pathPrefix;

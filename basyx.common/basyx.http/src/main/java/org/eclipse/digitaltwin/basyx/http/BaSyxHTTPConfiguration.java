@@ -35,12 +35,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -48,8 +48,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Configuration class providing all relevant beans for HTTP payload
@@ -63,35 +65,45 @@ public class BaSyxHTTPConfiguration {
 	Logger logger = LoggerFactory.getLogger(BaSyxHTTPConfiguration.class);
 
 	/**
-	 * Returns a Jackson2ObjectMapperBuilder that is configured using the passed
-	 * list of {@link SerializationExtension}
+	 * Creates a {@link JsonMapper.Builder} that is configured using the passed
+	 * list of {@link SerializationExtension}. The builder starts from the Jackson
+	 * 2.x defaults to keep the HTTP payloads stable across the Jackson 3 upgrade.
 	 * 
 	 * @param serializationExtensions
-	 * @return
+	 * @return the configured builder
 	 */
-	@Bean
-	public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(List<SerializationExtension> serializationExtensions) {
-		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-				.serializationInclusion(JsonInclude.Include.NON_NULL)
-				.modulesToInstall(new Jdk8Module());
+	public static JsonMapper.Builder createJsonMapperBuilder(List<SerializationExtension> serializationExtensions) {
+		JsonMapper.Builder builder = JsonMapper.builderWithJackson2Defaults()
+				.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL));
 
 		for (SerializationExtension serializationExtension : serializationExtensions) {
 			serializationExtension.extend(builder);
 		}
-		
+
 		return builder;
 	}
 
+	/**
+	 * Returns a {@link JsonMapper} that is configured using the passed list of
+	 * {@link SerializationExtension}. It is marked as primary since further
+	 * mappers (e.g., the XmlMapper auto-configured by Spring Boot) may be present.
+	 * 
+	 * @param serializationExtensions
+	 * @return the configured mapper
+	 */
 	@Bean
-	@ConditionalOnMissingBean(ObjectMapper.class)
-	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-		return builder.build();
+	@Primary
+	@ConditionalOnMissingBean(JsonMapper.class)
+	public JsonMapper basyxJsonMapper(List<SerializationExtension> serializationExtensions) {
+		return createJsonMapperBuilder(serializationExtensions).build();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(MappingJackson2HttpMessageConverter.class)
-	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
-		return new MappingJackson2HttpMessageConverter(objectMapper);
+	@ConditionalOnMissingBean(JacksonJsonHttpMessageConverter.class)
+	public JacksonJsonHttpMessageConverter basyxJacksonJsonHttpMessageConverter(JsonMapper jsonMapper) {
+		return new JacksonJsonHttpMessageConverter(jsonMapper);
 	}
 
 	@Bean

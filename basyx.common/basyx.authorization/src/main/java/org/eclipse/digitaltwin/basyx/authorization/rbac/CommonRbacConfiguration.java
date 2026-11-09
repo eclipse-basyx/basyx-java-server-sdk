@@ -30,16 +30,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.digitaltwin.basyx.authorization.CommonAuthorizationProperties;
+import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.reflections.Reflections;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * A base configuration for Rbac based authorization
@@ -50,21 +48,24 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @ConditionalOnExpression(value = "${" + CommonAuthorizationProperties.ENABLED_PROPERTY_KEY + ":false} and ('${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.equals('rbac') or '${" + CommonAuthorizationProperties.TYPE_PROPERTY_KEY + "}'.isEmpty())")
 public class CommonRbacConfiguration {
 
+	/**
+	 * Registers the RBAC specific (de-)serialization capabilities with the BaSyx
+	 * {@link tools.jackson.databind.json.JsonMapper}
+	 * 
+	 * @return the serialization extension
+	 */
 	@Bean
-	@Primary
-	public ObjectMapper getAasMapper(Jackson2ObjectMapperBuilder builder) {
-		ObjectMapper mapper = builder.build();
+	public SerializationExtension rbacSerializationExtension() {
+		return builder -> {
+			Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
+			Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
 
-		Reflections reflections = new Reflections("org.eclipse.digitaltwin.basyx");
-		Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(TargetInformationSubtype.class);
-		
-		subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(mapper::registerSubtypes);
-		
-		SimpleModule module = new SimpleModule();
-        module.addDeserializer(HashMap.class, new RbacRuleDeserializer());
-        mapper.registerModule(module);
+			subtypes.stream().map(this::createNamedType).filter(Objects::nonNull).forEach(builder::registerSubtypes);
 
-		return mapper;
+			SimpleModule module = new SimpleModule();
+			module.addDeserializer(HashMap.class, new RbacRuleDeserializer());
+			builder.addModule(module);
+		};
 	}
 
 	private NamedType createNamedType(Class<?> subType) {

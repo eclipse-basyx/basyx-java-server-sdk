@@ -12,8 +12,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonMapperFactory;
 import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.SimpleAbstractTypeResolverFactory;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationVariable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.module.SimpleAbstractTypeResolver;
 
 public class PostOperation {
 

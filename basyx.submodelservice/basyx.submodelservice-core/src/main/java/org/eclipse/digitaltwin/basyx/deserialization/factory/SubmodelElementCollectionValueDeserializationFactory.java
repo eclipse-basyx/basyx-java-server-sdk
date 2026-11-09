@@ -35,10 +35,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementCollec
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Factory class to create deserialized {@link SubmodelElementCollectionValue} based on
@@ -49,11 +48,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class SubmodelElementCollectionValueDeserializationFactory {
 	
-	private ObjectMapper objectMapper;
+	private DeserializationContext ctxt;
 	private JsonNode node;
 	
-	public SubmodelElementCollectionValueDeserializationFactory(ObjectMapper objectMapper, JsonNode node) {
-		this.objectMapper = objectMapper;
+	public SubmodelElementCollectionValueDeserializationFactory(DeserializationContext ctxt, JsonNode node) {
+		this.ctxt = ctxt;
 		this.node = node;
 	}
 	
@@ -64,12 +63,11 @@ public class SubmodelElementCollectionValueDeserializationFactory {
 	 * @return {@link SubmodelElementCollectionValue}
 	 * 
 	 */
-	public SubmodelElementCollectionValue create() throws JsonProcessingException {
-		Map<String, Object> map = objectMapper.readValue(node.toString(), new TypeReference<Map<String, Object>>() {});
+	public SubmodelElementCollectionValue create() throws JacksonException {
 		Map<String,SubmodelElementValue> valueOnlies = new HashMap<>();
 
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			SubmodelElementValue submodelElementValue = objectMapper.convertValue(entry.getValue(), SubmodelElementValue.class);
+		for (Map.Entry<String, JsonNode> entry : node.properties()) {
+			SubmodelElementValue submodelElementValue = ctxt.readTreeAsValue(entry.getValue(), SubmodelElementValue.class);
 			valueOnlies.put(entry.getKey(), submodelElementValue);
 		}
 

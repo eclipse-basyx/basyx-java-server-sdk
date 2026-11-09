@@ -34,10 +34,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
 
 @Configuration
 public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcConfigurer {
@@ -69,7 +68,7 @@ public class RestConfiguration extends BaSyxHTTPConfiguration implements WebMvcC
 	
 	@Bean
 	public SerializationExtension getDisableExtension() {
-		return builder -> builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		return builder -> builder.disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
 	@Override

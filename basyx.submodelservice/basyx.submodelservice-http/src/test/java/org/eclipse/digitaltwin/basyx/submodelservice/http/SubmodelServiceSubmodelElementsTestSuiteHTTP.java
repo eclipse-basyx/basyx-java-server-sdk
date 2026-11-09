@@ -56,8 +56,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 
 /**
  * Base testsuite for all Submodel Service HTTP tests related to Submodel
@@ -448,7 +448,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	}
 
 	@Test
-	public void createNestedSubmodelElementInSubmodelElementList() throws IOException, JsonProcessingException, JsonMappingException, ParseException {
+	public void createNestedSubmodelElementInSubmodelElementList() throws IOException, JacksonException, DatabindException, ParseException {
 		String element = getJSONValueAsString("SubmodelElementNew.json");
 		CloseableHttpResponse createdInListResponse = BaSyxHttpTestUtils.executePostOnURL(createSpecificSubmodelElementURL(DummySubmodelFactory.SUBMODEL_ELEMENT_LIST_SIMPLE), element);
 		assertEquals(HttpStatus.CREATED.value(), createdInListResponse.getCode());
@@ -681,7 +681,7 @@ public abstract class SubmodelServiceSubmodelElementsTestSuiteHTTP {
 		return BaSyxHttpTestUtils.executePutOnURL(url, element);
 	}
 	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException  {
+	private String getJSONWithoutCursorInfo(String response) throws DatabindException, JacksonException  {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 

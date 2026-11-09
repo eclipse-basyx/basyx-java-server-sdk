@@ -25,8 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.http.documentation;
 
+import org.eclipse.digitaltwin.aas4j.v3.dataformat.core.internal.util.ReflectionHelper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -56,9 +60,22 @@ public class RepositoryApiDocumentationConfiguration {
 		return new OpenAPI().info(apiInfo());
 	}
 	
+	/**
+	 * swagger-core still uses Jackson 2 for schema resolution, whereas the payload
+	 * (de-)serialization uses Jackson 3. Therefore, a dedicated Jackson 2 mapper
+	 * mirroring the AAS4J configuration is provided for the API documentation.
+	 */
 	@Bean
-	public ModelResolver modelResolver(Jackson2ObjectMapperBuilder builder) {
-		return new ModelResolver(builder.build());
+	public ModelResolver modelResolver() {
+		return new ModelResolver(createDocumentationObjectMapper());
+	}
+
+	private static ObjectMapper createDocumentationObjectMapper() {
+		JsonMapper.Builder builder = JsonMapper.builder()
+				.serializationInclusion(JsonInclude.Include.NON_NULL)
+				.annotationIntrospector(new Aas4JOpenApiAnnotationIntrospector());
+		ReflectionHelper.JSON_MIXINS.forEach(builder::addMixIn);
+		return builder.build();
 	}
 
 	protected Info apiInfo() {

@@ -30,8 +30,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetInformation;
 import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
@@ -125,7 +126,7 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		List<SpecificAssetId> decodedAssetIds;
 		try {
 			decodedAssetIds = getDecodedSpecificAssetIds(assetIds);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
         CursorResult<List<AssetAdministrationShell>> paginatedAAS = aasRepository.getAllAas(decodedAssetIds, idShort, paginationInfo);
@@ -243,8 +244,8 @@ public class AasRepositoryApiHTTPController implements AasRepositoryHTTPApi {
 		}
 	}
 
-	private List<SpecificAssetId> getDecodedSpecificAssetIds(List<Base64UrlEncodedIdentifier> assetIds) throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
+	private List<SpecificAssetId> getDecodedSpecificAssetIds(List<Base64UrlEncodedIdentifier> assetIds) throws JacksonException {
+		ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 		List<SpecificAssetId> result = new ArrayList<>();
 
 		if (assetIds == null)

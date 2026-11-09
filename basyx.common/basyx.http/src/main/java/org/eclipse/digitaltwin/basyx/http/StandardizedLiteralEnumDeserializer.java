@@ -1,14 +1,11 @@
 package org.eclipse.digitaltwin.basyx.http;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 import org.eclipse.digitaltwin.basyx.core.StandardizedLiteralEnum;
 
-import java.io.IOException;
-
-public class StandardizedLiteralEnumDeserializer<T extends StandardizedLiteralEnum> extends JsonDeserializer<T> {
+public class StandardizedLiteralEnumDeserializer<T extends StandardizedLiteralEnum> extends ValueDeserializer<T> {
 
   private Class<T> clazz;
 
@@ -17,7 +14,7 @@ public class StandardizedLiteralEnumDeserializer<T extends StandardizedLiteralEn
   }
 
   @Override
-  public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+  public T deserialize(JsonParser p, DeserializationContext ctxt) {
     String valueAsString = p.getValueAsString();
     return StandardizedLiteralEnumHelper.fromLiteral(clazz, valueAsString);
   }

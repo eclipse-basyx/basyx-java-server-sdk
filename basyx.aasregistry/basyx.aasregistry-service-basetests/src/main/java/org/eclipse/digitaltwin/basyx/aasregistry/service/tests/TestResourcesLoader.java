@@ -34,8 +34,9 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ObjectReader;
 
 public class TestResourcesLoader extends TestName {
 
@@ -51,7 +52,7 @@ public class TestResourcesLoader extends TestName {
 	}
 
 	public TestResourcesLoader() {
-		this(null, new ObjectMapper());
+		this(null, JsonMapper.builderWithJackson2Defaults().build());
 	}
 
 	@Override

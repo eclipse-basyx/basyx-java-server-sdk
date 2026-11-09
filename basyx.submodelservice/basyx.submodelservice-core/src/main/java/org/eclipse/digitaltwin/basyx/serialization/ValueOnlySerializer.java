@@ -30,9 +30,9 @@ import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ValueOnly;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Serializes a {@link ValueOnly} as described in DotAAS Part 2
@@ -40,12 +40,12 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @author danish
  *
  */
-public class ValueOnlySerializer extends JsonSerializer<ValueOnly> {
+public class ValueOnlySerializer extends ValueSerializer<ValueOnly> {
 
 	@Override
-	public void serialize(ValueOnly value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(ValueOnly value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartObject();
-        gen.writePOJOField(value.getIdShort(), value.getSubmodelElementValue());
+        gen.writePOJOProperty(value.getIdShort(), value.getSubmodelElementValue());
         gen.writeEndObject();
 	}
 

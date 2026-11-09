@@ -59,8 +59,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
 
 /**
  * Base testsuite for all Aas Repository HTTP tests
@@ -97,7 +97,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
-	public void aasRoundtrip() throws JsonMappingException, ParseException, JsonProcessingException, IOException {
+	public void aasRoundtrip() throws DatabindException, ParseException, JacksonException, IOException {
 		String aasJsonContent = createDummyAasOnServer(getAas1JSONString());
 
 		CloseableHttpResponse retrievalResponse = getSpecificAas(dummyAasId);
@@ -340,7 +340,7 @@ public abstract class AasRepositoryHTTPSuite {
 	}
 
 	@Test
-	public void updateAAS() throws JsonMappingException, JsonProcessingException, ParseException, IOException {
+	public void updateAAS() throws DatabindException, JacksonException, ParseException, IOException {
 		createDummyAasOnServer(getAas1JSONString());
 
 		String expectedAasJSON = getUpdatedAasJSONString();
@@ -453,7 +453,7 @@ public abstract class AasRepositoryHTTPSuite {
 		return BaSyxHttpTestUtils.readJSONStringFromClasspath("EmptyResponse.json");
 	}
 	
-	private String getJSONWithoutCursorInfo(String response) throws JsonMappingException, JsonProcessingException {
+	private String getJSONWithoutCursorInfo(String response) throws DatabindException, JacksonException {
 		return BaSyxHttpTestUtils.removeCursorFromJSON(response);
 	}
 

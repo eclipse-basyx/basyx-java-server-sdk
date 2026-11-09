@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleInitializer;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacStorage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 

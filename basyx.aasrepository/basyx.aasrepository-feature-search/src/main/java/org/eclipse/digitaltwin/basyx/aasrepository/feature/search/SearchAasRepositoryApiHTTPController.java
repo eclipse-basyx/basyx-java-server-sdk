@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
@@ -74,7 +74,7 @@ public class SearchAasRepositoryApiHTTPController implements SearchAasRepository
 				queryResponse.paging_metadata.resulType = "AssetAdministrationShell";
 				List<AssetAdministrationShell> shells = new ArrayList<>();
 				for (Object id : queryResponse.result) {
-					String identifier = ((ObjectNode) id).get("id").asText();
+					String identifier = ((ObjectNode) id).get("id").asString();
 					AssetAdministrationShell shell = backend.getAas(identifier);
 					shells.add(shell);
 

@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.persistence.AttributeConverter;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 
@@ -34,13 +35,13 @@ import java.util.Set;
 
 public class AssetLinksConverter implements AttributeConverter<Set<AssetLink>,String> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
     public String convertToDatabaseColumn(Set<AssetLink> attribute) {
         try{
             return objectMapper.writeValueAsString(attribute);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("Error converting AssetLink set to JSON", e);
         }
     }
@@ -49,7 +50,7 @@ public class AssetLinksConverter implements AttributeConverter<Set<AssetLink>,St
     public Set<AssetLink> convertToEntityAttribute(String dbData) {
         try {
             return objectMapper.readValue(dbData, objectMapper.getTypeFactory().constructCollectionType(Set.class, AssetLink.class));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("Error converting JSON to AssetLink Set", e);
         }
     }

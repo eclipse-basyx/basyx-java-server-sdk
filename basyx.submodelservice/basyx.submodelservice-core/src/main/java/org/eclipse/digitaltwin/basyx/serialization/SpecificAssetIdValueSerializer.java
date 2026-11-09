@@ -31,25 +31,25 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Reference;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.ReferenceValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SpecificAssetIdValue;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * @author witt, jungjan
  */
-public class SpecificAssetIdValueSerializer extends JsonSerializer<SpecificAssetIdValue> {
+public class SpecificAssetIdValueSerializer extends ValueSerializer<SpecificAssetIdValue> {
 
 	@Override
-	public void serialize(SpecificAssetIdValue value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	public void serialize(SpecificAssetIdValue value, JsonGenerator gen, SerializationContext serializers) {
 		gen.writeStartObject();
-		gen.writePOJOField(value.getName(), value.getValue());
+		gen.writePOJOProperty(value.getName(), value.getValue());
 
 		Reference externalSubjectId = value.getExternalSubjectId();
 
 		if (externalSubjectId != null) {
 			ReferenceValue externalSubjectIdValue = new ReferenceValue(externalSubjectId.getType(), externalSubjectId.getKeys());
-			gen.writeObjectField("externalSubjectId", externalSubjectIdValue);
+			gen.writePOJOProperty("externalSubjectId", externalSubjectIdValue);
 		}
 		gen.writeEndObject();
 	}

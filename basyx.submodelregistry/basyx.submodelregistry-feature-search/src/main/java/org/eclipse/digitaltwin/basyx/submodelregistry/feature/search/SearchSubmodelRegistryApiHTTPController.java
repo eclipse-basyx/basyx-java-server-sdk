@@ -26,7 +26,7 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.executor.ESQueryExecutor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
@@ -78,7 +78,7 @@ public class SearchSubmodelRegistryApiHTTPController implements SearchSubmodelRe
                 queryResponse.paging_metadata.resulType = "SubmodelDescriptor";
                 List<SubmodelDescriptor> smDescs = new ArrayList<>();
                 for (Object id : queryResponse.result) {
-                    String identifier = ((ObjectNode) id).get("id").asText();
+                    String identifier = ((ObjectNode) id).get("id").asString();
                     SubmodelDescriptor smDesc = backend.getSubmodelDescriptor(identifier);
                     smDescs.add(smDesc);
 
