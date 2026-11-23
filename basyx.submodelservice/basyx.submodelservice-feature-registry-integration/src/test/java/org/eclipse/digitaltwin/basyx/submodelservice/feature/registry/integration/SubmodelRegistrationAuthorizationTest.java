@@ -42,7 +42,7 @@ import org.springframework.test.annotation.DirtiesContext;
 	classes = SubmodelServiceTestConfiguration.class,
 	properties = {
 		"basyx.submodelservice.feature.registryintegration.authorization.enabled=true",
-		"basyx.submodelservice.feature.registryintegration.authorization.token-endpoint=http://localhost:9097/realms/BaSyx/protocol/openid-connect/token",
+		"basyx.submodelservice.feature.registryintegration.authorization.token-endpoint=http://localhost/realms/BaSyx/protocol/openid-connect/token",
 		"basyx.submodelservice.feature.registryintegration.authorization.grant-type=CLIENT_CREDENTIALS",
 		"basyx.submodelservice.feature.registryintegration.authorization.client-id=workstation-1",
 		"basyx.submodelservice.feature.registryintegration.authorization.client-secret=nY0mjyECF60DGzNmQUjL81XurSl8etom",
