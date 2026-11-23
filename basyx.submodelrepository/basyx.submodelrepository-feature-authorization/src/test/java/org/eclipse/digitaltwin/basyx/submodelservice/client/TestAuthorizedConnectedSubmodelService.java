@@ -53,6 +53,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
@@ -81,6 +82,12 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		application.setAdditionalProfiles(PROFILE);
 		
 		appContext = application.run(new String[] {});
+	}
+
+	@BeforeEach
+	public void authenticateTestThread() throws FileNotFoundException, IOException {
+		// The tests access the secured repository bean directly, which requires an authenticated security context
+		configureSecurityContext(getTokenProvider());
 	}
 
 	@AfterEach
