@@ -200,6 +200,39 @@ public class TestOperationDelegationFeature {
 	}
 
 	@Test
+	public void invokeOperationDelegationConnectsToValidatedAddress() throws Exception {
+		OperationDelegationSecurityProperties allowlistedSecurityProperties = new OperationDelegationSecurityProperties();
+		allowlistedSecurityProperties.getAllowlist().setCidrs(Arrays.asList("127.0.0.0/8"));
+		allowlistedSecurityProperties.getAllowlist().setPorts(Arrays.asList(2020));
+
+		// The synthetic host name is only known to the injected resolver, so the
+		// request can only succeed if the HTTP client connects to the address
+		// returned by the validator instead of performing its own DNS lookup.
+		InetAddress loopbackAddress = InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 });
+		OperationDelegationTargetValidator.HostResolver syntheticResolver = host -> {
+			if ("delegation-target.invalid".equals(host))
+				return new InetAddress[] { loopbackAddress };
+
+			throw new UnknownHostException(host);
+		};
+
+		OperationDelegationTargetValidator targetValidator = new OperationDelegationTargetValidator(allowlistedSecurityProperties, syntheticResolver);
+		SubmodelRepository allowlistedRepository = createOperationDelegationSubmodelRepository(new HTTPOperationDelegation(createWebClient(targetValidator)));
+
+		String submodelId = "validatedAddressDelegationSubmodel";
+		OperationVariable[] inputOperationVariable = getInputVariable();
+		String path = "/operationInvocationValidatedAddress";
+
+		createExpectationsForPost(path, getRequestBody(inputOperationVariable), getExpectedOutputResponse(getInputVariable()), 200);
+		createSubmodelAtRepository(allowlistedRepository, submodelId);
+		createInvokableSMEAtRepository(allowlistedRepository, submodelId, "operationDelegationSME", "http://delegation-target.invalid:2020" + path);
+
+		OperationVariable[] actualOutputOperationVariable = allowlistedRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+
+		assertArrayEquals(getOutputVariable(getInputVariable()), actualOutputOperationVariable);
+	}
+
+	@Test
 	public void invokeOperationDelegationBlocksDnsRebindingToLoopback() throws Exception {
 		AtomicBoolean internalServerHit = new AtomicBoolean(false);
 		HttpServer internalServer = HttpServer.create(new InetSocketAddress(9091), 0);

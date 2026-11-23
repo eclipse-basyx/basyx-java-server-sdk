@@ -34,6 +34,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
@@ -111,6 +112,29 @@ public class TestOperationDelegationAddressResolverGroup {
 		securityProperties.setEnabled(false);
 
 		List<InetSocketAddress> resolved = resolveAll(securityProperties, host -> new InetAddress[] { LOOPBACK_ADDRESS }, "internal.example", 8080);
+
+		assertEquals(Arrays.asList(new InetSocketAddress(LOOPBACK_ADDRESS, 8080)), resolved);
+	}
+
+	@Test
+	public void resolvesAbsoluteHostNameAsGiven() {
+		List<String> requestedHosts = new CopyOnWriteArrayList<>();
+		OperationDelegationTargetValidator.HostResolver recordingResolver = host -> {
+			requestedHosts.add(host);
+			return new InetAddress[] { PUBLIC_ADDRESS };
+		};
+
+		resolveAll(new OperationDelegationSecurityProperties(), recordingResolver, "delegation.example.", 8080);
+
+		assertEquals(Arrays.asList("delegation.example."), requestedHosts);
+	}
+
+	@Test
+	public void appliesHostAllowlistToAbsoluteHostName() {
+		OperationDelegationSecurityProperties securityProperties = new OperationDelegationSecurityProperties();
+		securityProperties.getAllowlist().setHosts(Arrays.asList("internal.example"));
+
+		List<InetSocketAddress> resolved = resolveAll(securityProperties, host -> new InetAddress[] { LOOPBACK_ADDRESS }, "internal.example.", 8080);
 
 		assertEquals(Arrays.asList(new InetSocketAddress(LOOPBACK_ADDRESS, 8080)), resolved);
 	}

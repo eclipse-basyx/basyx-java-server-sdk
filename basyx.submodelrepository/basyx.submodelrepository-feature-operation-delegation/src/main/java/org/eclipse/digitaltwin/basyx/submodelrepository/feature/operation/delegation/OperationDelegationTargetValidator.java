@@ -83,14 +83,15 @@ public class OperationDelegationTargetValidator {
 			throw new OperationDelegationException(String.format("Delegation URI scheme '%s' is not supported", targetUri.getScheme()));
 		}
 
-		String host = normalize(targetUri.getHost());
+		String requestedHost = trim(targetUri.getHost());
+		String host = normalize(requestedHost);
 		if (host.isEmpty())
 			throw new OperationDelegationException("Delegation URI must contain a host");
 
 		int targetPort = resolveTargetPort(targetUri, scheme);
 		validatePort(targetPort, targetUri);
 
-		InetAddress[] resolvedAddresses = resolveHost(host, targetUri.toString());
+		InetAddress[] resolvedAddresses = resolveHost(requestedHost, targetUri.toString());
 		validateResolvedAddresses(host, resolvedAddresses, targetUri.toString());
 	}
 
@@ -99,6 +100,9 @@ public class OperationDelegationTargetValidator {
 	 * The returned addresses are the ones that must be used for the outbound
 	 * connection, so the validated address and the connected address cannot
 	 * diverge (e.g. through DNS rebinding).
+	 * <p>
+	 * The host is resolved as given (an absolute name keeps its trailing dot);
+	 * the normalized form is only used for allowlist matching.
 	 *
 	 * @param host
 	 *            the host name or IP literal to resolve
@@ -108,14 +112,15 @@ public class OperationDelegationTargetValidator {
 	 *             blocked
 	 */
 	public List<InetAddress> resolveAndValidate(String host) {
-		String normalizedHost = normalize(host);
+		String requestedHost = trim(host);
+		String normalizedHost = normalize(requestedHost);
 		if (normalizedHost.isEmpty())
 			throw new OperationDelegationException("Delegation target host must not be empty");
 
-		InetAddress[] resolvedAddresses = resolveHost(normalizedHost, normalizedHost);
+		InetAddress[] resolvedAddresses = resolveHost(requestedHost, requestedHost);
 
 		if (securityProperties.isEnabled())
-			validateResolvedAddresses(normalizedHost, resolvedAddresses, normalizedHost);
+			validateResolvedAddresses(normalizedHost, resolvedAddresses, requestedHost);
 
 		return Collections.unmodifiableList(Arrays.asList(resolvedAddresses));
 	}
@@ -281,6 +286,10 @@ public class OperationDelegationTargetValidator {
 		}
 
 		return parsedCidrs;
+	}
+
+	private String trim(String value) {
+		return value == null ? "" : value.trim();
 	}
 
 	private String normalize(String value) {
