@@ -64,6 +64,7 @@
 		<revision>2.0.0-SNAPSHOT</revision>
 		<docker.provenance />
 		<docker.namespace>eclipsebasyx</docker.namespace>
+		<docker.noCache>true</docker.noCache>
 		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
 		<docker.image.tag>${revision}</docker.image.tag>
 		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
@@ -214,7 +215,7 @@
 										<maven.build.timestamp>
 											${maven.build.timestamp}</maven.build.timestamp>
 									</labels>
-									<noCache>true</noCache>
+									<noCache>${docker.noCache}</noCache>
 									<buildx>
 										<platforms>
 											${docker.target.platforms}

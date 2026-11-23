@@ -18,6 +18,11 @@ on:
       - 'LICENSE'
       - 'NOTICE'
 
+env:
+  # Applied to every mvn call: no download progress noise, and reuse Docker layers
+  # (the shared apt-get layer otherwise gets rebuilt for every image)
+  MAVEN_ARGS: -B -ntp -Ddocker.noCache=false
+
 jobs:
   test-basyx-client:
     runs-on: ubuntu-latest
