@@ -28,15 +28,13 @@ package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests the {@link AASXFileServer} with MongoDB backend
@@ -45,7 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestMongoDBAASXFileServer extends AASXFileServerSuite {
 
 	@Autowired
@@ -62,7 +59,7 @@ public class TestMongoDBAASXFileServer extends AASXFileServerSuite {
 		return aasxFileServer;
 	}
 
-	@Before
+	@BeforeEach
 	public void cleanUp() {
 		MongoDBUtilities.clearCollection(mongoTemplate, DummyAASXFileServerConfiguration.TEST_COLLECTION);
 		Query query = new Query(GridFsCriteria.whereContentType().is(CrudAASXFileServer.AASX_CONTENT_TYPE));

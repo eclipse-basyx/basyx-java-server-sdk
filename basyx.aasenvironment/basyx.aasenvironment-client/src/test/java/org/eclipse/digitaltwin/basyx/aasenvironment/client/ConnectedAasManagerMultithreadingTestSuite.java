@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultAssetAdministrationShe
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodel;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class ConnectedAasManagerMultithreadingTestSuite {
     static final int N_THREADS = 20;
@@ -74,9 +74,9 @@ public abstract class ConnectedAasManagerMultithreadingTestSuite {
     }
 
     void assertSubmodelWasCreatedAndRegistered(String shellId, String submodelId) {
-        assertEquals("No submodel with id " + submodelId + " found by the client", submodelId, getConnectedAasManager().getSubmodelService(submodelId).getSubmodel().getId());
-        assertTrue("SubmodelRef " + submodelId + " not found in shell " + shellId,
-                getAasRepository().getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals));
+        assertEquals(submodelId, getConnectedAasManager().getSubmodelService(submodelId).getSubmodel().getId(), "No submodel with id " + submodelId + " found by the client");
+        assertTrue(getAasRepository().getSubmodelReferences(shellId, PaginationInfo.NO_LIMIT).getResult().stream().map(Reference::getKeys).flatMap(Collection::stream).map(Key::getValue).anyMatch(submodelId::equals),
+                "SubmodelRef " + submodelId + " not found in shell " + shellId);
     }
 
     private AssetAdministrationShell createShell() {

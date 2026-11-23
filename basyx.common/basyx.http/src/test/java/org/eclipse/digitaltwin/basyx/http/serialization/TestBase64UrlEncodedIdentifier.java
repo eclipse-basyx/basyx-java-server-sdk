@@ -25,14 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.http.serialization;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the Base64UrlEncodedIdentifier class

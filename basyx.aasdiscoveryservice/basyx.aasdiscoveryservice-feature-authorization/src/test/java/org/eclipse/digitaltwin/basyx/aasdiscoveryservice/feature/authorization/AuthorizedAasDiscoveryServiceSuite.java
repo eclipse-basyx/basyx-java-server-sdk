@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,10 +40,10 @@ import org.eclipse.digitaltwin.basyx.authorization.DummyCredential;
 import org.eclipse.digitaltwin.basyx.authorization.DummyCredentialStore;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncoder;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 
@@ -76,18 +76,18 @@ public abstract class AuthorizedAasDiscoveryServiceSuite {
 	protected abstract ConfigurableApplicationContext getAppContext();
 	protected abstract AasDiscoveryService getUnauthDiscoveryService();
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpTokenProvider() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 	}
 
-	@Before
+	@BeforeEach
 	public void initializeRepositories() throws Exception {
 		String expectedAssetIds = getStringFromFile(ASSETLINKS_SET1_PATH);
 		getUnauthDiscoveryService().createAllAssetLinksById(AASID1, createSpecificAssetIdsFromJson(getAppContext().getBean(ObjectMapper.class), expectedAssetIds));
 	}
 
-	@After
+	@AfterEach
 	public void reset() throws Exception {
 		try {
 			getUnauthDiscoveryService().deleteAllAssetLinksById(AASID1);

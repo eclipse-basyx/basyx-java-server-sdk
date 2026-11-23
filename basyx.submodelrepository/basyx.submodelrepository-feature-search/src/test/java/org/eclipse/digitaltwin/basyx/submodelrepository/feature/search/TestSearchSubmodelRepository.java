@@ -34,7 +34,12 @@ import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -52,14 +57,14 @@ public class TestSearchSubmodelRepository {
     private static SubmodelRepository searchBackend;
     private static SearchSubmodelRepositoryApiHTTPController searchAPI;
 
-    @BeforeClass
+    @BeforeAll
     public static void startSmRepo(){
         appContext = new SpringApplicationBuilder(DummySearchSubmodelRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(SubmodelRepository.class);
         searchAPI = appContext.getBean(SearchSubmodelRepositoryApiHTTPController.class);
     }
 
-    @Before
+    @BeforeEach
     public void loadSubmodels() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadSubmodels();
         Thread.sleep(2000);
@@ -73,7 +78,7 @@ public class TestSearchSubmodelRepository {
         QueryResponse response = result.getBody();
         assert response != null;
         List<Submodel> submodels = response.result.stream().map(o->(Submodel)o).toList();
-        Assert.assertEquals(3,submodels.size());
+        Assertions.assertEquals(3,submodels.size());
     }
 
     private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -94,7 +99,7 @@ public class TestSearchSubmodelRepository {
         }
     }
 
-    @After
+    @AfterEach
     public void clearRepository(){
         searchBackend.getAllSubmodels(new PaginationInfo(100, "")).getResult().forEach(submodel -> {
             try {
@@ -103,7 +108,7 @@ public class TestSearchSubmodelRepository {
         });
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdownAasRepo() {
         appContext.close();
     }

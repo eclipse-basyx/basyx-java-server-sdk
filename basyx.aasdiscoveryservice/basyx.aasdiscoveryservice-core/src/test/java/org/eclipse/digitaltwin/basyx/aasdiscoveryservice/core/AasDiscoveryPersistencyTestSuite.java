@@ -25,13 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.SpecificAssetId;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Persitency TestSuite for AasDiscovery

@@ -26,12 +26,10 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2;
 import jakarta.transaction.Transactional;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests the AasDiscoveryService with MongoDb as backend
@@ -40,7 +38,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestH2AasDiscoveryService extends AasDiscoveryServiceSuite {
 
 	@Autowired
@@ -49,7 +46,7 @@ public class TestH2AasDiscoveryService extends AasDiscoveryServiceSuite {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	@Before
+	@BeforeEach
 	@Transactional
 	public void cleanup() {
 		jdbcTemplate.execute("DELETE FROM keys");

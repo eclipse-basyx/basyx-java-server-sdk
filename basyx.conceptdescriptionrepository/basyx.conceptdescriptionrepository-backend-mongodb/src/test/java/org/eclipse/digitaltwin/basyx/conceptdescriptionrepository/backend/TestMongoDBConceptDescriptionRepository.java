@@ -31,12 +31,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests the {@link MongoDBConceptDescriptionRepository}
@@ -45,7 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionRepositorySuite {
 
 	@Autowired
@@ -62,7 +59,7 @@ public class TestMongoDBConceptDescriptionRepository extends ConceptDescriptionR
 		return conceptDescriptionRepository;
 	}
 
-	@Before
+	@BeforeEach
 	public void cleanup() {
 		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.TEST_COLLECTION_NAME);
 	}

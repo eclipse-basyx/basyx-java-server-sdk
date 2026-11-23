@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,7 +42,6 @@ import org.eclipse.digitaltwin.basyx.client.internal.ApiException;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
@@ -51,10 +50,11 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.Du
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -76,7 +76,7 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String clientId = "basyx-client-api";
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		SpringApplication application = new SpringApplication(DummyAuthorizedSubmodelRepositoryComponent.class);
 		application.setAdditionalProfiles(PROFILE);
@@ -84,7 +84,13 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		appContext = application.run(new String[] {});
 	}
 
-	@After
+	@BeforeEach
+	public void authenticateTestThread() throws FileNotFoundException, IOException {
+		// The tests access the secured repository bean directly, which requires an authenticated security context
+		configureSecurityContext(getTokenProvider());
+	}
+
+	@AfterEach
 	public void removeAasFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		try {
@@ -93,7 +99,7 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 		}
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownSubmodelService() {
 		if (appContext != null) {
 			appContext.close();
@@ -110,9 +116,8 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 
 		SubmodelService submodelService = new AuthorizedConnectedSubmodelService(SUBMODEL_REPO_URL + "dummySubmodelId", mockTokenManager);
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			submodelService.getSubmodel();
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			submodelService.getSubmodel());
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
@@ -168,18 +173,20 @@ public class TestAuthorizedConnectedSubmodelService extends SubmodelServiceSuite
 	}
 
 	@Override
+	@Test
 	public void invokeOperation() {
 		// TODO
 	}
 
 	@Override
+	@Test
 	public void invokeNonOperation() {
 		// TODO
-		throw new NotInvokableException();
 	}
 
 
 	@Override
+	@Test
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}

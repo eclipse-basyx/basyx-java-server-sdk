@@ -26,8 +26,8 @@
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.tests.controllerAdvice;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,8 +51,8 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -67,7 +67,7 @@ public class GlobalExceptionHandlerTest {
 	private GlobalExceptionHandler exceptionHandler;
 	private WebRequest mockWebRequest;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		exceptionHandler = new GlobalExceptionHandler();
 		mockWebRequest = mock(WebRequest.class);

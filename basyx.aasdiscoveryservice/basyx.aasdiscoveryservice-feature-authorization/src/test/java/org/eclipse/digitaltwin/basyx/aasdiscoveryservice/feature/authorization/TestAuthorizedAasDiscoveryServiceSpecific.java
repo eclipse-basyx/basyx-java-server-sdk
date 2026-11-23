@@ -27,8 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.feature.authorization;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -43,7 +43,7 @@ public class TestAuthorizedAasDiscoveryServiceSpecific extends AuthorizedAasDisc
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "specific";
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpSpring() {
 		SpringApplication springApp = new SpringApplication(DummyAasDiscoveryServiceComponent.class);
 		springApp.setAdditionalProfiles(PROFILE);
@@ -51,7 +51,7 @@ public class TestAuthorizedAasDiscoveryServiceSpecific extends AuthorizedAasDisc
 		appContext = springApp.run(new String[] {});
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}

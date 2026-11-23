@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +34,8 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.AasEnvironmentTargetPermissionVerifier;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link AasEnvironmentTargetPermissionVerifier}
@@ -49,7 +49,7 @@ public class AasEnvironmentTargetPermissionVerifierTest {
 
 	private AasEnvironmentTargetPermissionVerifier verifier;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		verifier = new AasEnvironmentTargetPermissionVerifier();
 	}

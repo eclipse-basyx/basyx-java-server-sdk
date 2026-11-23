@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,10 +51,11 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientC
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -75,18 +76,24 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 	public static String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 	public static String clientId = "basyx-client-api";
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummyAuthorizedAasRepositoryComponent.class).profiles("authorization").run(new String[] {});
 	}
 
-	@After
+	@BeforeEach
+	public void authenticateTestThread() throws FileNotFoundException, IOException {
+		// The tests access the secured repository bean directly, which requires an authenticated security context
+		configureSecurityContext(getTokenProvider());
+	}
+
+	@AfterEach
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
 		repo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownSubmodelService() {
 		appContext.close();
 	}
@@ -101,9 +108,8 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 
 		AasService aasService = new AuthorizedConnectedAasService(AAS_REPO_URL + "dummyAasId", mockTokenManager);
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			aasService.getAAS();
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			aasService.getAAS());
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}

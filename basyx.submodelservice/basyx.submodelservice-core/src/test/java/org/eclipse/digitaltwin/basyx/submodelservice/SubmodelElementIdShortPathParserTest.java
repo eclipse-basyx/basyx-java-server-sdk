@@ -24,7 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Stack;
 
@@ -32,7 +33,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.HierarchicalSubmodelElementParser;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.PathToken;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortPathParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * 
@@ -67,10 +68,12 @@ public class SubmodelElementIdShortPathParserTest {
 		assertEquals(ID_SHORT_PATH_THIRD_PART, tokenStack.pop().getToken());
 	}
 
-	@Test(expected = Exception.class)
-	public void invalidIdShortPathThrowsError() throws Exception {
-		SubmodelElementIdShortPathParser pathParser = new SubmodelElementIdShortPathParser();
-		pathParser.parsePathTokens(INVALID_ID_SHORT_PATH);
+	@Test
+	public void invalidIdShortPathThrowsError() {
+		assertThrows(Exception.class, () -> {
+			SubmodelElementIdShortPathParser pathParser = new SubmodelElementIdShortPathParser();
+			pathParser.parsePathTokens(INVALID_ID_SHORT_PATH);
+		});
 	}
 
 	@Test
@@ -99,7 +102,7 @@ public class SubmodelElementIdShortPathParserTest {
 			String expected = testCase[1];
 			HierarchicalSubmodelElementParser hierarchicalSubmodelElementParser = new HierarchicalSubmodelElementParser(null);
 			String actual = hierarchicalSubmodelElementParser.getIdShortPathOfParentElement(input);
-			assertEquals("Failed for input: " + input, expected, actual);
+			assertEquals(expected, actual, "Failed for input: " + input);
 		}
 	}
 }

@@ -34,7 +34,12 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +56,7 @@ public class TestSearchCdRepository {
     private static ConceptDescriptionRepository searchBackend;
     private static SearchCdRepositoryApiHTTPController searchAPI;
 
-    @BeforeClass
+    @BeforeAll
     public static void startCdRepo() {
         appContext = new SpringApplicationBuilder(DummySearchCdRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(ConceptDescriptionRepository.class);
@@ -59,13 +64,13 @@ public class TestSearchCdRepository {
 
     }
 
-    @Before
+    @BeforeEach
     public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadCds();
         Thread.sleep(2000);
     }
 
-    @After
+    @AfterEach
     public void cleareRepo(){
         resetRepo();
     }
@@ -78,7 +83,7 @@ public class TestSearchCdRepository {
         QueryResponse response = result.getBody();
         assert response != null;
         List<ConceptDescription> topHits = response.result.stream().map(o->(ConceptDescription)o).toList();
-        Assert.assertEquals(1,topHits.size());
+        Assertions.assertEquals(1,topHits.size());
     }
 
     private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -99,7 +104,7 @@ public class TestSearchCdRepository {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdownCdRepo() {
         appContext.close();
     }

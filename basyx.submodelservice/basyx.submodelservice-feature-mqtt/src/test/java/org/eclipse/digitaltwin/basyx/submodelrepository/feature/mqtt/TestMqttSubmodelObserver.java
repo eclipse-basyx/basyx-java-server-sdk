@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,10 +62,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -81,7 +81,7 @@ public class TestMqttSubmodelObserver {
 	private static MqttSubmodelServiceTopicFactory topicFactory = new MqttSubmodelServiceTopicFactory(new Base64URLEncoder());
 	private static SubmodelService submodelService;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() throws MqttException, IOException {
 		mqttBroker = MqttBrokerTestSupport.start();
 		listener = mqttBroker.listener();
@@ -90,12 +90,12 @@ public class TestMqttSubmodelObserver {
 		submodelService = createMqttSubmodelService(mqttClient);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownClass() throws MqttException {
 		mqttBroker.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void resetSubmodelService() {
 		submodelService = createMqttSubmodelService(mqttClient);
 	}

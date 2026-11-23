@@ -25,11 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
 /**
  * Persistency TestSuite for {@link ConceptDescription}

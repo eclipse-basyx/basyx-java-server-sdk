@@ -32,8 +32,10 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -47,11 +49,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepositoryHTTPSuite {
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startConceptDescriptionRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummyConceptDescriptionRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
+	@BeforeEach
+	@AfterEach
 	@Override
 	public void resetRepository() {
 		ConceptDescriptionRepository repo = appContext.getBean(ConceptDescriptionRepository.class);
@@ -69,7 +73,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 		conceptDescriptions.forEach(repo::createConceptDescription);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAasRepo() {
 		appContext.close();
 	}

@@ -35,9 +35,9 @@ import org.eclipse.digitaltwin.basyx.aasrepository.http.DummyAasRepositoryCompon
 import org.eclipse.digitaltwin.basyx.aasservice.AasService;
 import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFactory;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -53,18 +53,18 @@ public class TestConnectedAasRepository extends AasRepositorySuite {
 
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummyAasRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@After
+	@AfterEach
 	public void removeAasFromRepo() {
 		AasRepository repo = appContext.getBean(AasRepository.class);
 		repo.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteAas);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASRepo() {
 		appContext.close();
 	}

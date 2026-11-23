@@ -86,17 +86,14 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent.Ev
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.TestResourcesLoader;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -104,7 +101,6 @@ import tools.jackson.databind.json.JsonMapper;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@RunWith(SpringRunner.class)
 public abstract class BaseIntegrationTest {
 
 	private static final String LANG_DE_DE = "de-DE";
@@ -139,12 +135,12 @@ public abstract class BaseIntegrationTest {
 
 	private final KafkaAdapter<RegistryEvent> adapter = KafkaAdapters.getAdapter("aas-registry", RegistryEvent.class);
 	
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
 	protected RegistryAndDiscoveryInterfaceApi api;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		initClient();
 		adapter.skipMessages();

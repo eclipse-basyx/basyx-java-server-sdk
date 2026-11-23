@@ -24,10 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link CrudConceptDescriptionRepository}

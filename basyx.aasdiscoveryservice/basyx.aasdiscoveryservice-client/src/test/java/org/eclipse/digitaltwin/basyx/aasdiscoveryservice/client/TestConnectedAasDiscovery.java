@@ -27,8 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client;
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServiceSuite;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -41,12 +41,12 @@ public class TestConnectedAasDiscovery extends AasDiscoveryServiceSuite {
 
     private static ConfigurableApplicationContext appContext;
 
-    @Before
+    @BeforeEach
     public void startAasDiscoveryService() {
         appContext = new SpringApplicationBuilder(DummyAasDiscoveryServiceComponent.class).run(new String[] {});
     }
 
-    @After
+    @AfterEach
     public void stopAasDiscoveryService() {
         appContext.close();
     }

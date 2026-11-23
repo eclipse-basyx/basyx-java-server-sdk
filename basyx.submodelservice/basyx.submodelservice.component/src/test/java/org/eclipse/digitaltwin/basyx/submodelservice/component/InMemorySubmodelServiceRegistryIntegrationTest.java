@@ -31,21 +31,18 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
-@RunWith(SpringRunner.class)
 @ActiveProfiles("integrationInMemory")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE
 , properties= {"basyx.externalurl=http://localhost:8765",
@@ -65,7 +62,7 @@ public class InMemorySubmodelServiceRegistryIntegrationTest {
 		Assertions.assertEquals(1, descriptor.getEndpoints().size());
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void testSubmodelServiceIsUnregistered() {
 		// the context ist closed after all a method run and thus after class
 		SubmodelRegistryApi api = new SubmodelRegistryApi("http://localhost:8060");

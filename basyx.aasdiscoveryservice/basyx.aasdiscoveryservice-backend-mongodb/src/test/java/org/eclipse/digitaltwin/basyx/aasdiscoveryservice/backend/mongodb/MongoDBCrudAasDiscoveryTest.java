@@ -25,11 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.mongodb.backend.MongoDBCrudAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
 public class MongoDBCrudAasDiscoveryTest {
     private static final String CONFIGURED_AAS_DISCOVERY_NAME = "test-aas-discovery";

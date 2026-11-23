@@ -33,9 +33,10 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelService;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -51,17 +52,17 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startSubmodelService() throws Exception {
 		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownSubmodelService() {
 		appContext.close();
 	}
 
-	@After
+	@AfterEach
 	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
@@ -83,6 +84,7 @@ public class TestConnectedSubmodelService extends SubmodelServiceSuite {
 	}
 
 	@Override
+	@Test
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}

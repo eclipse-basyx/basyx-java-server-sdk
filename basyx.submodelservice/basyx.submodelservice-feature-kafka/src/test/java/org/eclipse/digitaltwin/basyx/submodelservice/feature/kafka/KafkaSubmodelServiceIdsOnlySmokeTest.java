@@ -44,13 +44,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelService
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -60,7 +57,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
@@ -70,7 +66,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka" })
 @ActiveProfiles("test-submodel")
 @ContextConfiguration(classes = SubmodelServiceTestComponent.class)
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=IDS_ONLY", KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events", })
 public class KafkaSubmodelServiceIdsOnlySmokeTest {
@@ -86,7 +81,7 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
 	private SubmodelService service;
 
-	@Before
+	@BeforeEach
 	public void init() throws InterruptedException, SerializationException {
 		adapter.skipMessages();
 		FileRepository repository = new InMemoryFileRepository();
@@ -95,29 +90,29 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 		service = feature.decorate(smFactory).create(submodel);
 	}
 
-	@After
+	@AfterEach
 	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
 		adapter.assertNoAdditionalMessages();
 	}
 
 	@Test
 	public void testToplevelSubmodelElementAdded() {
-		Assert.assertTrue(feature.isEnabled());
+		Assertions.assertTrue(feature.isEnabled());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
 		SubmodelEvent evt = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
-		Assert.assertEquals(submodel.getId(), evt.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
-		Assert.assertNull(evt.getSubmodel());
-		Assert.assertNull(evt.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assertions.assertEquals(submodel.getId(), evt.getId());
+		Assertions.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
+		Assertions.assertNull(evt.getSubmodel());
+		Assertions.assertNull(evt.getSmElement());
 	}
 
 	@Test
 	public void testSubmodelElementPatched() {
-		Assert.assertTrue(feature.isEnabled());
+		Assertions.assertTrue(feature.isEnabled());
 
 		SubmodelElement elem0 = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_0, "0");
 		SubmodelElement elem1 = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "1");
@@ -125,11 +120,11 @@ public class KafkaSubmodelServiceIdsOnlySmokeTest {
 
 		SubmodelEvent evt = adapter.next();
 		// the submodel was updated
-		Assert.assertEquals(SubmodelEventType.SM_UPDATED, evt.getType());
-		Assert.assertEquals(submodel.getId(), evt.getId());
-		Assert.assertNull(evt.getSubmodel()); // ids only
-		Assert.assertNull(evt.getSmElementPath());
-		Assert.assertNull(evt.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SM_UPDATED, evt.getType());
+		Assertions.assertEquals(submodel.getId(), evt.getId());
+		Assertions.assertNull(evt.getSubmodel()); // ids only
+		Assertions.assertNull(evt.getSmElementPath());
+		Assertions.assertNull(evt.getSmElement());
 
 	}
 

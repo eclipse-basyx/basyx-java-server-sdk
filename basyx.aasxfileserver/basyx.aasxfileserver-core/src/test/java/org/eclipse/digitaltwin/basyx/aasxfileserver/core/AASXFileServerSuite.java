@@ -24,8 +24,10 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.core;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,7 +43,7 @@ import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the {@link AASXFileServer} interface
@@ -96,19 +98,23 @@ public abstract class AASXFileServerSuite {
 		assertEquals(expectedPackageDescription, actualPackageDescription);
 	}
 
-	@Test(expected = SecurityException.class)
+	@Test
 	public void createAASXPackageRejectsPathTraversalFileName() {
-		AASXFileServer server = getAASXFileServer();
+		assertThrows(SecurityException.class, () -> {
+			AASXFileServer server = getAASXFileServer();
 
-		server.createAASXPackage(DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
+			server.createAASXPackage(DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
+		});
 	}
 
-	@Test(expected = SecurityException.class)
+	@Test
 	public void updateAASXPackageRejectsPathTraversalFileName() {
-		AASXFileServer server = getAASXFileServer();
-		PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
+		assertThrows(SecurityException.class, () -> {
+			AASXFileServer server = getAASXFileServer();
+			PackageDescription packageDescription = DummyAASXFileServerFactory.createFirstDummyAASXPackageOnServer(server);
 
-		server.updateAASXByPackageId(packageDescription.getPackageId(), DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
+			server.updateAASXByPackageId(packageDescription.getPackageId(), DummyAASXFileServerFactory.FIRST_SHELL_IDS, createAASXFileContent(), "../test.aasx");
+		});
 	}
 
 	@Test
@@ -121,11 +127,13 @@ public abstract class AASXFileServerSuite {
 		assertTrue(packageDescriptions.isEmpty());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSpecificNonExistingPackageId() {
+		assertThrows(ElementDoesNotExistException.class, () -> {
 
-		AASXFileServer server = getAASXFileServer();
-		server.getAASXByPackageId("doesNotExist");
+			AASXFileServer server = getAASXFileServer();
+			server.getAASXByPackageId("doesNotExist");
+		});
 	}
 
 	@Test
@@ -146,14 +154,16 @@ public abstract class AASXFileServerSuite {
 		assertUpdatedAASXPackageId(expectedPackageDescription, actualPackageDescription, server);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void updateNonExistingAASXByPackageId() {
+		assertThrows(ElementDoesNotExistException.class, () -> {
 
-		String packageId = "notExisting";
+			String packageId = "notExisting";
 
-		AASXFileServer server = getAASXFileServer();
+			AASXFileServer server = getAASXFileServer();
 
-		updateAASXPackage(server, packageId, DummyAASXFileServerFactory.FIRST_SHELL_IDS, DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx"), DummyAASXFileServerFactory.FIRST_FILENAME);
+			updateAASXPackage(server, packageId, DummyAASXFileServerFactory.FIRST_SHELL_IDS, DummyAASXFileServerFactory.class.getClassLoader().getResourceAsStream("TestAAS1.aasx"), DummyAASXFileServerFactory.FIRST_FILENAME);
+		});
 	}
 
 	@Test
@@ -185,11 +195,13 @@ public abstract class AASXFileServerSuite {
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingAASXPackage() {
+		assertThrows(ElementDoesNotExistException.class, () -> {
 
-		AASXFileServer server = getAASXFileServer();
-		server.deleteAASXByPackageId("nonExisting");
+			AASXFileServer server = getAASXFileServer();
+			server.deleteAASXByPackageId("nonExisting");
+		});
 	}
 
 	private void updateAASXPackage(AASXFileServer server, String packageId, List<String> expectedShellIds, InputStream file, String filename) {

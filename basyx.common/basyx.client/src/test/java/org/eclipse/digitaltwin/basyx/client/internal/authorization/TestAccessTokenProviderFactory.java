@@ -29,13 +29,14 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessT
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.PasswordCredentialAccessTokenProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Collection;
-
-import static org.junit.Assert.*;
 
 /**
  * Test for the{@link AccessTokenProviderFactory}
@@ -47,7 +48,7 @@ public class TestAccessTokenProviderFactory {
     private AccessTokenProviderFactory factory;
     private Collection<String> scopes;
 
-    @Before
+    @BeforeEach
     public void setup() {
         scopes = Arrays.asList("scope1", "scope2");
     }

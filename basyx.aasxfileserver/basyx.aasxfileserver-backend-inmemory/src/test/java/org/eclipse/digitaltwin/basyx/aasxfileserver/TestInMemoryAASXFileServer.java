@@ -25,13 +25,14 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.CrudAASXFileServerFactory;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.backend.InMemoryPackageBackend;
 import org.eclipse.digitaltwin.basyx.aasxfileserver.core.AASXFileServerSuite;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link AASXFileServerInMemoryBackendProvider}

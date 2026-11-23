@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.http;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -36,9 +36,9 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import tools.jackson.core.JacksonException;
@@ -54,8 +54,8 @@ import tools.jackson.databind.DatabindException;
 public abstract class AasDiscoveryServiceHTTPSuite {
 	protected abstract String getURL();
 
-	@Before
-	@After
+	@BeforeEach
+	@AfterEach
 	public abstract void resetService();
 	
 	@Test

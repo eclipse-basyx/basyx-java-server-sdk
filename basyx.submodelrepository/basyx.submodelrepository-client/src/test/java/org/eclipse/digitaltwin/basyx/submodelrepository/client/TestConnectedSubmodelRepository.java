@@ -25,6 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Collection;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -34,10 +36,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.DummySubmodelRepositoryComponent;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -52,26 +54,28 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@After
+	@AfterEach
 	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASRepo() {
 		appContext.close();
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getConnectedSubmodelServiceNonExistingSubmodel() {
-		ConnectedSubmodelRepository repo = getSubmodelRepository();
-		repo.getConnectedSubmodelService("nonExisting");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			ConnectedSubmodelRepository repo = getSubmodelRepository();
+			repo.getConnectedSubmodelService("nonExisting");
+		});
 	}
 
 	@Override
@@ -87,11 +91,11 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void updateExistingSubmodelWithMismatchId() {
 		// TODO There should be a way to differentiate between both exceptions through
 		// the Http response
-		super.updateExistingSubmodelWithMismatchId();
+		assertThrows(MissingIdentifierException.class, this::updateExistingSubmodelUsingMismatchingId);
 	}
 
 	@Override
@@ -102,6 +106,7 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
+	@Test
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}

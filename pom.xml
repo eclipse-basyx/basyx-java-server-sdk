@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.2</version>
+		<version>4.2.0</version>
 		<relativePath />
 	</parent>
 	<groupId>org.eclipse.digitaltwin.basyx</groupId>
@@ -64,6 +64,7 @@
 		<revision>2.0.0-SNAPSHOT</revision>
 		<docker.provenance />
 		<docker.namespace>eclipsebasyx</docker.namespace>
+		<docker.noCache>true</docker.noCache>
 		<docker.image.name>NOT_DEFINED_IN_MODULE</docker.image.name>
 		<docker.image.tag>${revision}</docker.image.tag>
 		<docker.target.platforms>linux/amd64, linux/arm64, linux/arm/v7</docker.target.platforms>
@@ -75,17 +76,6 @@
 		<fasterxml-jackson-version>2.23.0</fasterxml-jackson-version>
 	</properties>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>dash-licenses-snapshots</id>
-			<url>
-				https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-	
 	<build>
 		<plugins>
 			<plugin>
@@ -225,7 +215,7 @@
 										<maven.build.timestamp>
 											${maven.build.timestamp}</maven.build.timestamp>
 									</labels>
-									<noCache>true</noCache>
+									<noCache>${docker.noCache}</noCache>
 									<buildx>
 										<platforms>
 											${docker.target.platforms}
@@ -288,13 +278,6 @@
 					<configuration>
 						<skip>${skipSurefire}</skip>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.surefire</groupId>
-							<artifactId>surefire-junit47</artifactId>
-							<version>${maven-surefire-plugin.version}</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1425,8 +1408,8 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -1434,6 +1417,20 @@
 	<profiles>
 		<profile>
 			<id>DashLicense</id>
+			<!-- Only needed for the Eclipse Dash license-tool-plugin. Scoped to this profile so regular builds
+			     never query repo.eclipse.org (an outage there with Retry-After makes every plugin lookup stall). -->
+			<pluginRepositories>
+				<pluginRepository>
+					<id>dash-licenses-snapshots</id>
+					<url>https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
 			<build>
 				<plugins>
 
@@ -1508,6 +1505,20 @@
 		</profile>
 		<profile>
 			<id>docker-push</id>
+			<!-- Only needed for the Eclipse Dash license-tool-plugin. Scoped to this profile so regular builds
+			     never query repo.eclipse.org (an outage there with Retry-After makes every plugin lookup stall). -->
+			<pluginRepositories>
+				<pluginRepository>
+					<id>dash-licenses-snapshots</id>
+					<url>https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
 			<build>
 				<plugins>
 					<plugin>

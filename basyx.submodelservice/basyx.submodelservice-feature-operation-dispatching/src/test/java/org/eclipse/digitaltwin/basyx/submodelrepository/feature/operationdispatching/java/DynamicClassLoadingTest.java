@@ -25,6 +25,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
@@ -33,8 +35,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.DynamicJavaClassLoader;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
@@ -55,33 +57,37 @@ public class DynamicClassLoadingTest {
 		
 		loader.compileClasses(sources, classes, pathJars);
 
-		Assert.assertTrue(Files.exists(classes));
+		Assertions.assertTrue(Files.exists(classes));
 		try (URLClassLoader urlLoader = loader.loadClasses(classes, pathJars)) {
 			Class<?> cls = urlLoader.loadClass(SQUARE_OPERATION_CLS_NAME);
-			Assert.assertEquals(SQUARE_OPERATION_CLS_NAME, cls.getName());
+			Assertions.assertEquals(SQUARE_OPERATION_CLS_NAME, cls.getName());
 			cls = urlLoader.loadClass(HELLO_OPERATION_CLS_NAME);
-			Assert.assertEquals(HELLO_OPERATION_CLS_NAME, cls.getName());
+			Assertions.assertEquals(HELLO_OPERATION_CLS_NAME, cls.getName());
 		} catch (ClassNotFoundException e) {
-			Assert.fail("SquareOperation class could not be loaded");
+			Assertions.fail("SquareOperation class could not be loaded");
 		}
 	}
 	
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testOnCompilationFailureIllegalStateException() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
-		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
-		Path sources = Path.of("test", "wrongsyntax");
-		Path classes = Path.of("target", "dynamic-loading", "classes");
-		Path jarPath = Path.of("..", "basyx.submodelservice.component", "example","jars","HelloWorld.jar");
-		loader.compileClasses(sources, classes, List.of(jarPath));
+		assertThrows(IllegalStateException.class, () -> {
+			DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
+			Path sources = Path.of("test", "wrongsyntax");
+			Path classes = Path.of("target", "dynamic-loading", "classes");
+			Path jarPath = Path.of("..", "basyx.submodelservice.component", "example", "jars", "HelloWorld.jar");
+			loader.compileClasses(sources, classes, List.of(jarPath));
+		});
 	}
 	
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testOnUnknownSrcFolderIllegalStateException() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
-		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
-		Path sources = Path.of("test", "unknown");
-		Path classes = Path.of("target", "dynamic-loading", "classes");
-		Path jarPath = Path.of("..", "basyx.submodelservice.component", "example","jars","HelloWorld.jar");
-		loader.compileClasses(sources, classes, List.of(jarPath));
+		assertThrows(IllegalStateException.class, () -> {
+			DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
+			Path sources = Path.of("test", "unknown");
+			Path classes = Path.of("target", "dynamic-loading", "classes");
+			Path jarPath = Path.of("..", "basyx.submodelservice.component", "example", "jars", "HelloWorld.jar");
+			loader.compileClasses(sources, classes, List.of(jarPath));
+		});
 	}
 	
 	@Test
@@ -90,7 +96,7 @@ public class DynamicClassLoadingTest {
 		Path sources = Path.of("test", "post");
 		Path classes = Path.of("target", "dynamic-loading", "classes");
 		loader.compileClasses(sources, classes, List.of());	
-		Assert.assertTrue(Files.exists(classes.resolve("PostOperation.class")));
+		Assertions.assertTrue(Files.exists(classes.resolve("PostOperation.class")));
 	}
 	
 	@Test
@@ -100,8 +106,8 @@ public class DynamicClassLoadingTest {
 		deleteClassesIfExisting(classes);
 		DynamicJavaClassLoader loader = new DynamicJavaClassLoader();
 		loader.compileClasses(sources, classes, List.of());
-		Assert.assertTrue(Files.exists(classes));
-		Assert.assertTrue(Files.exists(classes.resolve("PostOperation.class")));
+		Assertions.assertTrue(Files.exists(classes));
+		Assertions.assertTrue(Files.exists(classes.resolve("PostOperation.class")));
 	}
 
 	private void deleteClassesIfExisting(Path classes) throws IOException {

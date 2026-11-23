@@ -26,9 +26,10 @@
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core;
 
 import static org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryUtils.deriveShellFromIdAndSpecificAssetIds;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.model.AssetLink;
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingAssetLinkException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the {@link AasDiscoveryService} interface
@@ -116,16 +117,18 @@ public abstract class AasDiscoveryServiceSuite {
 		assertEquals(expectedAssetIds, actualAssetIds);
 	}
 
-	@Test(expected = CollidingAssetLinkException.class)
+	@Test
 	public void createExistingAllAssetLinksById() {
-		AasDiscoveryService discoveryService = getAasDiscoveryService();
+		assertThrows(CollidingAssetLinkException.class, () -> {
+			AasDiscoveryService discoveryService = getAasDiscoveryService();
 
-		String shellIdentifier = "ExistingAASId";
+			String shellIdentifier = "ExistingAASId";
 
-		AssetAdministrationShell assetAdministrationShell = getSingleDummyShell(shellIdentifier);
-		createAssetLink(assetAdministrationShell, discoveryService);
+			AssetAdministrationShell assetAdministrationShell = getSingleDummyShell(shellIdentifier);
+			createAssetLink(assetAdministrationShell, discoveryService);
 
-		discoveryService.createAllAssetLinksById(shellIdentifier, new ArrayList<>());
+			discoveryService.createAllAssetLinksById(shellIdentifier, new ArrayList<>());
+		});
 	}
 
 	@Test
@@ -149,11 +152,13 @@ public abstract class AasDiscoveryServiceSuite {
 
 	}
 
-	@Test(expected = AssetLinkDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingAllAssetLinksById() {
-		String shellIdentifier = "NonExistingLink";
+		assertThrows(AssetLinkDoesNotExistException.class, () -> {
+			String shellIdentifier = "NonExistingLink";
 
-		getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier);
+			getAasDiscoveryService().deleteAllAssetLinksById(shellIdentifier);
+		});
 	}
 
 	public static List<AssetAdministrationShell> getMultipleDummyShells() {

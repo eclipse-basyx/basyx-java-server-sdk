@@ -38,16 +38,16 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelServiceFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestCreateAndRemoveUnderPath {
 	
 	private Submodel submodel;
 	private SubmodelService service;
 
-	@Before
+	@BeforeEach
 	public void init() throws DeserializationException, IOException {
 		submodel = loadSubmodel();
 		service = new CrudSubmodelServiceFactory(new InMemorySubmodelBackend(), new InMemoryFileRepository()).create(submodel);
@@ -57,23 +57,23 @@ public class TestCreateAndRemoveUnderPath {
 	public void testDeleteEntity() {
 		service.deleteSubmodelElement("E1.P1");
 		Entity entity = (Entity) service.getSubmodelElement("E1");
-		Assert.assertTrue(entity.getStatements().isEmpty());
+		Assertions.assertTrue(entity.getStatements().isEmpty());
 	}
 
 	@Test
 	public void testDeleteEntityUnderList() {
 		service.deleteSubmodelElement("C2.L1[1][0]");
 		SubmodelElementList list = (SubmodelElementList) service.getSubmodelElement("C2.L1[1]");
-		Assert.assertEquals(1, list.getValue().size());
-		Assert.assertEquals("4", ((Property) list.getValue().get(0)).getValue());
+		Assertions.assertEquals(1, list.getValue().size());
+		Assertions.assertEquals("4", ((Property) list.getValue().get(0)).getValue());
 	}
 
 	@Test
 	public void testCreateProperty() {
 		service.createSubmodelElement("C2.L1[1][0]", new DefaultProperty.Builder().idShort("P77").value("77").valueType(DataTypeDefXsd.STRING).build());
 		Entity entity = (Entity) service.getSubmodelElement("C2.L1[1][0]");
-		Assert.assertEquals(2, entity.getStatements().size());
-		Assert.assertEquals("77", ((Property) entity.getStatements().get(1)).getValue());
+		Assertions.assertEquals(2, entity.getStatements().size());
+		Assertions.assertEquals("77", ((Property) entity.getStatements().get(1)).getValue());
 	}
 
 	private Submodel loadSubmodel() throws DeserializationException, IOException {

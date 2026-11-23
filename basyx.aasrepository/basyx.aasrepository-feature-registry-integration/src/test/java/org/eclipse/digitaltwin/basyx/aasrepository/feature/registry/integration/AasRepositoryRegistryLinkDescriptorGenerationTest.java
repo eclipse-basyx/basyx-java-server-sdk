@@ -36,22 +36,20 @@ import org.eclipse.digitaltwin.basyx.aasrepository.backend.CrudAasRepositoryFact
 import org.eclipse.digitaltwin.basyx.aasservice.backend.InMemoryAasBackend;
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for {@link RegistryIntegrationAasRepository} feature
  */
-@RunWith(Parameterized.class)
 public class AasRepositoryRegistryLinkDescriptorGenerationTest {	
 	private static final String DUMMY_IDSHORT = "ExampleMotor";
 	private static final String DUMMY_AAS_ID = "customIdentifier";
@@ -64,7 +62,7 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     private AttributeMapper mockedAttributeMapper;
     private RegistryAndDiscoveryInterfaceApi mockedRegistryApi;
     
-    @Before
+    @BeforeEach
     public void setUp() {    	
     	mockedAasRepository = getAasRepository();
     	mockedRegistryLink = Mockito.mock(AasRepositoryRegistryLink.class);
@@ -75,22 +73,19 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
         
         registryIntegrationAasRepository = new RegistryIntegrationAasRepository(mockedAasRepository, mockedRegistryLink, mockedAttributeMapper);
     }
-
-    @Parameterized.Parameter(0)
     public String externalUrl;
-
-    @Parameterized.Parameter(1)
     public String expectedUrl;
 
-    @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { { BASE_URL + "/context", BASE_URL + "/context/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) },
                 { BASE_URL, BASE_URL + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) }, { BASE_URL + "/", BASE_URL + "/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) },
                 { BASE_URL + "/context/", BASE_URL + "/context/shells/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_AAS_ID) } });
     }
 
-    @Test
-    public void testExternalUrl() {
+	@MethodSource("data")
+	@ParameterizedTest
+	public void testExternalUrl(String externalUrl, String expectedUrl) {
+		initAasRepositoryRegistryLinkDescriptorGenerationTest(externalUrl, expectedUrl);
         Mockito.when(mockedRegistryLink.getAasRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
 
         AssetAdministrationShellDescriptor descriptor = createAndRetrieveDescriptor(createDummyAas());
@@ -115,6 +110,11 @@ public class AasRepositoryRegistryLinkDescriptorGenerationTest {
     
 	protected AasRepository getAasRepository() {
         return CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository( new InMemoryFileRepository()).create();
+	}
+
+	public void initAasRepositoryRegistryLinkDescriptorGenerationTest(String externalUrl, String expectedUrl) {
+		this.externalUrl = externalUrl;
+		this.expectedUrl = expectedUrl;
 	}
 
 }

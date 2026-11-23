@@ -25,10 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.aasxfileserver.backend;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.basyx.aasxfileserver.AASXFileServer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CrudAASXFileServerTest {
 	private static final String CONFIGURED_AASX_FILE_SERVER_NAME = "test-aasx-file-server";

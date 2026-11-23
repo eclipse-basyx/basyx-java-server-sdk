@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integr
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -45,7 +45,7 @@ public class MultiUrlSubmodelRepositoryRegistryLinkTest extends SubmodelReposito
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummySubmodelRepositoryIntegrationComponent.class);
 		application.setAdditionalProfiles("multiurl");		
@@ -53,7 +53,7 @@ public class MultiUrlSubmodelRepositoryRegistryLinkTest extends SubmodelReposito
 		submodelRepositoryRegistryLink = appContext.getBean(SubmodelRepositoryRegistryLink.class);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}

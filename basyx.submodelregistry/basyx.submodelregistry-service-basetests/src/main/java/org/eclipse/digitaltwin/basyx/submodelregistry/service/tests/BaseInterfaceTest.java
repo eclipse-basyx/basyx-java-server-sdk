@@ -38,19 +38,19 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEve
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.RegistrationEventSendingSubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public abstract class BaseInterfaceTest {
 
@@ -66,21 +66,21 @@ public abstract class BaseInterfaceTest {
 
 	protected RegistrationEventSendingSubmodelRegistryStorage storage;
 
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader testResourcesLoader = new TestResourcesLoader();
 
 	protected RegistryEventSink getEventSink() {
 		return eventSink;
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		storage = new RegistrationEventSendingSubmodelRegistryStorage(baseStorage, eventSink);
 		List<SubmodelDescriptor> submodels = testResourcesLoader.loadRepositoryDefinition(SubmodelDescriptor.class);
 		submodels.forEach(baseStorage::insertSubmodelDescriptor);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		storage.clear();
 	}

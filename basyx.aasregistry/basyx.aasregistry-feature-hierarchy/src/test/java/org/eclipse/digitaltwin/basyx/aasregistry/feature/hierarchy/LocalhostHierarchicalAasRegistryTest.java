@@ -26,8 +26,8 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.server.context.WebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,7 +49,7 @@ public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistr
 	private static ConfigurableApplicationContext rootAppContext;
 	private static ConfigurableApplicationContext delegatedAppContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupRegistries() {
 		delegatedAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] { "--server.port=0", "--basyx.feature.hierarchy.enabled=false" });
 		rootAppContext = new SpringApplication(DummyAasRegistryComponent.class).run(new String[] { "--server.port=0" });
@@ -62,7 +62,7 @@ public class LocalhostHierarchicalAasRegistryTest extends HierarchicalAasRegistr
 		factory = new DummyDescriptorFactory(REPO_BASE_URL, delegatedRegistryUrl + "/test/aas");
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownRegistries() {
 		if (rootAppContext != null)
 			rootAppContext.close();

@@ -25,10 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -50,7 +51,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.FileBlobValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.MultiLanguagePropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.RangeValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the SubmodelService interface
@@ -98,11 +99,13 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(SubmodelServiceHelper.getDummySubmodelElement(technicalData, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT), smElement);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getNonExistingSubmodelElement() {
-		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 
-		getSubmodelService(technicalData).getSubmodelElement("nonExisting");
+			getSubmodelService(technicalData).getSubmodelElement("nonExisting");
+		});
 	}
 
 	@Test
@@ -174,11 +177,13 @@ public abstract class SubmodelServiceSuite {
 		assertTrue(submodelElement instanceof DefaultProperty);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getNonExistentHierachicalSubmodelElementValue() {
-		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
-		String idShortPath = generateNonExistentIdShortPath();
-		getSubmodelService(operationalData).getSubmodelElementValue(idShortPath);
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+			String idShortPath = generateNonExistentIdShortPath();
+			getSubmodelService(operationalData).getSubmodelElementValue(idShortPath);
+		});
 	}
 
 	@Test
@@ -191,11 +196,13 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(expectedValue.getValue(), ((PropertyValue) service.getSubmodelElementValue(idShortPath)).getValue());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void setNonExistentHierachicalSubmodelElementValue() {
-		Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
-		String idShortPath = generateNonExistentIdShortPath();
-		getSubmodelService(operationalData).setSubmodelElementValue(idShortPath, new PropertyValue("205"));
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel operationalData = DummySubmodelFactory.createOperationalDataSubmodelWithHierarchicalSubmodelElements();
+			String idShortPath = generateNonExistentIdShortPath();
+			getSubmodelService(operationalData).setSubmodelElementValue(idShortPath, new PropertyValue("205"));
+		});
 	}
 
 	@Test
@@ -209,11 +216,13 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(expected, submodelElementValue.getValue());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getNonExistingSubmodelElementValue() {
-		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 
-		getSubmodelService(technicalData).getSubmodelElementValue("nonExisting");
+			getSubmodelService(technicalData).getSubmodelElementValue("nonExisting");
+		});
 	}
 
 	@Test
@@ -232,15 +241,17 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(expected, propertyElementValue.getValue());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void setNonExistingSubmodelElementValue() {
-		Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel technicalData = DummySubmodelFactory.createTechnicalDataSubmodel();
 
-		String expected = "doesNotMatter";
+			String expected = "doesNotMatter";
 
-		PropertyValue submodelElementValue = new PropertyValue(expected);
+			PropertyValue submodelElementValue = new PropertyValue(expected);
 
-		getSubmodelService(technicalData).setSubmodelElementValue("nonExisting", submodelElementValue);
+			getSubmodelService(technicalData).setSubmodelElementValue("nonExisting", submodelElementValue);
+		});
 	}
 
 	@Test
@@ -391,16 +402,18 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(newFileSME, updatedFile);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void updateNonExistingSME() {
-		Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalSubmodel);
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			Submodel technicalSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+			SubmodelService submodelService = getSubmodelService(technicalSubmodel);
 
-		String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + "NonExistingSMEIdShort";
+			String idShortPathPropertyInSmeCol = SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_SUBMODEL_ELEMENT_COLLECTION_ID_SHORT + "." + "NonExistingSMEIdShort";
 
-		Property newNonExistingProperty = SubmodelServiceHelper.createDummyProperty(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, "arbitraryPropertyValue", DataTypeDefXsd.STRING);
+			Property newNonExistingProperty = SubmodelServiceHelper.createDummyProperty(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_PROPERTY_ID_SHORT, "arbitraryPropertyValue", DataTypeDefXsd.STRING);
 
-		submodelService.updateSubmodelElement(idShortPathPropertyInSmeCol, newNonExistingProperty);
+			submodelService.updateSubmodelElement(idShortPathPropertyInSmeCol, newNonExistingProperty);
+		});
 	}
 
 	@Test
@@ -524,12 +537,14 @@ public abstract class SubmodelServiceSuite {
 	}
 
 	// Has to be overwritten if backend does not support operations
-	@Test(expected = NotInvokableException.class)
+	@Test
 	public void invokeNonOperation() {
-		Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
-		SubmodelService submodelService = getSubmodelService(invokableSubmodel);
+		assertThrows(NotInvokableException.class, () -> {
+			Submodel invokableSubmodel = DummySubmodelFactory.createSubmodelWithAllSubmodelElements();
+			SubmodelService submodelService = getSubmodelService(invokableSubmodel);
 
-		submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
+			submodelService.invokeOperation(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
+		});
 	}
 
 	@Test
@@ -579,13 +594,15 @@ public abstract class SubmodelServiceSuite {
 
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void getNonExistingFile() {
-		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
-		deleteFileIfExisted(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		assertThrows(FileDoesNotExistException.class, () -> {
+			Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+			SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
+			deleteFileIfExisted(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
-		submodelService.getFileByPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+			submodelService.getFileByPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		});
 	}
 
 	@Test
@@ -618,21 +635,25 @@ public abstract class SubmodelServiceSuite {
 		assertStoredFileContentEquals(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT, DUMMY_JSON_2);
 	}
 
-	@Test(expected = ElementNotAFileException.class)
+	@Test
 	public void getFileFromNonFileSME() {
-		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
+		assertThrows(ElementNotAFileException.class, () -> {
+			Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+			SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
 
-		submodelService.getFileByPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
+			submodelService.getFileByPath(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_MULTI_LANG_PROP_ID_SHORT);
+		});
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingFile() throws IOException {
-		Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
-		SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
-		deleteFileIfExisted(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		assertThrows(FileDoesNotExistException.class, () -> {
+			Submodel technicalDataSubmodel = DummySubmodelFactory.createTechnicalDataSubmodel();
+			SubmodelService submodelService = getSubmodelService(technicalDataSubmodel);
+			deleteFileIfExisted(submodelService, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
 
-		submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+			submodelService.deleteFileValue(SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_FILE_ID_SHORT);
+		});
 	}
 
 	@Test
@@ -684,15 +705,17 @@ public abstract class SubmodelServiceSuite {
 		assertEquals(sme.getIdShort(), sme.getIdShort());
 	}
 
-	@Test(expected = SubmodelElementNotADataElementException.class)
-	public void addNonDataElementToAre(){
-		List<SubmodelElement> submodelElements = new ArrayList<>();
-		AnnotatedRelationshipElement topAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("MainAre").build();
-		AnnotatedRelationshipElement subAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("SubAre").build();
-		submodelElements.add(topAre);
-		Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
-		SubmodelService submodelService = getSubmodelService(submodel);
-		submodelService.createSubmodelElement("MainAre", subAre);
+	@Test
+	public void addNonDataElementToAre() {
+		assertThrows(SubmodelElementNotADataElementException.class, () -> {
+			List<SubmodelElement> submodelElements = new ArrayList<>();
+			AnnotatedRelationshipElement topAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("MainAre").build();
+			AnnotatedRelationshipElement subAre = new DefaultAnnotatedRelationshipElement.Builder().idShort("SubAre").build();
+			submodelElements.add(topAre);
+			Submodel submodel = buildDummySubmodelWithSmElement(ID, submodelElements);
+			SubmodelService submodelService = getSubmodelService(submodel);
+			submodelService.createSubmodelElement("MainAre", subAre);
+		});
 	}
 
 	protected Submodel buildDummySubmodelWithSmElement(String id, List<SubmodelElement> submodelElements) {

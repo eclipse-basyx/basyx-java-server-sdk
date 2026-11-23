@@ -30,9 +30,9 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.client.ConnectedAasRepository;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -49,7 +49,7 @@ public class TestConnectedAasManagerMultithreadingInMemory extends ConnectedAasM
     static SubmodelRegistryApi smRegistryApi;
     static ConfigurableApplicationContext appContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupRepositories() {
         appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
         connectedAasRepository = new ConnectedAasRepository(AAS_REPOSITORY_BASE_PATH);
@@ -61,12 +61,12 @@ public class TestConnectedAasManagerMultithreadingInMemory extends ConnectedAasM
         cleanUpRegistries();
     }
 
-    @After
+    @AfterEach
     public void cleanUpComponents() {
         cleanUpRegistries();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopContext() {
         appContext.close();
     }

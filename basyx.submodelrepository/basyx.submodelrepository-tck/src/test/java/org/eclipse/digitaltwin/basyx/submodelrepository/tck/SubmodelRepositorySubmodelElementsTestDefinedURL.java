@@ -32,8 +32,9 @@ import java.io.IOException;
 import org.apache.hc.core5.http.ParseException;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.BaSyxSubmodelHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * 
@@ -44,12 +45,12 @@ public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelSe
 
 	public static String url = "http://localhost:8081/submodels";
 
-	@Before
+	@BeforeEach
 	public void createSubmodelOnRepo() {
 		SubmodelTCKHelper.createSubmodelOnRepository(url, createSubmodel());
 	}
 
-	@After
+	@AfterEach
 	public void removeSubmodelFromRepo() {
 		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(url);
 	}
@@ -60,6 +61,7 @@ public class SubmodelRepositorySubmodelElementsTestDefinedURL extends SubmodelSe
 	}
 
 	@Override
+	@Test
 	public void invokeOperation() throws FileNotFoundException, IOException, ParseException {
 		// Not supported on OTS Components for now
 	}

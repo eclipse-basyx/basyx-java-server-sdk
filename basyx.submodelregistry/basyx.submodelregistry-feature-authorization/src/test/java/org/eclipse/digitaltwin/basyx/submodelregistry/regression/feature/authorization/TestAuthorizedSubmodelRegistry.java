@@ -40,7 +40,11 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -49,6 +53,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,8 +62,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link AuthorizedSubmodelRegistryStorage} feature
@@ -76,7 +80,7 @@ public class TestAuthorizedSubmodelRegistry {
 	public static String submodelRegistryBaseUrl = BASE_URL + "/submodel-descriptors";
 	private static SubmodelRegistryStorage storage;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 		String clientId = "basyx-client-api";
@@ -88,12 +92,12 @@ public class TestAuthorizedSubmodelRegistry {
 		storage = appContext.getBean(SubmodelRegistryStorage.class);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void initializeRepositories() throws IOException {
 		configureSecurityContext();
 
@@ -102,7 +106,7 @@ public class TestAuthorizedSubmodelRegistry {
 		clearSecurityContext();
 	}
 
-	@After
+	@AfterEach
 	public void reset() throws IOException {
 		configureSecurityContext();
 

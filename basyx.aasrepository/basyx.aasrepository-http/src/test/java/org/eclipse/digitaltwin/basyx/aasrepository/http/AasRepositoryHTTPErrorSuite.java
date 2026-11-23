@@ -26,16 +26,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -49,8 +49,8 @@ public abstract class AasRepositoryHTTPErrorSuite {
 
     protected abstract String getURL();
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public abstract void resetRepository();
 
     @Test

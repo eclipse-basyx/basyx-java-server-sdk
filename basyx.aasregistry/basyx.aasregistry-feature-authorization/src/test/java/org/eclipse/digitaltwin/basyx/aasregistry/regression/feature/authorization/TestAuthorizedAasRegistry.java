@@ -39,7 +39,11 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AuthorizedAasRegistryStorage;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -48,6 +52,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,8 +61,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link AuthorizedAasRegistryStorage} feature
@@ -77,7 +81,7 @@ public class TestAuthorizedAasRegistry {
 	public static String aasRegistryBaseUrl = BASE_URL + "/shell-descriptors";
 	private static AasRegistryStorage storage;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 		String clientId = "basyx-client-api";
@@ -89,12 +93,12 @@ public class TestAuthorizedAasRegistry {
 		storage = appContext.getBean(AasRegistryStorage.class);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void initializeRepositories() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 
@@ -103,7 +107,7 @@ public class TestAuthorizedAasRegistry {
 		clearSecurityContext();
 	}
 
-	@After
+	@AfterEach
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 

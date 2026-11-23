@@ -25,7 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.feature.hierarchy;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +36,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscovery
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.AssetAdministrationShellDescriptor;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.aasregistry.client.model.SubmodelDescriptor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -51,7 +52,7 @@ public abstract class HierarchicalAasRegistryTestSuite {
 	protected abstract RegistryAndDiscoveryInterfaceApi getDelegatedRegistryApi();
 	protected abstract DummyDescriptorFactory getDescriptorFactory();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws ApiException {
 		cleanUpRegistries();
 		setupDelegatedRegistry();

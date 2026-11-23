@@ -24,9 +24,16 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.tck;
 
-import org.junit.internal.TextListener;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+
+import java.io.PrintWriter;
+
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 /**
  * Application for testing an AAS Repository. The first argument is the server
@@ -40,22 +47,25 @@ public class ConceptDescriptionRepositoryTestApplication {
 	public static void main(String[] args) throws Exception {
 		String url = getConceptDescriptionRepositoryUrl(args);
 
-		Result result = runTests(url);
+		TestExecutionSummary result = runTests(url);
 
 		printResults(result);
 	}
 
-	private static void printResults(Result result) {
-		System.out.println("Finished. Result: Failures: " + result.getFailureCount() + ". Ignored: " + result.getIgnoreCount() + ". Tests run: " + result.getRunCount() + ". Time: " + result.getRunTime() + "ms.");
+	private static void printResults(TestExecutionSummary result) {
+		result.printFailuresTo(new PrintWriter(System.out, true));
+		System.out.println("Finished. Result: Failures: " + result.getTotalFailureCount() + ". Ignored: " + result.getTestsSkippedCount() + ". Tests run: " + result.getTestsStartedCount() + ". Time: " + (result.getTimeFinished() - result.getTimeStarted()) + "ms.");
 	}
 
-	private static Result runTests(String url) {
+	private static TestExecutionSummary runTests(String url) {
 		ConceptDescriptionRepositoryTestDefinedURL.url = url;
 
-		JUnitCore junit = new JUnitCore();
-		junit.addListener(new TextListener(System.out));
+		LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request().selectors(selectClass(ConceptDescriptionRepositoryTestDefinedURL.class)).build();
+		Launcher launcher = LauncherFactory.create();
+		SummaryGeneratingListener listener = new SummaryGeneratingListener();
+		launcher.execute(request, listener);
 
-		return junit.run(ConceptDescriptionRepositoryTestDefinedURL.class);
+		return listener.getSummary();
 	}
 
 	private static String getConceptDescriptionRepositoryUrl(String[] args) {

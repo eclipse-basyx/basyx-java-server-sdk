@@ -25,6 +25,8 @@
 package org.eclipse.digitaltwin.basyx.submodelrepository.tck;
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositorySubmodelHTTPTestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * 
@@ -36,11 +38,13 @@ public class SubmodelRepositorySubmodelTestDefinedURL extends SubmodelRepository
 
 	public static String url = "http://localhost:8081/submodels";
 
+	@AfterEach
 	@Override
 	public void resetRepository() {
 		SubmodelTCKHelper.deleteAllSubmodelsOnRepository(getURL());
 	}
 
+	@BeforeEach
 	@Override
 	public void populateRepository() {
 		createSubmodels().forEach(s -> SubmodelTCKHelper.createSubmodelOnRepository(getURL(), s));

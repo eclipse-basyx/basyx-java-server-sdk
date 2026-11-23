@@ -25,7 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +35,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.GetSubmodelDescriptorsResult;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -52,7 +53,7 @@ public abstract class HierarchicalSubmodelRegistryTestSuite {
 
 	protected abstract DummyDescriptorFactory getDescriptorFactory();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws ApiException {
 		cleanUpRegistries();
 		setupDelegatedRegistry();

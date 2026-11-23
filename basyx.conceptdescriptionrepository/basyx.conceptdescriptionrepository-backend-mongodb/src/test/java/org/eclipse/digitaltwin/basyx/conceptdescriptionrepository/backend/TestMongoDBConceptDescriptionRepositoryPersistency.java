@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositoryPersistencyTestSuite;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -43,12 +43,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class TestMongoDBConceptDescriptionRepositoryPersistency extends ConceptDescriptionRepositoryPersistencyTestSuite {
 	private static ConfigurableApplicationContext applicationContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initComponent() {
 		applicationContext = new SpringApplication(DummyConceptDescriptionRepositoryComponent.class).run();
 	}
 
-	@Before
+	@BeforeEach
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
 		MongoDBUtilities.clearCollection(mongoTemplate, DummyConceptDescriptionRepositoryConfig.TEST_COLLECTION_NAME);

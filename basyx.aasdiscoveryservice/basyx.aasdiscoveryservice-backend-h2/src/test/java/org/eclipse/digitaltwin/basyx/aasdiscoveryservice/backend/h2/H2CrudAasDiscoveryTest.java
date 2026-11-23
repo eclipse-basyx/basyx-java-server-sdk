@@ -24,11 +24,13 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2;
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.backend.h2.backend.H2CrudAasDiscoveryFactory;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class H2CrudAasDiscoveryTest {
     private static final String CONFIGURED_AAS_DISCOVERY_NAME = "test-aas-discovery";

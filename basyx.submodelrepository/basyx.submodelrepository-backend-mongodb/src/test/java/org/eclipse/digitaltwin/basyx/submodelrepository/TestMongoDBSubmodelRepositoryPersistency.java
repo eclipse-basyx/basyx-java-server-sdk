@@ -27,8 +27,8 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositoryPersistencyTestSuite;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -41,12 +41,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class TestMongoDBSubmodelRepositoryPersistency extends SubmodelRepositoryPersistencyTestSuite {
 	private static ConfigurableApplicationContext applicationContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initComponent() {
 		applicationContext = new SpringApplication(DummySubmodelRepositoryComponent.class).run();
 	}
 
-	@Before
+	@BeforeEach
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
 		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.TEST_COLLECTION);

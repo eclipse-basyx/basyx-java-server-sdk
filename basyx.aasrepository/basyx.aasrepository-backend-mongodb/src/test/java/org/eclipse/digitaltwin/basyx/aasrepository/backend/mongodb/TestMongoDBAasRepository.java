@@ -39,12 +39,10 @@ import org.eclipse.digitaltwin.basyx.aasservice.DummyAssetAdministrationShellFac
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Test for MongoDBAasRepository
@@ -55,7 +53,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestMongoDBAasRepository extends AasRepositorySuite {
 
 	@Autowired
@@ -72,7 +69,7 @@ public class TestMongoDBAasRepository extends AasRepositorySuite {
 		return aasRepositoryFactory.create();
 	}
 
-	@Before
+	@BeforeEach
 	public void cleanup() {
 		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.TEST_COLLECTION_NAME);
 	}

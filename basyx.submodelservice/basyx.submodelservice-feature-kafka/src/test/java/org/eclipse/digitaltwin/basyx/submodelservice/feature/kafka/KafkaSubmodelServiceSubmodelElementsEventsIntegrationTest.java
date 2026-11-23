@@ -45,13 +45,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.backend.CrudSubmodelService
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -61,7 +58,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
@@ -70,7 +66,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka" })
 @ActiveProfiles("test-submodel")
-@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SubmodelServiceTestComponent.class })
 @TestPropertySource(properties = { "spring.kafka.bootstrap-servers=localhost:9092", KafkaSubmodelServiceFeature.FEATURENAME + ".preservationlevel=REMOVE_BLOB_VALUE", KafkaSubmodelServiceFeature.FEATURENAME + ".enabled=true",
 		KafkaSubmodelServiceFeature.FEATURENAME + ".topic.name=submodel-events" })
@@ -88,7 +83,7 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
 	private SubmodelService service;
 
-	@Before
+	@BeforeEach
 	public void startPolling() throws InterruptedException {
 
 		FileRepository repository = new InMemoryFileRepository();
@@ -97,7 +92,7 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		service = feature.decorate(smFactory).create(submodel);
 	}
 
-	@After
+	@AfterEach
 	public void assertNoAdditionalMessageAndStopPolling() throws InterruptedException {
 		
 		adapter.assertNoAdditionalMessages();
@@ -106,17 +101,17 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 
 	@Test
 	public void testToplevelSubmodelElementAdded() {
-		Assert.assertTrue(feature.isEnabled());
+		Assertions.assertTrue(feature.isEnabled());
 
 		SubmodelElement elem = TestSubmodels.submodelElement(TestSubmodels.IDSHORT_PROP_1, "ID");
 		service.createSubmodelElement(elem);
 
 		SubmodelEvent evt = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
-		Assert.assertEquals(submodel.getId(), evt.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
-		Assert.assertNull(evt.getSubmodel());
-		Assert.assertEquals(elem, evt.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assertions.assertEquals(submodel.getId(), evt.getId());
+		Assertions.assertEquals(TestSubmodels.IDSHORT_PROP_1, evt.getSmElementPath());
+		Assertions.assertNull(evt.getSubmodel());
+		Assertions.assertEquals(elem, evt.getSmElement());
 	}
 
 	@Test
@@ -125,12 +120,12 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		service.createSubmodelElement(TestSubmodels.IDSHORT_COLL, elem);
 
 		SubmodelEvent evt = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
-		Assert.assertEquals(submodel.getId(), evt.getId());
+		Assertions.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assertions.assertEquals(submodel.getId(), evt.getId());
 		String expected = TestSubmodels.path(TestSubmodels.IDSHORT_COLL, TestSubmodels.IDSHORT_PROP_1);
-		Assert.assertEquals(expected, evt.getSmElementPath());
-		Assert.assertNull(evt.getSubmodel());
-		Assert.assertEquals(elem, evt.getSmElement());
+		Assertions.assertEquals(expected, evt.getSmElementPath());
+		Assertions.assertNull(evt.getSubmodel());
+		Assertions.assertEquals(elem, evt.getSmElement());
 	}
 
 	@Test
@@ -140,13 +135,13 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		service.createSubmodelElement(blob);
 
 		SubmodelEvent evt = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
-		Assert.assertEquals(TestSubmodels.ID_SM, evt.getId());
-		Assert.assertEquals(idShortBlob, evt.getSmElementPath());
-		Assert.assertNull(evt.getSubmodel());
-		Assert.assertNotEquals(blob, evt.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SME_CREATED, evt.getType());
+		Assertions.assertEquals(TestSubmodels.ID_SM, evt.getId());
+		Assertions.assertEquals(idShortBlob, evt.getSmElementPath());
+		Assertions.assertNull(evt.getSubmodel());
+		Assertions.assertNotEquals(blob, evt.getSmElement());
 		SubmodelElement expectedElem = new DefaultBlob.Builder().idShort(idShortBlob).build(); // expected has no value
-		Assert.assertEquals(expectedElem, evt.getSmElement());
+		Assertions.assertEquals(expectedElem, evt.getSmElement());
 	}
 
 	@Test
@@ -155,11 +150,11 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		service.updateSubmodelElement(TestSubmodels.IDSHORT_PROP_0, elem);
 
 		SubmodelEvent evtUpdated = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_UPDATED, evtUpdated.getType());
-		Assert.assertEquals(TestSubmodels.ID_SM, evtUpdated.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_0, evtUpdated.getSmElementPath());
-		Assert.assertNull(evtUpdated.getSubmodel());
-		Assert.assertEquals(elem, evtUpdated.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SME_UPDATED, evtUpdated.getType());
+		Assertions.assertEquals(TestSubmodels.ID_SM, evtUpdated.getId());
+		Assertions.assertEquals(TestSubmodels.IDSHORT_PROP_0, evtUpdated.getSmElementPath());
+		Assertions.assertNull(evtUpdated.getSubmodel());
+		Assertions.assertEquals(elem, evtUpdated.getSmElement());
 	}
 
 	@Test
@@ -167,11 +162,11 @@ public class KafkaSubmodelServiceSubmodelElementsEventsIntegrationTest {
 		service.deleteSubmodelElement(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED);
 
 		SubmodelEvent evtDeleted = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SME_DELETED, evtDeleted.getType());
-		Assert.assertEquals(TestSubmodels.ID_SM, evtDeleted.getId());
-		Assert.assertEquals(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED, evtDeleted.getSmElementPath());
-		Assert.assertNull(evtDeleted.getSubmodel());
-		Assert.assertNull(evtDeleted.getSmElement());
+		Assertions.assertEquals(SubmodelEventType.SME_DELETED, evtDeleted.getType());
+		Assertions.assertEquals(TestSubmodels.ID_SM, evtDeleted.getId());
+		Assertions.assertEquals(TestSubmodels.IDSHORT_PROP_TO_BE_REMOVED, evtDeleted.getSmElementPath());
+		Assertions.assertNull(evtDeleted.getSubmodel());
+		Assertions.assertNull(evtDeleted.getSmElement());
 	}
 
 }

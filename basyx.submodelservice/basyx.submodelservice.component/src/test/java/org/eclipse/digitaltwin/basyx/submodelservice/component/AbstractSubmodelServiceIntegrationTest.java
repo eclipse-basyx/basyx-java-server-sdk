@@ -29,13 +29,14 @@ import org.eclipse.digitaltwin.aas4j.v3.model.OperationRequest;
 import org.eclipse.digitaltwin.aas4j.v3.model.OperationResult;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.TestOperationValues;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 /**
  * @author Gerhard Sonnenberg DFKI GmbH
  */
@@ -55,8 +56,8 @@ public abstract class AbstractSubmodelServiceIntegrationTest {
         ResponseEntity<OperationResult> response = restTemplate.postForEntity(url, request, OperationResult.class);
         
         OperationResult expected = TestOperationValues.resultForInt(25);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assert.assertEquals(expected, response.getBody());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expected, response.getBody());
     }
     
     @Test
@@ -67,8 +68,8 @@ public abstract class AbstractSubmodelServiceIntegrationTest {
         ResponseEntity<OperationResult> response = restTemplate.postForEntity(url, request, OperationResult.class);
         
         OperationResult expected = TestOperationValues.resultForInt(12);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assert.assertEquals(expected, response.getBody());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expected, response.getBody());
     }
     
     @Test
@@ -78,13 +79,13 @@ public abstract class AbstractSubmodelServiceIntegrationTest {
         
         ResponseEntity<OperationResult> response = restTemplate.postForEntity(url, request, OperationResult.class);
         // no operation handling assigned
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     
     @Test
     public void testGetPropertyValue() {
         String url = "http://localhost:" + port + "/submodel/submodel-elements/test/$value";                
         ResponseEntity<SubmodelElementValue> response = restTemplate.getForEntity(url, SubmodelElementValue.class);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

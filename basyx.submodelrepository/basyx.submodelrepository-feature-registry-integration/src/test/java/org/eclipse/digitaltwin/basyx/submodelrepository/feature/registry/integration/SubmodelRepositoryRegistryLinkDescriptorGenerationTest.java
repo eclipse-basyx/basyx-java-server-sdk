@@ -37,22 +37,20 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for RegistryIntegrationAasRepository feature
  */
-@RunWith(Parameterized.class)
 public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {	
 	private static final String DUMMY_SUBMODEL_IDSHORT = "TechnicalData";
 	private static final String DUMMY_SUBMODEL_ID = "7A7104BDAB57E184";
@@ -65,7 +63,7 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     private AttributeMapper mockedAttributeMapper;
     private SubmodelRegistryApi mockedRegistryApi;
     
-    @Before
+    @BeforeEach
     public void setUp() {    	
     	mockedSubmodelRepository = getSubmodelRepository();
     	mockedRegistryLink = Mockito.mock(SubmodelRepositoryRegistryLink.class);
@@ -76,22 +74,19 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
         
         registryIntegrationSubmodelRepository = new RegistryIntegrationSubmodelRepository(mockedSubmodelRepository, mockedRegistryLink, mockedAttributeMapper);
     }
-
-    @Parameterized.Parameter(0)
     public String externalUrl;
-
-    @Parameterized.Parameter(1)
     public String expectedUrl;
 
-    @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { { BASE_URL + "/context", BASE_URL + "/context/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) },
                 { BASE_URL, BASE_URL + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) }, { BASE_URL + "/", BASE_URL + "/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) },
                 { BASE_URL + "/context/", BASE_URL + "/context/submodels/" + Base64UrlEncodedIdentifier.encodeIdentifier(DUMMY_SUBMODEL_ID) } });
     }
 
-    @Test
-    public void testExternalUrl() throws ApiException {
+	@MethodSource("data")
+	@ParameterizedTest
+	public void testExternalUrl(String externalUrl, String expectedUrl) throws ApiException {
+		initSubmodelRepositoryRegistryLinkDescriptorGenerationTest(externalUrl, expectedUrl);
         Mockito.when(mockedRegistryLink.getSubmodelRepositoryBaseURLs()).thenReturn(List.of(externalUrl));
 
         SubmodelDescriptor descriptor = createAndRetrieveDescriptor(createDummySubmodel());
@@ -113,6 +108,11 @@ public class SubmodelRepositoryRegistryLinkDescriptorGenerationTest {
     
 	protected SubmodelRepository getSubmodelRepository() {
         return CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
+	}
+
+	public void initSubmodelRepositoryRegistryLinkDescriptorGenerationTest(String externalUrl, String expectedUrl) {
+		this.externalUrl = externalUrl;
+		this.expectedUrl = expectedUrl;
 	}
 
 }

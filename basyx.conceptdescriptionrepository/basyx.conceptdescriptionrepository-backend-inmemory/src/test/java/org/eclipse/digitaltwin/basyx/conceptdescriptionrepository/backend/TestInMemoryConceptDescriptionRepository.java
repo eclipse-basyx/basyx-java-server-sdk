@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.backend;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.ConceptDescriptionRepositorySuite;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.core.exceptions.CollidingIdentifierException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link InMemoryConceptDescriptionRepository}
@@ -66,11 +66,13 @@ public class TestInMemoryConceptDescriptionRepository extends ConceptDescription
 		assertEquals(CONFIGURED_CD_REPO_NAME, repo.getName());
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
+	@Test
 	public void idCollisionDuringConstruction() {
-		Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
+		assertThrows(CollidingIdentifierException.class, () -> {
+			Collection<ConceptDescription> conceptDescriptionsWithCollidingIds = createConceptDescriptionCollectionWithCollidingIds();
 
-		CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptionsWithCollidingIds).create();
+			CrudConceptDescriptionRepositoryFactory.builder().backend(backend).remoteCollection(conceptDescriptionsWithCollidingIds).create();
+		});
 	}
 
 	private Collection<ConceptDescription> createConceptDescriptionCollectionWithCollidingIds() {

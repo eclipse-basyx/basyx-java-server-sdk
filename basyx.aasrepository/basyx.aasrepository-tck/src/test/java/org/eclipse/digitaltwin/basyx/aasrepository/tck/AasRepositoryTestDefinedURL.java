@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.tck;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +37,8 @@ import org.eclipse.digitaltwin.aas4j.v3.dataformat.json.JsonDeserializer;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.AasRepositoryHTTPSuite;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.google.gson.Gson;
 
@@ -58,6 +60,8 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 		return url;
 	}
 
+	@BeforeEach
+	@AfterEach
 	@Override
 	public void resetRepository() {
 		getAllAasIds().forEach(this::deleteAas);

@@ -27,8 +27,10 @@ package org.eclipse.digitaltwin.basyx.aasrepository.http;
 
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -41,12 +43,12 @@ public class TestAasRepositoryHTTPError extends AasRepositoryHTTPErrorSuite {
 
     private static ConfigurableApplicationContext appContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void startAasRepo() {
         appContext = new SpringApplicationBuilder(DummyAasRepositoryComponent.class).profiles("httptests").run();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopAasRepo() {
         appContext.close();
     }
@@ -56,8 +58,10 @@ public class TestAasRepositoryHTTPError extends AasRepositoryHTTPErrorSuite {
         return "http://localhost:8080/shells";
     }
 
-    @Override
-    public void resetRepository() {
+	@BeforeEach
+	@AfterEach
+	@Override
+	public void resetRepository() {
         AasRepository repo = appContext.getBean(AasRepository.class);
         repo.getAllAas(null, null, PaginationInfo.NO_LIMIT)
                 .getResult()

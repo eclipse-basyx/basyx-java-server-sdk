@@ -23,6 +23,9 @@ on:
       - 'NOTICE'
 
 env:
+  # Applied to every mvn call: no download progress noise, and reuse Docker layers
+  # (the shared apt-get layer otherwise gets rebuilt for every image)
+  MAVEN_ARGS: -B -ntp -Ddocker.noCache=false
   VERSION: 2.0.0-SNAPSHOT
   MVN_ARGS_BUILD_BASYX_NO_TESTS: -DskipTests
 

@@ -32,16 +32,16 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatchin
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.execution.OperationExecutor;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.JavaInvokableDefinition;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.ReflectionBasedOperationDispatcherProviderComponent;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { ReflectionBasedOperationDispatcherProviderComponent.class })
 @EnableConfigurationProperties(value = { JavaInvokableDefinition.class, OperationDispatcherMapping.class })
 @TestPropertySource(properties = { OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".enabled=true",
@@ -65,9 +65,9 @@ public class ReflectionBasedOperationDispatcherProviderComponentTest {
 	public void testDefaultMapping() {
 		OperationExecutor executor = component.getOperationExecutor("Unknown");
 		OperationVariable[] vars = executor.invoke(null, null, null);
-		Assert.assertEquals(1, vars.length);
+		Assertions.assertEquals(1, vars.length);
 		Property prop = (Property) vars[0].getValue();
-		Assert.assertEquals("default", prop.getValue());
+		Assertions.assertEquals("default", prop.getValue());
 	}
 
 	@Test
@@ -75,8 +75,8 @@ public class ReflectionBasedOperationDispatcherProviderComponentTest {
 		OperationExecutor executor = component.getOperationExecutor("BaseOperations.SquareOperation");
 		OperationVariable in = TestOperationValues.toOperationVariable(TestOperationValues.toIntProperty(3));
 		OperationVariable[] vars = executor.invoke("BaseOperations.SquareOperation", null, new OperationVariable[] { in });
-		Assert.assertEquals(1, vars.length);
+		Assertions.assertEquals(1, vars.length);
 		Property prop = (Property) vars[0].getValue();
-		Assert.assertEquals("9", prop.getValue());
+		Assertions.assertEquals("9", prop.getValue());
 	}
 }

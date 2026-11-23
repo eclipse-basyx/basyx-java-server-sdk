@@ -25,15 +25,18 @@
 
 package org.eclipse.digitaltwin.basyx.client.internal;
 
-import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.PasswordCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.PasswordCredentialAccessTokenProvider;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests the behaviour of {@link TokenManager}
@@ -45,7 +48,7 @@ public class TokenManagerTest {
     private static final String TOKEN_ENDPOINT = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
     private TokenManager tokenManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tokenManager = new TokenManager(TOKEN_ENDPOINT, new PasswordCredentialAccessTokenProvider(new PasswordCredential("basyx.reader", "basyxreader"), new ClientCredential("max-sso", "8ccc227xJflxGgtFkwwssHRZUh99nAAc")));
     }

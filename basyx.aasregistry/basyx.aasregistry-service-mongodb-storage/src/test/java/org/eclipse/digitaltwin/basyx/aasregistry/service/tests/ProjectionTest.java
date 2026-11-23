@@ -42,8 +42,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchP
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SegmentBlocksBuilder;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SegmentBlocksBuilder.SegmentBlock;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SimpleVarNameProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 
@@ -54,7 +54,7 @@ public class ProjectionTest {
 	@Autowired
 	private ObjectMapper mapper;
 	
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(ProjectionTest.class.getPackageName(), mapper);
 
 	@Test

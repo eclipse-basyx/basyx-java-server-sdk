@@ -33,12 +33,13 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistr
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
+
 /**
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */
@@ -63,7 +64,7 @@ public class SubmodelRegistrationMultiUrlTest {
 		Assertions.assertTrue(hrefs.contains("http://smservice:8081/submodel"));
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void testSubmodelServiceIsUnregistered() {
 		// the context ist closed after all a method run and thus after class
 		SubmodelRegistryApi api = new SubmodelRegistryApi("http://localhost:8060");

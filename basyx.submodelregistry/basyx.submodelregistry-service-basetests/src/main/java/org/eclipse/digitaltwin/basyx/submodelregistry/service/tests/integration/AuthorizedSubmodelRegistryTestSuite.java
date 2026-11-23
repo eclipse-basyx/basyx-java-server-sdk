@@ -33,8 +33,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +48,8 @@ import org.eclipse.digitaltwin.basyx.authorization.jwt.JwtTokenDecoder;
 import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
 
 import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,9 +61,6 @@ import org.apache.hc.core5.http.ParseException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test suite for Submodel Registry Authorization
@@ -68,7 +68,6 @@ import static org.junit.Assert.assertEquals;
  * @author danish
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@RunWith(SpringRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class AuthorizedSubmodelRegistryTestSuite {
 
@@ -84,7 +83,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
     @Autowired
     private SubmodelRegistryStorage storage;
 
-    @Before
+    @BeforeEach
     public void initializeRepositories() throws IOException {
         configureSecurityContext();
 
@@ -93,7 +92,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         clearSecurityContext();
     }
 
-    @After
+    @AfterEach
     public void reset() throws IOException {
         configureSecurityContext();
 

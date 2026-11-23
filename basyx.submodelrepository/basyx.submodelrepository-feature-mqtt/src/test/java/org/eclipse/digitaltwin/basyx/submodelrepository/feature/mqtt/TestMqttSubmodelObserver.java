@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -66,9 +66,9 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelElementValue;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DatabindException;
@@ -91,7 +91,7 @@ public class TestMqttSubmodelObserver {
 	private static final String FILE_SUBMODEL_ELEMENT_CONTENT = "This is a text file.";
 	private static String SAVED_FILE_PATH = "";
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() throws MqttException, IOException {
 		mqttBroker = MqttBrokerTestSupport.start();
 		listener = mqttBroker.listener();
@@ -100,7 +100,7 @@ public class TestMqttSubmodelObserver {
 		submodelRepository = createMqttSubmodelRepository(mqttClient);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownClass() throws MqttException {
 		mqttBroker.close();
 	}

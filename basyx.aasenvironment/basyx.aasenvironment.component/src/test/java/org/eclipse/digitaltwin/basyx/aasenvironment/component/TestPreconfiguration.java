@@ -25,9 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,9 +44,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -62,7 +62,7 @@ public class TestPreconfiguration {
 	private static AasRepository aasRepo;
 	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASEnvironment() throws Exception {
 		appContext = new SpringApplication(AasEnvironmentComponent.class).run(new String[] {});
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
@@ -210,7 +210,7 @@ public class TestPreconfiguration {
 		assertFileContents(expectedFilePath, expectedFileExtension, actualFile1, actualFile2);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASEnvironment() {
 		appContext.close();
 	}

@@ -25,9 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,7 +57,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceSuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.PropertyValue;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.SubmodelValueOnly;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -123,10 +124,12 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(operationalDataSm, retrieved);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSpecificNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodel("doesNotExist");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.getSubmodel("doesNotExist");
+		});
 	}
 
 	@Test
@@ -140,17 +143,23 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(expected, repo.getSubmodel(id));
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void updateNonExistingSubmodel() {
-		String id = "notExisting";
-		Submodel doesNotExist = buildDummySubmodel(id);
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			String id = "notExisting";
+			Submodel doesNotExist = buildDummySubmodel(id);
 
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.updateSubmodel(id, doesNotExist);
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.updateSubmodel(id, doesNotExist);
+		});
 	}
 
-	@Test(expected = IdentificationMismatchException.class)
+	@Test
 	public void updateExistingSubmodelWithMismatchId() {
+		assertThrows(IdentificationMismatchException.class, this::updateExistingSubmodelUsingMismatchingId);
+	}
+
+	protected void updateExistingSubmodelUsingMismatchingId() {
 		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
 		Submodel newSm = buildDummySubmodel("mismatchId");
 
@@ -170,35 +179,43 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(expectedSubmodel, retrieved);
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
+	@Test
 	public void createSubmodelWithCollidingId() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		Submodel submodel = repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
+		assertThrows(CollidingIdentifierException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			Submodel submodel = repo.getSubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID);
 
-		repo.createSubmodel(submodel);
+			repo.createSubmodel(submodel);
+		});
 	}
 
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createSubmodelWithEmptyId() {
-		SubmodelRepository repo = getSubmodelRepository();
-		Submodel submodel = buildDummySubmodel(EMPTY_ID);
+		assertThrows(MissingIdentifierException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepository();
+			Submodel submodel = buildDummySubmodel(EMPTY_ID);
 
-		repo.createSubmodel(submodel);
+			repo.createSubmodel(submodel);
+		});
 	}
 
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createSubmodelWithNullId() {
-		SubmodelRepository repo = getSubmodelRepository();
-		Submodel submodel = buildDummySubmodel(NULL_ID);
+		assertThrows(MissingIdentifierException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepository();
+			Submodel submodel = buildDummySubmodel(NULL_ID);
 
-		repo.createSubmodel(submodel);
+			repo.createSubmodel(submodel);
+		});
 	}
 
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createSubmodelCollectionWithMissingId() {
-		Collection<Submodel> submodels = Arrays.asList(buildDummySubmodel(EMPTY_ID), buildDummySubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID), buildDummySubmodel(NULL_ID));
+		assertThrows(MissingIdentifierException.class, () -> {
+			Collection<Submodel> submodels = Arrays.asList(buildDummySubmodel(EMPTY_ID), buildDummySubmodel(DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID), buildDummySubmodel(NULL_ID));
 
-		getSubmodelRepository(submodels);
+			getSubmodelRepository(submodels);
+		});
 	}
 
 	@Test
@@ -213,28 +230,36 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.deleteSubmodel("nonExisting");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.deleteSubmodel("nonExisting");
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSubmodelElementsOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElements("notExisting", PaginationInfo.NO_LIMIT).getResult();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.getSubmodelElements("notExisting", PaginationInfo.NO_LIMIT).getResult();
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSubmodelElementOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElement("nonExisting", "doesNotMatter");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.getSubmodelElement("nonExisting", "doesNotMatter");
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSubmodelElementValueOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-		repo.getSubmodelElementValue("nonExisting", "doesNotMatter");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+			repo.getSubmodelElementValue("nonExisting", "doesNotMatter");
+		});
 	}
 
 	@Test
@@ -250,13 +275,15 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 		assertEquals(expected, retrievedValue.getValue());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void setSubmodelElementValueOfNonExistingSubmodel() {
-		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
 
-		PropertyValue valueToWrite = new PropertyValue("400");
+			PropertyValue valueToWrite = new PropertyValue("400");
 
-		repo.setSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
+			repo.setSubmodelElementValue("nonExisting", "doesNotMatter", valueToWrite);
+		});
 	}
 
 	@Test
@@ -342,11 +369,13 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 	}
 
 	// Has to be overwritten if backend does not support operations
-	@Test(expected = NotInvokableException.class)
+	@Test
 	public void invokeNonOperation() {
-		SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
+		assertThrows(NotInvokableException.class, () -> {
+			SubmodelRepository submodelRepo = getSubmodelRepositoryWithDummySubmodels();
 
-		submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
+			submodelRepo.invokeOperation(DummySubmodelFactory.SUBMODEL_TECHNICAL_DATA_ID, SubmodelServiceHelper.SUBMODEL_TECHNICAL_DATA_ANNOTATED_RELATIONSHIP_ELEMENT_ID_SHORT, new OperationVariable[0]);
+		});
 	}
 	
 	@Test
@@ -363,11 +392,13 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
         assertEquals(expectedValueOnly.getValuesOnlyMap(), valueOnly.getValuesOnlyMap());
     }
     
-    @Test(expected = ElementDoesNotExistException.class)
+    @Test
     public void getSubmodelByIdValueOnlyNonExistingSubmodel() {
-        SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-        repo.getSubmodelByIdValueOnly("nonExistingSubmodelId");
-    }
+			assertThrows(ElementDoesNotExistException.class, () -> {
+				SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+				repo.getSubmodelByIdValueOnly("nonExistingSubmodelId");
+			});
+		}
     
     @Test
     public void getSubmodelByIdMetadataExistingSubmodel() {
@@ -381,11 +412,13 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
         assertEquals(expectedMetadata, metadata);
     }
 
-    @Test(expected = ElementDoesNotExistException.class)
+    @Test
     public void getSubmodelByIdMetadataNonExistingSubmodel() {
-        SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-        repo.getSubmodelByIdMetadata("nonExistingSubmodelId");
-    }
+			assertThrows(ElementDoesNotExistException.class, () -> {
+				SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+				repo.getSubmodelByIdMetadata("nonExistingSubmodelId");
+			});
+		}
 
 	private Submodel buildDummySubmodel(String id) {
 		return new DefaultSubmodel.Builder().id(id).submodelElements(new DefaultProperty.Builder().idShort("prop").value("testValue").valueType(DataTypeDefXsd.STRING).build()).build();

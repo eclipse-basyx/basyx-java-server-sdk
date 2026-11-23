@@ -44,9 +44,9 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -75,7 +75,7 @@ public class AasEnvironmentLoaderTest {
 	protected ConceptDescriptionRepository conceptDescriptionRepository;
 	protected DefaultResourceLoader rLoader = new DefaultResourceLoader();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		submodelRepository = Mockito.spy(CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create());
 		aasRepository = Mockito.spy(CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create());
@@ -95,9 +95,9 @@ public class AasEnvironmentLoaderTest {
 	public void testWithResourceFile_AllElementsAreDeployed() throws InvalidFormatException, IOException, DeserializationException, ZipBombException {
 		loadRepositories(List.of(TEST_ENVIRONMENT_JSON));
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
 	@Test
@@ -142,9 +142,9 @@ public class AasEnvironmentLoaderTest {
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(0)).updateSubmodel(Mockito.anyString(), Mockito.any());
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
 	@Test
@@ -158,9 +158,9 @@ public class AasEnvironmentLoaderTest {
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(0)).updateSubmodel(Mockito.anyString(), Mockito.any());
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
 	@Test
@@ -174,22 +174,22 @@ public class AasEnvironmentLoaderTest {
 		Mockito.verify(submodelRepository, Mockito.times(2)).createSubmodel(Mockito.any());
 		Mockito.verify(submodelRepository, Mockito.times(1)).updateSubmodel(Mockito.anyString(), Mockito.any());
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 
 	@Test
 	public void testDuplicateSubmodelIdsInEnvironments_ExceptionIsThrown() throws InvalidFormatException, IOException, DeserializationException {
 
 		String expectedMsg = new CollidingIdentifierException("aas1").getMessage();
-		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositories(List.of(TEST_ENVIRONMENT_SHELLS_ONLY_JSON, TEST_ENVIRONMENT_SHELLS_ONLY_JSON)));
+		Assertions.assertThrows(CollidingIdentifierException.class, () -> loadRepositories(List.of(TEST_ENVIRONMENT_SHELLS_ONLY_JSON, TEST_ENVIRONMENT_SHELLS_ONLY_JSON)), expectedMsg);
 	}
 
 	@Test
 	public void testDuplicateShellIdsInEnvironments_ExceptionIsThrown() {
 		String expectedMsg = new CollidingIdentifierException("sm1").getMessage();
-		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositories(List.of(TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON, TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON)));
+		Assertions.assertThrows(CollidingIdentifierException.class, () -> loadRepositories(List.of(TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON, TEST_ENVIRONMENT_SUBMODELS_ONLY_JSON)), expectedMsg);
 	}
 	
 	@Test
@@ -198,17 +198,17 @@ public class AasEnvironmentLoaderTest {
 		
 		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 		
 		deleteElementsFromRepos();
 		
 		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
 		
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 	
 	@Test
@@ -217,12 +217,12 @@ public class AasEnvironmentLoaderTest {
 		
 		loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader);
 
-		Assert.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(2, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 		
 		String expectedMsg = new CollidingIdentifierException("aas1").getMessage();
-		Assert.assertThrows(expectedMsg, CollidingIdentifierException.class, () -> loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader));
+		Assertions.assertThrows(CollidingIdentifierException.class, () -> loadRepositoriesWithEnvironment(List.of(TEST_ENVIRONMENT_JSON), envLoader), expectedMsg);
 	}
 	
 	private void loadRepositoriesWithEnvironment(List<String> pathsToLoad, AasEnvironment aasEnvironment) throws IOException, DeserializationException, InvalidFormatException, ZipBombException {
@@ -239,9 +239,9 @@ public class AasEnvironmentLoaderTest {
 	}
 
 	private void assertRepositorySizes(int expectedAasCount, int expectedSubmodelCount, int expectedConceptDescriptionCount) {
-		Assert.assertEquals(expectedAasCount, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(expectedSubmodelCount, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(expectedConceptDescriptionCount, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(expectedAasCount, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(expectedSubmodelCount, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(expectedConceptDescriptionCount, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 	
 	private void deleteElementsFromRepos() {
@@ -249,9 +249,9 @@ public class AasEnvironmentLoaderTest {
 		submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().forEach(sm -> submodelRepository.deleteSubmodel(sm.getId()));
 		conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().stream().forEach(cd -> conceptDescriptionRepository.deleteConceptDescription(cd.getId()));
 		
-		Assert.assertEquals(0, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(0, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
-		Assert.assertEquals(0, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(0, aasRepository.getAllAas(null, null, PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(0, submodelRepository.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().size());
+		Assertions.assertEquals(0, conceptDescriptionRepository.getAllConceptDescriptions(PaginationInfo.NO_LIMIT).getResult().size());
 	}
 	
 }

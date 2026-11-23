@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelAlreadyExistsException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class SubmodelRegistryStorageTest extends ExtensionsTest {
 

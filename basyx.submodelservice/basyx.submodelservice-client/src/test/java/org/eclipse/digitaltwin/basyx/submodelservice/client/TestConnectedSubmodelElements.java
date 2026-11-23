@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +90,11 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMappe
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -104,17 +108,17 @@ public class TestConnectedSubmodelElements {
 	private static final String ACCESS_URL = "http://localhost:8081/submodels/";
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startSubmodelService() throws Exception {
 		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownSubmodelService() {
 		appContext.close();
 	}
 
-	@After
+	@AfterEach
 	public void cleanUpService(){
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.deleteSubmodel(SUBMODEL_ID);
@@ -385,7 +389,7 @@ public class TestConnectedSubmodelElements {
 		assertEquals(1, submodelElementList.getValue().getSubmodelElementValues().size());
 	}
 
-	@Ignore("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
+	@Disabled("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
 	@Test
 	public void setSubmodelElementListValue() {
 		DefaultSubmodelElementList submodelElementList = getDefaultSubmodelElementList();

@@ -24,9 +24,10 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.core.filerepository.backend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,7 +37,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileHandlingException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileMetadata;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the FileRepository interface
@@ -56,14 +57,16 @@ public abstract class FileRepositoryTestSuite {
 		assertEquals(true, fileRepo.exists(filePath));
 	}
 
-	@Test (expected = FileHandlingException.class)
+	@Test
 	public void saveExistingFile() {
-		FileRepository fileRepo = getFileRepository();
-		
-		FileMetadata fileMetadata = createDummyFile();
-		
-		String filePath = fileRepo.save(fileMetadata);
-		filePath = fileRepo.save(fileMetadata);
+		assertThrows(FileHandlingException.class, () -> {
+			FileRepository fileRepo = getFileRepository();
+
+			FileMetadata fileMetadata = createDummyFile();
+
+			String filePath = fileRepo.save(fileMetadata);
+			filePath = fileRepo.save(fileMetadata);
+		});
 	}
 
 	@Test
@@ -80,11 +83,13 @@ public abstract class FileRepositoryTestSuite {
 		IOUtils.contentEquals(streamToCompare, actualStream);
 	}
 	
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void findNonExistingFile() {
-		FileRepository fileRepo = getFileRepository();
-		
-		InputStream testInputStream = fileRepo.find("does not exist");
+		assertThrows(FileDoesNotExistException.class, () -> {
+			FileRepository fileRepo = getFileRepository();
+
+			InputStream testInputStream = fileRepo.find("does not exist");
+		});
 	}
 	
 	@Test
@@ -99,13 +104,15 @@ public abstract class FileRepositoryTestSuite {
 		assertFalse(fileRepo.exists(filePath));
 	}
 	
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingFile() {
-		FileRepository fileRepo = getFileRepository();
-		
-		String filePath = "does not exist";
-		
-		fileRepo.delete(filePath); 
+		assertThrows(FileDoesNotExistException.class, () -> {
+			FileRepository fileRepo = getFileRepository();
+
+			String filePath = "does not exist";
+
+			fileRepo.delete(filePath);
+		});
 	}
 	
 	@Test

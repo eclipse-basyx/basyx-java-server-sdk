@@ -42,7 +42,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.Sorting;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.SortingPath;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.events.RegistryEvent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 

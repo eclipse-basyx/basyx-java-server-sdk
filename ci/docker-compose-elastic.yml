@@ -32,6 +32,7 @@ services:
       retries: 30
 
   kibana_settings:
+    profiles: ["kibana"]
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -53,6 +54,7 @@ services:
       '
 
   kibana:
+    profiles: ["kibana"]
     depends_on:
       kibana_settings:
         condition: service_completed_successfully

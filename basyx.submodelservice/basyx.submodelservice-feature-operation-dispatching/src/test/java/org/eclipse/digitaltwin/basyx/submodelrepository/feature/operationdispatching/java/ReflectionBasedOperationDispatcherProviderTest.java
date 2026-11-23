@@ -38,8 +38,8 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatchin
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.ReflectionBasedOperationDispatcherProvider.MethodDispatcher;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.ReflectionBasedOperationDispatcherProvider.MultiArgMethodDispatcher;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.ReflectionBasedOperationDispatcherProvider.SingleArgMethodDispatcher;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -54,8 +54,8 @@ public class ReflectionBasedOperationDispatcherProviderTest {
 		ReflectionBasedOperationDispatcherProvider provider = new ReflectionBasedOperationDispatcherProvider(loader,
 				Map.of(), DefaultInvokableOperation.class.getName());
 		MethodDispatcher dispatcher = provider.getDefaultMethodDispatcher();
-		Assert.assertNotNull(dispatcher);
-		Assert.assertEquals(MultiArgMethodDispatcher.class, dispatcher.getClass());
+		Assertions.assertNotNull(dispatcher);
+		Assertions.assertEquals(MultiArgMethodDispatcher.class, dispatcher.getClass());
 	}
 
 	@Test
@@ -63,9 +63,9 @@ public class ReflectionBasedOperationDispatcherProviderTest {
 		DefaultInvokableOperation op = new DefaultInvokableOperation();
 		try {
 			op.invoke("Test", null, null);
-			Assert.fail();
+			Assertions.fail();
 		} catch (ResponseStatusException ex) {
-			Assert.assertEquals(HttpStatusCode.valueOf(404), ex.getStatusCode());
+			Assertions.assertEquals(HttpStatusCode.valueOf(404), ex.getStatusCode());
 		}
 	}
 
@@ -76,13 +76,13 @@ public class ReflectionBasedOperationDispatcherProviderTest {
 				Map.of("OneArgOp", MockOneArgMappingOperation.class.getName()),
 				DefaultInvokableOperation.class.getName());
 		OperationExecutor dispatcher = provider.getDispatchingMappings().get("OneArgOp");
-		Assert.assertNotNull(dispatcher);
-		Assert.assertEquals(SingleArgMethodDispatcher.class, dispatcher.getClass());
+		Assertions.assertNotNull(dispatcher);
+		Assertions.assertEquals(SingleArgMethodDispatcher.class, dispatcher.getClass());
 		OperationVariable[] out = dispatcher.invoke("OneArgOp", null, null);
 		OperationVariable expected = TestOperationValues
 				.toOperationVariable(TestOperationValues.toStringProperty(MockOneArgMappingOperation.ONE_ARG));
-		Assert.assertEquals(1, out.length);
-		Assert.assertEquals(expected, out[0]);
+		Assertions.assertEquals(1, out.length);
+		Assertions.assertEquals(expected, out[0]);
 	}
 	
 	@Test
@@ -92,13 +92,13 @@ public class ReflectionBasedOperationDispatcherProviderTest {
 				Map.of("MultiArgOp", MockMappingOperation.class.getName()),
 				DefaultInvokableOperation.class.getName());
 		OperationExecutor dispatcher = provider.getDispatchingMappings().get("MultiArgOp");
-		Assert.assertNotNull(dispatcher);
-		Assert.assertEquals(MultiArgMethodDispatcher.class, dispatcher.getClass());
+		Assertions.assertNotNull(dispatcher);
+		Assertions.assertEquals(MultiArgMethodDispatcher.class, dispatcher.getClass());
 		OperationVariable[] out = dispatcher.invoke("MultiArgOp", null, null);
 		OperationVariable expected = TestOperationValues
 				.toOperationVariable(TestOperationValues.toStringProperty("MultiArgOp"));
-		Assert.assertEquals(1, out.length);
-		Assert.assertEquals(expected, out[0]);
+		Assertions.assertEquals(1, out.length);
+		Assertions.assertEquals(expected, out[0]);
 	}
 
 }

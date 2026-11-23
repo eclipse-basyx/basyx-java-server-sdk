@@ -69,17 +69,15 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent.EventType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -87,7 +85,6 @@ import tools.jackson.databind.json.JsonMapper;
 
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@RunWith(SpringRunner.class)
 public abstract class BaseIntegrationTest {
 
 	private static final String LANG_DE_DE = "de-DE";
@@ -116,13 +113,13 @@ public abstract class BaseIntegrationTest {
 
 	private ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 	
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader resourceLoader = new TestResourcesLoader(BaseIntegrationTest.class.getPackageName(), mapper);
 
 	protected SubmodelRegistryApi api;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws ApiException, InterruptedException, DeserializationException {
 		adapter.skipMessages();
 		initClient();
@@ -130,7 +127,7 @@ public abstract class BaseIntegrationTest {
 		
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws ApiException, InterruptedException, DeserializationException {
 		cleanup();
 	}
