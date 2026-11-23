@@ -24,14 +24,16 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.authorization;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.eclipse.digitaltwin.basyx.authorization.rbac.KeycloakRoleProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.NullSubjectException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -55,7 +57,7 @@ public class TestKeycloakRoleProvider {
 	@InjectMocks
     private KeycloakRoleProvider keycloakRoleProvider;
 
-	@Before
+	@BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
@@ -134,15 +136,17 @@ public class TestKeycloakRoleProvider {
         assertTrue(roles.isEmpty());
     }
 
-	@Test(expected = NullSubjectException.class)
+	@Test
     public void getRoles_whenJwtIsNull() {
-        @SuppressWarnings("unchecked")
-        SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
-        when(subjectInfo.get()).thenReturn(null);
-        when(subjectInformationProvider.get()).thenReturn(subjectInfo);
+		assertThrows(NullSubjectException.class, () -> {
+			@SuppressWarnings("unchecked")
+			SubjectInformation<Object> subjectInfo = mock(SubjectInformation.class);
+			when(subjectInfo.get()).thenReturn(null);
+			when(subjectInformationProvider.get()).thenReturn(subjectInfo);
 
-        keycloakRoleProvider.getRoles();
-    }
+			keycloakRoleProvider.getRoles();
+		});
+	}
 
 	@Test
     public void getRoles_whenRealmAccessNotPresentButResourceAccessPresent() {

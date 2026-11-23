@@ -24,7 +24,8 @@
  ******************************************************************************/
 
 package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
@@ -38,13 +39,11 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -75,7 +74,7 @@ public class SubmodelRbacStorageTest extends RbacStorageTestSuite {
 	@Mock
 	private RbacRuleAdapter ruleAdapter;
 
-	@Before
+	@BeforeEach
 	@Override
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);

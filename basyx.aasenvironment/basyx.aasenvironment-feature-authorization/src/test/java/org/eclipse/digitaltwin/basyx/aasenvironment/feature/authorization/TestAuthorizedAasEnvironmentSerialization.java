@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,11 +51,10 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -80,7 +79,7 @@ public class TestAuthorizedAasEnvironmentSerialization {
 	
 	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
@@ -91,12 +90,12 @@ public class TestAuthorizedAasEnvironmentSerialization {
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
 	
-	@After
+	@AfterEach
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 		

@@ -33,12 +33,10 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -48,9 +46,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.eclipse.basyx.digitaltwin.aasenvironment.http.TestAasEnvironmentHTTP.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(Parameterized.class)
 public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 
 
@@ -68,18 +67,15 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 	private int initialCdCount;
 
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
 		aasRepo = appContext.getBean(AasRepository.class);
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
-
-	@Parameterized.Parameter
 	public String scenario;
 
-	@Parameters(name = "TestCase: {0}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
 				{ "NO_CHANGE" },    // Normal test. No changes before AASX reupload
@@ -90,8 +86,10 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 	}
 
 
-	@Test
-	public void testEnvironmentIgnoreDuplicates_AASX() throws IOException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "TestCase: {0}")
+	public void testEnvironmentIgnoreDuplicates_AASX(String scenario) throws IOException {
+		initTestAasEnvironmentHTTP_IgnoreDuplicates(scenario);
 		uploadInitialAASX();
 		recordInitialCounts();
 
@@ -181,8 +179,12 @@ public class TestAasEnvironmentHTTP_IgnoreDuplicates {
 		} catch (Exception ignored) {}
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdown() {
 		appContext.close();
+	}
+
+	public void initTestAasEnvironmentHTTP_IgnoreDuplicates(String scenario) {
+		this.scenario = scenario;
 	}
 }

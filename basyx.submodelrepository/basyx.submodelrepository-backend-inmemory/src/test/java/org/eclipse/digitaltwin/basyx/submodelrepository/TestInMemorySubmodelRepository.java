@@ -33,13 +33,15 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepo
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
-import org.junit.Test;
-import org.junit.Test.None;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
 
 /**
  * Tests the {@link CrudSubmodelRepository} with InMemory backend
@@ -75,18 +77,22 @@ public class TestInMemorySubmodelRepository extends SubmodelRepositorySuite {
 		assertEquals(CONFIGURED_SM_REPO_NAME, repo.getName());
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
+	@Test
 	public void idCollisionDuringConstruction() {
-		Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
-		
-		getSubmodelRepository(submodelsWithCollidingIds);
+		assertThrows(CollidingIdentifierException.class, () -> {
+			Collection<Submodel> submodelsWithCollidingIds = createSubmodelCollectionWithCollidingIds();
+
+			getSubmodelRepository(submodelsWithCollidingIds);
+		});
 	}
 	
-	@Test(expected = None.class)
+	@Test
 	public void assertIdUniqueness() {
-		Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
-		
-		getSubmodelRepository(submodelsWithUniqueIds);
+		assertDoesNotThrow(() -> {
+			Collection<Submodel> submodelsWithUniqueIds = createSubmodelCollectionWithUniqueIds();
+
+			getSubmodelRepository(submodelsWithUniqueIds);
+		});
 	}
 
 	private Collection<Submodel> createSubmodelCollectionWithCollidingIds() {

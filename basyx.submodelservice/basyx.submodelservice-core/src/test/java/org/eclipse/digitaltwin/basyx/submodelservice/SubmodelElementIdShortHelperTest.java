@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.pathparsing.SubmodelElementIdShortHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SubmodelElementIdShortHelperTest {
 	private static final String PARENT_PATH = "root.parent";

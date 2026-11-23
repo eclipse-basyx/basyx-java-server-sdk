@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.component;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,8 +35,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.Au
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.RegistryIntegrationSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelRepositoryRegistryLink;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.search.SearchSubmodelRepository;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
 public class SubmodelRepositoryDecoratorNameTest {

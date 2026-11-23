@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Extension;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringNameType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.LangStringTextType;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.Reference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 

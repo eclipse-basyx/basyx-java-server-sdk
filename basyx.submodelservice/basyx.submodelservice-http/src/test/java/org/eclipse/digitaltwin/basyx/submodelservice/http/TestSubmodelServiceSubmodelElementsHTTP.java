@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.http;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -39,12 +39,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestSubmodelServiceSubmodelElementsHTTP extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	private static ConfigurableApplicationContext appContext;
 
-	@Before
+	@BeforeEach
 	public void startSubmodelService() throws Exception {
 		appContext = new SpringApplication(DummySubmodelServiceComponent.class).run(new String[] {});
 	}
 
-	@After
+	@AfterEach
 	public void shutdownSubmodelService() {
 		appContext.close();
 	}

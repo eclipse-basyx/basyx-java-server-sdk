@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -41,8 +41,7 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.Cl
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -77,9 +76,8 @@ public class AuthorizedClientTest extends BaseIntegrationTest {
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 		descriptor.setIdShort("shortId");
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			registryApi.postAssetAdministrationShellDescriptor(descriptor);
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			registryApi.postAssetAdministrationShellDescriptor(descriptor));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}

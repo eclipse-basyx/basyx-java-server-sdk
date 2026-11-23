@@ -25,7 +25,6 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.feature.authorization;
 
-import static org.junit.Assert.*;
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementCollection;
@@ -33,10 +32,15 @@ import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElementList;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultProperty;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollection;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +58,7 @@ public class SubmodelTargetInformationAdapterTest {
 
 	private SubmodelTargetInformationAdapter submodelTargetInformationAdapter;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		submodelTargetInformationAdapter = new SubmodelTargetInformationAdapter();
 	}
@@ -149,21 +153,25 @@ public class SubmodelTargetInformationAdapterTest {
 		assertTrue(actualType.equals("submodel"));
 	}
 
-	@Test(expected = InvalidTargetInformationException.class)
+	@Test
 	public void testAdaptSubmodelElementCollectionWithInvalidStructure() {
+		assertThrows(InvalidTargetInformationException.class, () -> {
 
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
-				.value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build())).build();
+			SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
+					.value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build())).build();
 
-		submodelTargetInformationAdapter.adapt(targetInformationSMC);
+			submodelTargetInformationAdapter.adapt(targetInformationSMC);
+		});
 	}
 
-	@Test(expected = InvalidTargetInformationException.class)
+	@Test
 	public void testAdaptSubmodelElementCollectionWithoutSubmodelIds() {
+		assertThrows(InvalidTargetInformationException.class, () -> {
 
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Collections.emptyList()).build();
+			SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation").value(Collections.emptyList()).build();
 
-		submodelTargetInformationAdapter.adapt(targetInformationSMC);
+			submodelTargetInformationAdapter.adapt(targetInformationSMC);
+		});
 	}
 
 	private SubmodelElement createTypeProperty(String type) {

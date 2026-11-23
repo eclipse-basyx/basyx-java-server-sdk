@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,10 +45,10 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositoryS
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization.DummyAuthorizedSubmodelRepositoryComponent;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.TestAuthorizedConnectedSubmodelService;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -66,7 +66,7 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "authorization";
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		SpringApplication application = new SpringApplication(DummyAuthorizedSubmodelRepositoryComponent.class);
 		application.setAdditionalProfiles(PROFILE);
@@ -74,7 +74,7 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 		appContext = application.run(new String[] {});
 	}
 
-	@After
+	@AfterEach
 	public void removeSubmodelFromRepo() throws FileNotFoundException, IOException {
 		TestAuthorizedConnectedSubmodelService.configureSecurityContext(TestAuthorizedConnectedSubmodelService.getTokenProvider());
 		
@@ -87,7 +87,7 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 		SecurityContextHolder.clearContext();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASRepo() {
 		if (appContext != null) {
 			appContext.close();
@@ -104,9 +104,8 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 
 		Submodel expected = DummySubmodelFactory.createSimpleDataSubmodel();
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			submodelRepository.createSubmodel(expected);
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			submodelRepository.createSubmodel(expected));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
@@ -133,11 +132,12 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 	}
 	
 	@Override
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void updateExistingSubmodelWithMismatchId() {
-		// TODO There should be a way to differentiate between both exceptions through
-		// the Http response
-		super.updateExistingSubmodelWithMismatchId();
+		assertThrows(MissingIdentifierException.class, () ->
+			// TODO There should be a way to differentiate between both exceptions through
+			// the Http response
+			super.updateExistingSubmodelWithMismatchId());
 	}
 
 	@Override
@@ -148,17 +148,20 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 	}
 
 	@Override
+	@Test
 	public void invokeOperation() {
 		// TODO
 	}
 
 	@Override
+	@Test
 	public void invokeNonOperation() {
 		// TODO
 		throw new NotInvokableException();
 	}
 
 	@Override
+	@Test
 	public void getFileByFilePath(){
 		// Not Implemented for Client so Override Test
 	}

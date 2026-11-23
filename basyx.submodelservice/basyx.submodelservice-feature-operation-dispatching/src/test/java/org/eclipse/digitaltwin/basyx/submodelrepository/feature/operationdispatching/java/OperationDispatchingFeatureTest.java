@@ -39,19 +39,21 @@ import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatchin
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.JavaInvokableDefinition;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.ReflectionBasedOperationDispatcherProviderComponent;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@RunWith(SpringRunner.class)
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { OperationDispatchingSubmodelServiceFeature.class,
 		CrudSubmodelServiceFactory.class, InMemorySubmodelBackend.class, ReflectionBasedOperationDispatcherProviderComponent.class,
 		InMemoryFileRepository.class, SubmodelServiceFactoryTestConfiguration.class })
@@ -84,15 +86,17 @@ public class OperationDispatchingFeatureTest {
 		SubmodelService service = factory.create(createSubmodel());
 		OperationVariable in = TestOperationValues.toOperationVariable(TestOperationValues.toIntProperty(7));
 		OperationVariable[] out = service.invokeOperation("SquareOp", new OperationVariable[] { in });
-		Assert.assertEquals(1, out.length);
+		Assertions.assertEquals(1, out.length);
 		Property prop = (Property) out[0].getValue();
-		Assert.assertEquals("49", prop.getValue());
+		Assertions.assertEquals("49", prop.getValue());
 	}
 
-	@Test(expected = ResponseStatusException.class)
+	@Test
 	public void testOperationInvokationOnProperty() {
-		SubmodelService service = factory.create(createSubmodel());
-		OperationVariable in = TestOperationValues.toOperationVariable(TestOperationValues.toIntProperty(7));
-		service.invokeOperation("Prop", new OperationVariable[] { in });
+		assertThrows(ResponseStatusException.class, () -> {
+			SubmodelService service = factory.create(createSubmodel());
+			OperationVariable in = TestOperationValues.toOperationVariable(TestOperationValues.toIntProperty(7));
+			service.invokeOperation("Prop", new OperationVariable[]{in});
+		});
 	}
 }

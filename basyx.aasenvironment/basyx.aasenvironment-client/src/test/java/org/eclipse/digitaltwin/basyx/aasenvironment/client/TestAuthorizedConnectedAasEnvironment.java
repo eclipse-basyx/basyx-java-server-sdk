@@ -39,9 +39,9 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.Cl
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,7 +59,7 @@ public class TestAuthorizedConnectedAasEnvironment extends TestConnectedAasEnvir
 	private static SubmodelRepository submodelRepository;
 	private static ConceptDescriptionRepository conceptDescriptionRepository;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void initApplication() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummyAasEnvironmentComponent.class);
 		application.setAdditionalProfiles(PROFILE);
@@ -85,13 +85,13 @@ public class TestAuthorizedConnectedAasEnvironment extends TestConnectedAasEnvir
 		}
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void cleanUpContext() {
 		SecurityContextHolder.clearContext();
 		appContext.close();
 	}
 	
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		TokenManager mockTokenManager = new TokenManager("http://localhost:9098/realms/BaSyx/protocol/openid-connect/token", new ClientCredentialAccessTokenProvider(new ClientCredential("workstation-1", "nY0mjyECF60DGzNmQUjL81XurSl8etom")));
 		

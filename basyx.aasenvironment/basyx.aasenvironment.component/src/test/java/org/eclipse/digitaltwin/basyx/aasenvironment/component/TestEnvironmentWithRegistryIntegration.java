@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,9 +45,9 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ZipBombException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration.SubmodelRepositoryRegistryLink;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -71,7 +71,7 @@ public class TestEnvironmentWithRegistryIntegration {
     static AasRepository aasRepository;
     static SubmodelRepository smRepository;
 
-    @BeforeClass
+    @BeforeAll
     public static void startAASEnvironment() {
         appContext = new SpringApplicationBuilder(AasEnvironmentComponent.class).profiles("reginteg").run(new String[] {});
 
@@ -84,12 +84,12 @@ public class TestEnvironmentWithRegistryIntegration {
         assertRepositoriesAreEmpty();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopAASEnvironment() {
         appContext.close();
     }
 
-    @AfterClass
+    @AfterAll
     public static void clearRegistries() throws Exception {
         smRepositoryRegistryLink.getRegistryApi().deleteAllSubmodelDescriptors();
         aasRepositoryRegistryLink.getRegistryApi().deleteAllShellDescriptors();

@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.api;
  
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,11 +42,12 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.service.errors.SubmodelNot
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEventSink;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.tests.TestResourcesLoader;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
@@ -55,9 +56,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { BasyxSubmodelRegistryApiDelegate.class, SubmodelDescriptorsApiController.class, SubmodelDescriptorsApiController.class, InMemorySubmodelStorageConfiguration.class })
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @TestPropertySource(properties = { "registry.type=inMemory" })
@@ -88,15 +88,15 @@ public class BasyxRegistryApiDelegateTest {
 	private SubmodelDescriptorsApiController submodelController;
 
 
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader testResourcesLoader = new TestResourcesLoader();
 
-	@Before
+	@BeforeEach
 	public void initStorage() throws IOException {
 		testResourcesLoader.loadRepositoryDefinition(SubmodelDescriptor.class).forEach(storage::insertSubmodelDescriptor);
 	}
 
-	@After
+	@AfterEach
 	public void clearStorage() {
 		storage.clear();
 	}

@@ -24,10 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasservice.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MqttAasServiceTopicFactoryTest {
 	private static final String AAS_ID = "https://example.org/aas/ä";

@@ -38,8 +38,8 @@ import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.ShellDescriptorSearchRequests.GroupedQueries;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.mongodb.SearchQueryBuilder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -47,7 +47,7 @@ public class SearchPathCriteriaBuilderTest {
 
 	private static Map<String, String> PATH_MAPPINGS = new HashMap<>();
 
-	@Rule
+	@RegisterExtension
 	public final TestResourcesLoader loader = new TestResourcesLoader();
 
 	static {

@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
@@ -42,10 +43,10 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -62,7 +63,7 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 	private static ConfigurableApplicationContext appContext;
 	private static final String PROFILE = "authorization";
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		SpringApplication application = new SpringApplication(DummyAuthorizedAasRepositoryComponent.class);
 		application.setAdditionalProfiles(PROFILE);
@@ -70,7 +71,7 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 		appContext = application.run(new String[] {});
 	}
 
-	@After
+	@AfterEach
 	public void removeAasFromRepo() throws FileNotFoundException, IOException {
 		TestAuthorizedConnectedAasService.configureSecurityContext(TestAuthorizedConnectedAasService.getTokenProvider());
 		
@@ -80,7 +81,7 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 		SecurityContextHolder.clearContext();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASRepo() {
 		appContext.close();
 	}
@@ -95,9 +96,8 @@ public class TestAuthorizedConnectedAasRepository extends AasRepositorySuite {
 
 		AssetAdministrationShell expected = DummyAasFactory.createAasWithSubmodelReference();
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			aasRepository.createAas(expected);
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			aasRepository.createAas(expected));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}

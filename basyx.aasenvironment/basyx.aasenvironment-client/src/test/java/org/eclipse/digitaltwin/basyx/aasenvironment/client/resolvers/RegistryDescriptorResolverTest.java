@@ -25,7 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client.resolvers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
@@ -33,9 +34,9 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.client.DummyAasEnvironmentCo
 import org.eclipse.digitaltwin.basyx.aasenvironment.client.TestFixture;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -56,7 +57,7 @@ public class RegistryDescriptorResolverTest {
 
 	private static final TestFixture FIXTURE = new TestFixture(AAS_REPOSITORY_BASE_PATH, SM_REPOSITORY_BASE_PATH);
 
-	@BeforeClass
+	@BeforeAll
 	public static void initApplication() {
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
 
@@ -66,7 +67,7 @@ public class RegistryDescriptorResolverTest {
 		smRepository.createSubmodel(FIXTURE.buildSmPre1());
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void cleanUp() {
 		appContext.close();
 	}

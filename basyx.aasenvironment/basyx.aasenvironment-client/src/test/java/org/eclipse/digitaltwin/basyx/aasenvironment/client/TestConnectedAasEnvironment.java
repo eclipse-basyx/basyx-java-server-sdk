@@ -25,9 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -62,10 +62,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.xml.sax.SAXException;
@@ -86,7 +86,7 @@ public class TestConnectedAasEnvironment {
 	private static SubmodelRepository submodelRepository;
 	private static ConceptDescriptionRepository conceptDescriptionRepository;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void initApplication() throws FileNotFoundException, IOException {
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});		
 
@@ -107,12 +107,12 @@ public class TestConnectedAasEnvironment {
 		}
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void cleanUpContext() {
 		appContext.close();
 	}
 	
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		aasEnvironment = new ConnectedAasEnvironment();
 	}
@@ -276,18 +276,16 @@ public class TestConnectedAasEnvironment {
 
 	private static List<String> retrieveSubmodelIds(Environment aasEnvironment) {
 		List<String> submodelIds = new ArrayList<>();
-		aasEnvironment.getSubmodels().forEach(s -> {
-			submodelIds.add(((DefaultSubmodel) s).getId());
-		});
+		aasEnvironment.getSubmodels().forEach(s ->
+			submodelIds.add(((DefaultSubmodel) s).getId()));
 		return submodelIds;
 	}
 
 	private static List<String> retrieveShellIds(Environment aasEnvironment) {
 		List<String> aasIds = new ArrayList<>();
 
-		aasEnvironment.getAssetAdministrationShells().forEach(a -> {
-			aasIds.add(((DefaultAssetAdministrationShell) a).getId());
-		});
+		aasEnvironment.getAssetAdministrationShells().forEach(a ->
+			aasIds.add(((DefaultAssetAdministrationShell) a).getId()));
 		return aasIds;
 	}
 

@@ -30,15 +30,15 @@ import java.util.Map;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.operationdispatching.java.ops.MockDefaultOperation;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatcherMapping;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(OperationDispatcherMapping.class)
 @TestPropertySource(properties = { 
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".enabled=true", 
@@ -57,13 +57,13 @@ public class OperationDispatcherMappingsTest {
 	@Test
 	public void testDefaultMappingIsSetCorrectly() {
 		String defaultMapping = mappingInfo.getDefaultMapping();
-		Assert.assertEquals(MockDefaultOperation.class.getName(), defaultMapping);
+		Assertions.assertEquals(MockDefaultOperation.class.getName(), defaultMapping);
 	}
 	
 	@Test
 	public void testMappingIsSetCorrectly() {
 		Map<String, String> mappings = mappingInfo.getMappings();
-		Assert.assertEquals("BasicOp.Add", mappings.get("AddOperation"));
-		Assert.assertEquals("BasicOp.Square", mappings.get("SquareOperation"));
+		Assertions.assertEquals("BasicOp.Add", mappings.get("AddOperation"));
+		Assertions.assertEquals("BasicOp.Square", mappings.get("SquareOperation"));
 	}
 }

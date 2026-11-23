@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,10 +50,10 @@ import org.eclipse.digitaltwin.basyx.core.RepositoryUrlHelper;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -95,7 +95,7 @@ public class TestAuthorizedSubmodelRepository {
 	private static SubmodelRepository submodelRepo;
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException, DeserializationException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
@@ -106,7 +106,7 @@ public class TestAuthorizedSubmodelRepository {
 		initializeRepository();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		if (appContext != null) {
 			appContext.close();
@@ -702,7 +702,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void invokeWithCorrectRoleAndPermission() throws IOException, ParseException {
 		String parameters = getJSONValueAsString("authorization/parameters.json");
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_EXECUTOR_CREDENTIAL;
@@ -717,7 +717,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void invokeWithAuthorizedSpecificSubmodelAndSpecificSME() throws IOException, ParseException {
 		String parameters = getJSONValueAsString("authorization/parameters.json");
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_EXECUTOR_TWO_CREDENTIAL;
@@ -732,7 +732,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void invokeWithInsufficientPermissionRole() throws IOException {
 		String parameters = getJSONValueAsString("authorization/parameters.json");
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
@@ -744,7 +744,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void invokeWithUnauthorizedSpecificSME() throws IOException {
 		String parameters = getJSONValueAsString("authorization/parameters.json");
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_EXECUTOR_TWO_CREDENTIAL;
@@ -756,7 +756,7 @@ public class TestAuthorizedSubmodelRepository {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void invokeWithNoAuthorization() throws IOException {
 		String parameters = getJSONValueAsString("authorization/parameters.json");
 

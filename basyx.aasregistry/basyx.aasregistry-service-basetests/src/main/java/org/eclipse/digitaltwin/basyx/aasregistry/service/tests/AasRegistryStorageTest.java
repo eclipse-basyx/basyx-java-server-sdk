@@ -25,7 +25,7 @@
 package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -46,7 +46,7 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelAlreadyE
 import org.eclipse.digitaltwin.basyx.aasregistry.service.errors.SubmodelNotFoundException;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorCopies;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class AasRegistryStorageTest extends ExtensionsTest {
 

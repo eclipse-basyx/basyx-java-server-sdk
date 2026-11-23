@@ -24,8 +24,9 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ import org.eclipse.digitaltwin.basyx.aasservice.AasServiceSuite;
 import org.eclipse.digitaltwin.basyx.core.exceptions.*;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the AasRepository interface
@@ -135,29 +136,37 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		assertEquals(expected, retrieved);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
-	public void getNonExistingAasByIdentifier() throws ElementDoesNotExistException {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.getAas("nonExisting");
+	@Test
+	public void getNonExistingAasByIdentifier() {
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.getAas("nonExisting");
+		});
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
-	public void createWithCollidingAasIdentifiers() throws CollidingIdentifierException {
-		AssetAdministrationShell colliding = DummyAasFactory.createAasWithSubmodelReference();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(colliding));
-		aasRepo.createAas(colliding);
+	@Test
+	public void createWithCollidingAasIdentifiers() {
+		assertThrows(CollidingIdentifierException.class, () -> {
+			AssetAdministrationShell colliding = DummyAasFactory.createAasWithSubmodelReference();
+			AasRepository aasRepo = getAasRepository(Collections.singleton(colliding));
+			aasRepo.createAas(colliding);
+		});
 	}
 	
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createWithEmptyAasIdentifier() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_EMPTY_ID).build());
+		assertThrows(MissingIdentifierException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_EMPTY_ID).build());
+		});
 	}
 	
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createWithNullAasIdentifier() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_NULL_ID).build());
+		assertThrows(MissingIdentifierException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.createAas(new DefaultAssetAdministrationShell.Builder().id(AAS_NULL_ID).build());
+		});
 	}
 
 	@Test
@@ -173,38 +182,48 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.deleteAas("nonExisting");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.deleteAas("nonExisting");
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSubmodelReferencesOfNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.getSubmodelReferences("doesNotMatter", PaginationInfo.NO_LIMIT).getResult();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.getSubmodelReferences("doesNotMatter", PaginationInfo.NO_LIMIT).getResult();
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void addSubmodelReferenceToNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
-		Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
-		aasRepo.addSubmodelReference("doesNotMatter", reference);
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+			aasRepo.addSubmodelReference("doesNotMatter", reference);
+		});
 	}
 
-	@Test(expected = CollidingSubmodelReferenceException.class)
+	@Test
 	public void duplicateSubmodelReference() {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
-		Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
-		aasRepo.addSubmodelReference(aas.getId(), reference);
+		assertThrows(CollidingSubmodelReferenceException.class, () -> {
+			AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
+			AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
+			Reference reference = DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID);
+			aasRepo.addSubmodelReference(aas.getId(), reference);
+		});
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void removeSubmodelReferenceOfNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
 
-		aasRepo.removeSubmodelReference("nonExisting", "doesNotMatter");
+			aasRepo.removeSubmodelReference("nonExisting", "doesNotMatter");
+		});
 	}
 
 	@Test
@@ -220,22 +239,26 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		assertEquals(aas, aasRepo.getAas(aas.getId()));
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void updateNonExistingAas() {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
-		AasRepository aasRepo = getAasRepository();
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
+			AasRepository aasRepo = getAasRepository();
 
-		aasRepo.updateAas("nonExisting", aas);
+			aasRepo.updateAas("nonExisting", aas);
+		});
 	}
 
-	@Test(expected = IdentificationMismatchException.class)
+	@Test
 	public void updateExistingAasWithMismatchedIdentifier() {
-		AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
-		AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
+		assertThrows(IdentificationMismatchException.class, () -> {
+			AssetAdministrationShell aas = DummyAasFactory.createAasWithSubmodelReference();
+			AasRepository aasRepo = getAasRepository(Collections.singleton(aas));
 
-		AssetAdministrationShell aasOtherId = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID)).build();
+			AssetAdministrationShell aasOtherId = new DefaultAssetAdministrationShell.Builder().id("mismatchId").submodels(DummyAasFactory.createDummyReference(DummyAasFactory.DUMMY_SUBMODEL_ID)).build();
 
-		aasRepo.updateAas(aas.getId(), aasOtherId);
+			aasRepo.updateAas(aas.getId(), aasOtherId);
+		});
 	}
 
 	@Test
@@ -246,10 +269,12 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		assertEquals(aas.getAssetInformation(), aasRepo.getAssetInformation(aas.getId()));
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getAssetInformationOfNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.getAssetInformation("nonExisting");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.getAssetInformation("nonExisting");
+		});
 	}
 
 	@Test
@@ -262,10 +287,12 @@ public abstract class AasRepositorySuite extends AasServiceSuite {
 		assertEquals(assetInfo, aasRepo.getAssetInformation(aas.getId()));
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void setAssetInformationOfNonExistingAas() {
-		AasRepository aasRepo = getAasRepository();
-		aasRepo.setAssetInformation("nonExisting", DummyAasFactory.createDummyAssetInformation());
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AasRepository aasRepo = getAasRepository();
+			aasRepo.setAssetInformation("nonExisting", DummyAasFactory.createDummyAssetInformation());
+		});
 	}
 
 	@Test

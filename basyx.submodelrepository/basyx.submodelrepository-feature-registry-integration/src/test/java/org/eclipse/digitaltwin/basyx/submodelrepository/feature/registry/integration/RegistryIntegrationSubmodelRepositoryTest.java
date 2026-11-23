@@ -24,9 +24,9 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -48,8 +48,8 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.mapper.AttributeMap
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -65,7 +65,7 @@ public class RegistryIntegrationSubmodelRepositoryTest {
 	private SubmodelRegistryApi registryApi;
 	private RegistryIntegrationSubmodelRepository repository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		decorated = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
 		registryApi = mock(SubmodelRegistryApi.class);

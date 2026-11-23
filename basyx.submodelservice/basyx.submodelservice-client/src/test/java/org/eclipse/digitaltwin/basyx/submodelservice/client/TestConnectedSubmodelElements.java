@@ -26,7 +26,7 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.client;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +90,10 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.BlobValueMappe
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipElementValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -104,29 +107,29 @@ public class TestConnectedSubmodelElements {
 	private static final String ACCESS_URL = "http://localhost:8081/submodels/";
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startSubmodelService() throws Exception {
 		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownSubmodelService() {
 		appContext.close();
 	}
 
-	@After
+	@AfterEach
 	public void cleanUpService(){
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.deleteSubmodel(SUBMODEL_ID);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getBlobValue() {
 		ConnectedBlob blob = getConnectedBlob(getDefaultBlob());
 		assertEquals(EXPECTED_STRING, blob.getValue().getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setBlobValue() {
 		ConnectedBlob blob = getConnectedBlob(getDefaultBlob());
 		String newValue = "This is a new test";
@@ -135,7 +138,7 @@ public class TestConnectedSubmodelElements {
 		assertEquals(newValue, actual);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getBlob() {
 		Blob expected = getDefaultBlob();
 		ConnectedBlob blob = getConnectedBlob(expected);
@@ -144,13 +147,13 @@ public class TestConnectedSubmodelElements {
 		assertEquals(valueMapperExpected.getValue().getValue(), valueMapper.getValue().getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getPropertyValue(){
 		ConnectedProperty property = getConnectedProperty(getDefaultProperty());
 		assertEquals(EXPECTED_STRING, property.getValue().getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setPropertyValue(){
 		ConnectedProperty property = getConnectedProperty(getDefaultProperty());
 		String newValue = "This is a new test";
@@ -159,19 +162,19 @@ public class TestConnectedSubmodelElements {
 		assertEquals(newValue, actual);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getProperty(){
 		Property expected = getDefaultProperty();
 		ConnectedProperty property = getConnectedProperty(expected);
 		assertEquals(expected.getValue(), property.getSubmodelElement().getValue());
 	}
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getFileValue(){
 		ConnectedFile file = getConnectedFile(getDefaultFile());
 		assertEquals(EXPECTED_STRING, file.getValue().getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setFileValue(){
 		ConnectedFile file = getConnectedFile(getDefaultFile());
 		String newValue = "This is a new test";
@@ -180,20 +183,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals(newValue, actual);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getFile(){
 		File expected = getDefaultFile();
 		ConnectedFile file = getConnectedFile(expected);
 		assertEquals(expected.getValue(), file.getSubmodelElement().getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getEntityValue(){
 		ConnectedEntity entity = getConnectedEntity(getDefaultEntity());
 		assertEquals(EXPECTED_STRING, entity.getValue().getGlobalAssetId());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setEntityValue(){
 		Entity entity = getDefaultEntity();
 		ConnectedEntity connectedEntity = getConnectedEntity(entity);
@@ -203,20 +206,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals(newValue.getGlobalAssetId(), actual.getGlobalAssetId());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getEntity(){
 		Entity expected = getDefaultEntity();
 		ConnectedEntity entity = getConnectedEntity(expected);
 		assertEquals(expected.getGlobalAssetId(), entity.getSubmodelElement().getGlobalAssetId());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getRelationshipElementValue() {
 		ConnectedRelationshipElement relationshipElement = getConnectedRelationshipElement(getDefaultRelationshipElement());
 		assertEquals(EXPECTED_STRING, relationshipElement.getValue().getFirst().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setRelationshipElementValue() {
 		RelationshipElement relationshipElement = getDefaultRelationshipElement();
 		ConnectedRelationshipElement connectedRelationshipElement = getConnectedRelationshipElement(relationshipElement);
@@ -228,20 +231,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals("newKey2", actual.getSecond().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getRelationshipElement() {
 		RelationshipElement expected = getDefaultRelationshipElement();
 		ConnectedRelationshipElement relationshipElement = getConnectedRelationshipElement(expected);
 		assertEquals(expected.getFirst().getKeys().get(0).getValue(), relationshipElement.getSubmodelElement().getFirst().getKeys().get(0).getValue());
 	}
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAnnotatedRelationshipElementValue() {
 		ConnectedAnnotatedRelationshipElement annotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(getDefaultAnnotatedRelationshipElement());
 		assertEquals(EXPECTED_STRING, annotatedRelationshipElement.getValue().getFirst().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setAnnotatedRelationshipElementValue() {
 		AnnotatedRelationshipElement annotatedRelationshipElement = getDefaultAnnotatedRelationshipElement();
 		ConnectedAnnotatedRelationshipElement connectedAnnotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(annotatedRelationshipElement);
@@ -253,20 +256,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals("newKey2", actual.getSecond().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAnnotatedRelationshipElement() {
 		AnnotatedRelationshipElement expected = getDefaultAnnotatedRelationshipElement();
 		ConnectedAnnotatedRelationshipElement annotatedRelationshipElement = getConnectedAnnotatedRelationshipElement(expected);
 		assertEquals(expected.getFirst().getKeys().get(0).getValue(), annotatedRelationshipElement.getSubmodelElement().getFirst().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getBasicEventElementValue() {
 		ConnectedBasicEventElement basicEventElement = getConnectedBasicEventElement(getDefaultBasicEventElement());
 		assertEquals(EXPECTED_STRING, basicEventElement.getValue().getObserved().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setBasicEventElementValue() {
 		DefaultBasicEventElement basicEventElement = getDefaultBasicEventElement();
 		ConnectedBasicEventElement connectedBasicEventElement = getConnectedBasicEventElement(basicEventElement);
@@ -277,20 +280,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals("newValue", actual);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getBasicEventElement() {
 		DefaultBasicEventElement expected = getDefaultBasicEventElement();
 		ConnectedBasicEventElement basicEventElement = getConnectedBasicEventElement(expected);
 		assertEquals(expected.getObserved().getKeys().get(0).getValue(), basicEventElement.getSubmodelElement().getObserved().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getMultiLanguagePropertyValue() {
 		ConnectedMultiLanguageProperty multiLanguageProperty = getConnectedMultiLanguageProperty(getDefaultMultiLanguageProperty());
 		assertEquals(EXPECTED_STRING, multiLanguageProperty.getValue().getValue().get(0).getText());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setMultiLanguagePropertyValue() {
 		DefaultMultiLanguageProperty multiLanguageProperty = getDefaultMultiLanguageProperty();
 		ConnectedMultiLanguageProperty connectedMultiLanguageProperty = getConnectedMultiLanguageProperty(multiLanguageProperty);
@@ -300,21 +303,21 @@ public class TestConnectedSubmodelElements {
 		assertEquals(newValue.getText(), actual);
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getMultiLanguageProperty() {
 		DefaultMultiLanguageProperty expected = getDefaultMultiLanguageProperty();
 		ConnectedMultiLanguageProperty multiLanguageProperty = getConnectedMultiLanguageProperty(expected);
 		assertEquals(expected.getValue().get(0).getText(), multiLanguageProperty.getSubmodelElement().getValue().get(0).getText());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getRangeValue() {
 		ConnectedRange range = getConnectedRange(getDefaultRange());
 		assertEquals(0, range.getValue().getMin());
 		assertEquals(10, range.getValue().getMax());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setRangeValue() {
 		DefaultRange range = getDefaultRange();
 		ConnectedRange connectedRange = getConnectedRange(range);
@@ -325,7 +328,7 @@ public class TestConnectedSubmodelElements {
 		assertEquals(11, actual.getMax());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getRange() {
 		DefaultRange expected = getDefaultRange();
 		ConnectedRange range = getConnectedRange(expected);
@@ -333,13 +336,13 @@ public class TestConnectedSubmodelElements {
 		assertEquals(expected.getMax(), range.getSubmodelElement().getMax());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getReferenceValue() {
 		ConnectedReferenceElement reference = getConnectedReference(getDefaultReferenceElement());
 		assertEquals(EXPECTED_STRING, reference.getValue().getReferenceValue().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setReferenceValue() {
 		DefaultReferenceElement referenceElement = getDefaultReferenceElement();
 		ConnectedReferenceElement connectedReferenceElement = getConnectedReference(referenceElement);
@@ -349,20 +352,20 @@ public class TestConnectedSubmodelElements {
 		assertEquals("newKey", actual.getReferenceValue().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getReferenceElement() {
 		DefaultReferenceElement expected = getDefaultReferenceElement();
 		ConnectedReferenceElement reference = getConnectedReference(expected);
 		assertEquals(expected.getValue().getKeys().get(0).getValue(), reference.getSubmodelElement().getValue().getKeys().get(0).getValue());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getSubmodelElementCollectionValue() {
 		ConnectedSubmodelElementCollection submodelElementCollection = getConnectedSubmodelElementCollection(getDefaultSubmodelElementCollection());
 		assertEquals(1, submodelElementCollection.getSubmodelElement().getValue().size());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void setSubmodelElementCollectionValue() {
 		DefaultSubmodelElementCollection submodelElementCollection = getDefaultSubmodelElementCollection();
 		ConnectedSubmodelElementCollection connectedSubmodelElementCollection = getConnectedSubmodelElementCollection(submodelElementCollection);
@@ -372,21 +375,21 @@ public class TestConnectedSubmodelElements {
 		assertEquals(2, connectedSubmodelElementCollection.getValue().getValue().size());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getSubmodelElementCollection() {
 		DefaultSubmodelElementCollection expected = getDefaultSubmodelElementCollection();
 		ConnectedSubmodelElementCollection submodelElementCollection = getConnectedSubmodelElementCollection(expected);
 		assertEquals(expected.getValue().size(), submodelElementCollection.getSubmodelElement().getValue().size());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getSubmodelElementListValue() {
 		ConnectedSubmodelElementList submodelElementList = getConnectedSubmodelElementList(getDefaultSubmodelElementList());
 		assertEquals(1, submodelElementList.getValue().getSubmodelElementValues().size());
 	}
 
-	@Ignore("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
-	@Test
+	@Disabled("Patch Endpoint for SubmodelElementList Values is disabled as it is not working.")
+	@org.junit.jupiter.api.Test
 	public void setSubmodelElementListValue() {
 		DefaultSubmodelElementList submodelElementList = getDefaultSubmodelElementList();
 		ConnectedSubmodelElementList connectedSubmodelElementList = getConnectedSubmodelElementList(submodelElementList);
@@ -396,7 +399,7 @@ public class TestConnectedSubmodelElements {
 		assertEquals(2, connectedSubmodelElementList.getValue().getSubmodelElementValues().size());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getSubmodelElementList() {
 		DefaultSubmodelElementList expected = getDefaultSubmodelElementList();
 		ConnectedSubmodelElementList submodelElementList = getConnectedSubmodelElementList(expected);

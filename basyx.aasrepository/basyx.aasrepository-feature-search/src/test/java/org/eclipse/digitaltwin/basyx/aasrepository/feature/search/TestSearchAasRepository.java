@@ -33,7 +33,11 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +54,7 @@ public class TestSearchAasRepository {
     private static AasRepository searchBackend;
     private static SearchAasRepositoryApiHTTPController searchAPI;
 
-    @BeforeClass
+    @BeforeAll
     public static void startAasRepo() {
         appContext = new SpringApplicationBuilder(DummySearchAasRepositoryComponent.class).run(new String[] {});
         searchBackend = appContext.getBean(AasRepository.class);
@@ -58,13 +62,13 @@ public class TestSearchAasRepository {
 
     }
 
-    @Before
+    @BeforeEach
     public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
         preloadShells();
         Thread.sleep(2000);
     }
 
-    @After
+    @AfterEach
     public void resetRepo(){
         searchBackend.getAllAas(null, null, new PaginationInfo(100, "")).getResult().forEach(aas -> {
             try {
@@ -73,7 +77,7 @@ public class TestSearchAasRepository {
         });
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void testRepo() throws FileNotFoundException, DeserializationException {
         File file = new File(TestSearchAasRepository.class.getResource("/query.json").getFile());
         AASQuery query = queryFromFile(file);
@@ -81,7 +85,7 @@ public class TestSearchAasRepository {
         QueryResponse response = result.getBody();
         assert response != null;
         List<AssetAdministrationShell> shells = response.result.stream().map(o->(AssetAdministrationShell)o).toList();
-        Assert.assertEquals(4,shells.size());
+        Assertions.assertEquals(4,shells.size());
     }
 
     private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {
@@ -102,7 +106,7 @@ public class TestSearchAasRepository {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdownAasRepo() {
         appContext.close();
     }

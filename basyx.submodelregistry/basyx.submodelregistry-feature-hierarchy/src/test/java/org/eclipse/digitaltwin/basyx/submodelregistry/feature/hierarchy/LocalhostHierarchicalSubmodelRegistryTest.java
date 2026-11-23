@@ -26,8 +26,8 @@
 package org.eclipse.digitaltwin.basyx.submodelregistry.feature.hierarchy;
 
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.server.context.WebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,7 +49,7 @@ public class LocalhostHierarchicalSubmodelRegistryTest extends HierarchicalSubmo
 	private static ConfigurableApplicationContext rootAppContext;
 	private static ConfigurableApplicationContext delegatedAppContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupRegistries() {
 		delegatedAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] { "--server.port=0", "--basyx.feature.hierarchy.enabled=false" });
 		rootAppContext = new SpringApplication(DummySubmodelRegistryComponent.class).run(new String[] { "--server.port=0" });
@@ -62,7 +62,7 @@ public class LocalhostHierarchicalSubmodelRegistryTest extends HierarchicalSubmo
 		factory = new DummyDescriptorFactory(REPO_BASE_URL, delegatedRegistryUrl + "/test/sm");
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownRegistries() {
 		if (rootAppContext != null)
 			rootAppContext.close();

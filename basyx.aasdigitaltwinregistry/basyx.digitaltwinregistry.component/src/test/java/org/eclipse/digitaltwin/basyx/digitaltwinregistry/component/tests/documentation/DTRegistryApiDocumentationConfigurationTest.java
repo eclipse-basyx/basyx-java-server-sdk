@@ -25,13 +25,13 @@
 
 package org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.tests.documentation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.digitaltwin.basyx.digitaltwinregistry.component.documentation.DTRegistryApiDocumentationConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class DTRegistryApiDocumentationConfigurationTest {
 
 	private DTRegistryApiDocumentationConfiguration config;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		config = new DTRegistryApiDocumentationConfiguration();
 	}
@@ -64,7 +64,7 @@ public class DTRegistryApiDocumentationConfigurationTest {
 		log.info("Started unit test - testBeanPrimaryAnnotation()");
 		java.lang.reflect.Method method = DTRegistryApiDocumentationConfiguration.class.getMethod("customOpenAPI");
 		boolean hasPrimaryAnnotation = method.isAnnotationPresent(org.springframework.context.annotation.Primary.class);
-		assertTrue("customOpenAPI method should have @Primary annotation", hasPrimaryAnnotation);
+		assertTrue(hasPrimaryAnnotation, "customOpenAPI method should have @Primary annotation");
 		log.info("Successfully conducted unit test");
 	}
 
@@ -72,7 +72,7 @@ public class DTRegistryApiDocumentationConfigurationTest {
 	public void testConfigurationAnnotation() {
 		log.info("Started unit test - testConfigurationAnnotation()");
 		boolean hasConfigurationAnnotation = config.getClass().isAnnotationPresent(org.springframework.context.annotation.Configuration.class);
-		assertTrue("Class should have @Configuration annotation", hasConfigurationAnnotation);
+		assertTrue(hasConfigurationAnnotation, "Class should have @Configuration annotation");
 		log.info("Successfully conducted unit test");
 	}
 }

@@ -31,22 +31,21 @@ import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
 import org.eclipse.digitaltwin.basyx.submodelservice.backend.SubmodelBackend;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 
 	@Autowired
@@ -69,7 +68,7 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		return submodelRepository;
 	}
 
-	@Before
+	@BeforeEach
 	public void cleanup() {
 		MongoDBUtilities.clearCollection(mongoTemplate, DummySubmodelRepositoryConfig.TEST_COLLECTION);
 		gridFsTemplate.delete(new Query(GridFsCriteria.whereFilename().ne("")));
@@ -86,15 +85,17 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 	}
 
 	@Override
-	@Ignore
+	@Test
+	@Disabled
 	public void invokeOperation() {
 		// TODO Ignored due to MongoDB doesn't provide invocation
 	}
 
-	@Test(expected = NotInvokableException.class)
+	@Test
 	@Override
 	public void invokeNonOperation() {
-		super.invokeNonOperation();
+		assertThrows(NotInvokableException.class, () ->
+			super.invokeNonOperation());
 	}
 
 }

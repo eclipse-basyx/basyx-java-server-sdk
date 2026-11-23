@@ -41,19 +41,19 @@ import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.DescriptorFilte
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.RegistrationEventSendingAasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public abstract class BaseInterfaceTest {
 
@@ -86,7 +86,7 @@ public abstract class BaseInterfaceTest {
 
 	protected RegistrationEventSendingAasRegistryStorage storage;
 
-	@Rule
+	@RegisterExtension
 	public TestResourcesLoader testResourcesLoader = new TestResourcesLoader();
 	
 	
@@ -98,14 +98,14 @@ public abstract class BaseInterfaceTest {
 		baseStorage.clear();
 	}
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		storage = new RegistrationEventSendingAasRegistryStorage(baseStorage, eventSink);
 		List<AssetAdministrationShellDescriptor> descriptors = testResourcesLoader.loadRepositoryDefinition(AssetAdministrationShellDescriptor.class);
 		descriptors.forEach(baseStorage::insertAasDescriptor);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		baseStorage.clear();
 	}

@@ -25,10 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.backend;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link CrudSubmodelRepository}

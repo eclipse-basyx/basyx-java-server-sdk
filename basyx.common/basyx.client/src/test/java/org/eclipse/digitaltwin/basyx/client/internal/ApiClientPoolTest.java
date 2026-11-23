@@ -25,18 +25,18 @@
 
 package org.eclipse.digitaltwin.basyx.client.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.net.http.HttpClient;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
-import org.junit.Test;
-
 import tools.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that {@link ApiClientPool} shares one {@link HttpClient} per origin

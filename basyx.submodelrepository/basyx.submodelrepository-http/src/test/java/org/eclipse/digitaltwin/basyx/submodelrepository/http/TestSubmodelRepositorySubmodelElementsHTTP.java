@@ -28,10 +28,10 @@ package org.eclipse.digitaltwin.basyx.submodelrepository.http;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.http.SubmodelServiceSubmodelElementsTestSuiteHTTP;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -45,24 +45,24 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TestSubmodelRepositorySubmodelElementsHTTP extends SubmodelServiceSubmodelElementsTestSuiteHTTP {
 	private static ConfigurableApplicationContext appContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummySubmodelRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
-	@Before
+	@BeforeEach
 	public void createSubmodelOnRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.createSubmodel(createSubmodel());
 	}
 
-	@After
+	@AfterEach
 	public void removeSubmodelFromRepo() {
 		SubmodelRepository repo = appContext.getBean(SubmodelRepository.class);
 		repo.getAllSubmodels(PaginationInfo.NO_LIMIT).getResult().stream().map(s -> s.getId()).forEach(repo::deleteSubmodel);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdownAASRepo() {
 		appContext.close();
 	}

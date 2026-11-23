@@ -47,7 +47,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.AuthorizedConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -73,7 +73,7 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 
 	private AuthorizedConnectedAasManager aasManager;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void initApplication() {
 		SpringApplication application = new SpringApplication(DummyAasEnvironmentComponent.class);
 		application.setAdditionalProfiles(PROFILE);

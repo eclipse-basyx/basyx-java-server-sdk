@@ -25,18 +25,19 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
 import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.exceptions.FeatureNotSupportedException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test for mongoDb submodel service backend
@@ -45,7 +46,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 
 	static final String TEST_COLLECTION = "submodelServiceTestCollection";
@@ -59,7 +59,7 @@ public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	@Before
+	@BeforeEach
 	public void clear() {
 		MongoDBUtilities.clearCollection(mongoTemplate, TEST_COLLECTION);
 	}
@@ -70,9 +70,10 @@ public class TestMongoDBSubmodelService extends SubmodelServiceSuite {
 	}
 
 	@Override
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void invokeOperation() {
-		super.invokeOperation();
+		assertThrows(ElementDoesNotExistException.class, () ->
+			super.invokeOperation());
 	}
 
 	@Override

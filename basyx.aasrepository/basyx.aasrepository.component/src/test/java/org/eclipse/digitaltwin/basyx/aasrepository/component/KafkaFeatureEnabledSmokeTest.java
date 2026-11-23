@@ -40,13 +40,10 @@ import org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka.events.model.Aa
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapter;
 import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,7 +57,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author sonnenberg (DFKI GmbH)
@@ -69,7 +65,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx.aasrepository.feature.kafka" })
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = { "basyx.feature.kafka.enabled=true", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaAasRepositoryFeature.FEATURENAME + "kafka.enabled=true",
 		KafkaAasRepositoryFeature.FEATURENAME + ".topic.name=aas-events" })
 public class KafkaFeatureEnabledSmokeTest {
@@ -91,7 +86,7 @@ public class KafkaFeatureEnabledSmokeTest {
 
 	
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		restTemplate.getRestTemplate().getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		adapter.skipMessages();
@@ -99,7 +94,7 @@ public class KafkaFeatureEnabledSmokeTest {
 
 	}
 	
-	@After
+	@AfterEach
 	public void dispose() {
 		cleanup();
 	}
@@ -118,9 +113,9 @@ public class KafkaFeatureEnabledSmokeTest {
 		HttpEntity<String> entity = createHttpEntity(shell);
 		restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, Void.class);
 		AasEvent event = adapter.next();
-		Assert.assertEquals(AasEventType.AAS_CREATED, event.getType());
-		Assert.assertEquals(shell.getId(), event.getId());
-		Assert.assertEquals(shell, event.getAas());
+		Assertions.assertEquals(AasEventType.AAS_CREATED, event.getType());
+		Assertions.assertEquals(shell.getId(), event.getId());
+		Assertions.assertEquals(shell, event.getAas());
 	}
 
 	private String createEndpointUrl() {

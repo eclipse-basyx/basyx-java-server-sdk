@@ -24,13 +24,14 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.AssetAdministrationShellDescriptorPathVisitor;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPathProcessor.UnknownLeafPathException;
 import org.eclipse.digitaltwin.basyx.aasregistry.paths.AasRegistryPaths;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class SearchQueryBuilderTest {

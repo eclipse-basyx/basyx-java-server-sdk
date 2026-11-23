@@ -24,8 +24,8 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -69,7 +69,7 @@ import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.RelationshipEl
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementCollectionValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.SubmodelElementListValueMapper;
 import org.eclipse.digitaltwin.basyx.submodelservice.value.mapper.ValueMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the mapped submodel element value from SubmodelElements

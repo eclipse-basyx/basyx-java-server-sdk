@@ -25,30 +25,30 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rbac;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import tools.jackson.databind.ObjectMapper;
 
 public class RbacRuleInitializerTest {
-	@Rule
-	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+	@TempDir
+	public File temporaryFolder;
 
 	@Test
 	public void deserializesArrayRulesWithGeneratedKeys() throws Exception {
-		File rulesFile = temporaryFolder.newFile("rbac_rules.json");
+		File rulesFile = newFile(temporaryFolder, "rbac_rules.json");
 		Files.writeString(rulesFile.toPath(), """
 				[
 				  {
@@ -100,5 +100,11 @@ public class RbacRuleInitializerTest {
 		public Map<String, Object> toMap() {
 			return Map.of("ids", ids);
 		}
+	}
+
+	private static File newFile(File parent, String child) throws IOException {
+		File result = new File(parent, child);
+		result.createNewFile();
+		return result;
 	}
 }

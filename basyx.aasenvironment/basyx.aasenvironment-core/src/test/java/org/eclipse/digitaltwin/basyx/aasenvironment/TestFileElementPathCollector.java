@@ -26,14 +26,14 @@
 package org.eclipse.digitaltwin.basyx.aasenvironment;
 
 import static org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathTestHelper.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the behaviour of {@link FileElementPathCollector}

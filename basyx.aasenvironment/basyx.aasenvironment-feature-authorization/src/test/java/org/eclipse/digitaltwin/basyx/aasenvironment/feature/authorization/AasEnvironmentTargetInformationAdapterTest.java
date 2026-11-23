@@ -25,8 +25,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,8 +44,8 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization.rbac.backend.submodel.AasEnvironmentTargetInformationAdapter;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidTargetInformationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link AasEnvironmentTargetInformationAdapter}
@@ -55,7 +56,7 @@ public class AasEnvironmentTargetInformationAdapterTest {
 
 	private AasEnvironmentTargetInformationAdapter aasEnvironmentTargetInformationAdapter;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		aasEnvironmentTargetInformationAdapter = new AasEnvironmentTargetInformationAdapter();
 	}
@@ -127,22 +128,26 @@ public class AasEnvironmentTargetInformationAdapterTest {
 		assertType(elements.get(3));
 	}
 
-	@Test(expected = InvalidTargetInformationException.class)
+	@Test
 	public void testAdaptSubmodelElementCollectionWithInvalidStructure() {
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
-				.value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build()))
-				.build();
+		assertThrows(InvalidTargetInformationException.class, () -> {
+			SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
+					.value(Collections.singletonList(new DefaultProperty.Builder().idShort("invalidElement").value("value").build()))
+					.build();
 
-		aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
+			aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
+		});
 	}
 
-	@Test(expected = InvalidTargetInformationException.class)
+	@Test
 	public void testAdaptSubmodelElementCollectionWithoutAasIds() {
-		SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
-				.value(Collections.emptyList())
-				.build();
+		assertThrows(InvalidTargetInformationException.class, () -> {
+			SubmodelElementCollection targetInformationSMC = new DefaultSubmodelElementCollection.Builder().idShort("targetInformation")
+					.value(Collections.emptyList())
+					.build();
 
-		aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
+			aasEnvironmentTargetInformationAdapter.adapt(targetInformationSMC);
+		});
 	}
 
 	private void assertElementList(SubmodelElement element, String idShort, List<String> expectedValues) {

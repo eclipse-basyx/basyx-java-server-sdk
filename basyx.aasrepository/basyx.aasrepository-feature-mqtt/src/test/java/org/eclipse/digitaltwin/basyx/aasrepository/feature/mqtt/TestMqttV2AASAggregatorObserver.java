@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,9 +48,9 @@ import org.eclipse.digitaltwin.basyx.common.mqttcore.listener.MqttTestListener.M
 import org.eclipse.digitaltwin.basyx.core.filerepository.InMemoryFileRepository;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -67,7 +67,7 @@ public class TestMqttV2AASAggregatorObserver {
 
 	private static AasRepository aasRepository;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() throws MqttException, IOException {
 		mqttBroker = MqttBrokerTestSupport.start();
 		listener = mqttBroker.listener();
@@ -76,7 +76,7 @@ public class TestMqttV2AASAggregatorObserver {
 		aasRepository = createMqttAasRepository(mqttClient);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownClass() throws MqttException {
 		mqttBroker.close();
 	}

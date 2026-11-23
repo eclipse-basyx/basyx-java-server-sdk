@@ -25,9 +25,10 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +49,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.IdentificationMismatchExcep
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the ConceptDescriptionRepository interface
@@ -146,10 +147,12 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertEquals(conceptDescription, retrieved);
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void getSpecificNonExistingConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.getConceptDescription("doesNotExist");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+			repo.getConceptDescription("doesNotExist");
+		});
 	}
 
 	@Test
@@ -163,22 +166,26 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertEquals(expected, repo.getConceptDescription(id));
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void updateNonExistingConceptDescription() {
-		String id = "notExisting";
-		ConceptDescription doesNotExist = createDummyConceptDescription(id);
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			String id = "notExisting";
+			ConceptDescription doesNotExist = createDummyConceptDescription(id);
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.updateConceptDescription(id, doesNotExist);
+			ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+			repo.updateConceptDescription(id, doesNotExist);
+		});
 	}
 
-	@Test(expected = IdentificationMismatchException.class)
+	@Test
 	public void updateExistingCDWithMismatchId() {
-		String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
-		ConceptDescription newCd = createDummyConceptDescription("mismatchId");
+		assertThrows(IdentificationMismatchException.class, () -> {
+			String id = ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID;
+			ConceptDescription newCd = createDummyConceptDescription("mismatchId");
 
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.updateConceptDescription(id, newCd);
+			ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+			repo.updateConceptDescription(id, newCd);
+		});
 	}
 
 	@Test
@@ -193,35 +200,43 @@ public abstract class ConceptDescriptionRepositorySuite {
 		assertEquals(expectedConceptDescription, retrieved);
 	}
 
-	@Test(expected = CollidingIdentifierException.class)
+	@Test
 	public void createConceptDescriptionWithCollidingId() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
+		assertThrows(CollidingIdentifierException.class, () -> {
+			ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+			ConceptDescription conceptDescription = repo.getConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID);
 
-		repo.createConceptDescription(conceptDescription);
+			repo.createConceptDescription(conceptDescription);
+		});
 	}
 	
-	@Test(expected = MissingIdentifierException.class)
+	@Test
 	public void createConceptDescriptionWithEmptyId() {
-		ConceptDescriptionRepository repo  = getConceptDescriptionRepository();
-		ConceptDescription conceptDescription = createDummyConceptDescription(EMPTY_ID);
-		
-		repo.createConceptDescription(conceptDescription);
-	}
-	
-	@Test(expected = MissingIdentifierException.class)
-	public void createConceptDescriptionWithNullId() {
-		ConceptDescriptionRepository repo  = getConceptDescriptionRepository();
-		ConceptDescription conceptDescription = createDummyConceptDescription(NULL_ID);
-		
-		repo.createConceptDescription(conceptDescription);
-	}
-	
-	@Test(expected = MissingIdentifierException.class)
-	public void createConceptDescriptionCollectionWithMissingId() {
-		Collection<ConceptDescription> conceptDescriptions = Arrays.asList(createDummyConceptDescription(EMPTY_ID), createDummyConceptDescription(NULL_ID), createDummyConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID));
+		assertThrows(MissingIdentifierException.class, () -> {
+			ConceptDescriptionRepository repo = getConceptDescriptionRepository();
+			ConceptDescription conceptDescription = createDummyConceptDescription(EMPTY_ID);
 
-		getConceptDescriptionRepository(conceptDescriptions);
+			repo.createConceptDescription(conceptDescription);
+		});
+	}
+	
+	@Test
+	public void createConceptDescriptionWithNullId() {
+		assertThrows(MissingIdentifierException.class, () -> {
+			ConceptDescriptionRepository repo = getConceptDescriptionRepository();
+			ConceptDescription conceptDescription = createDummyConceptDescription(NULL_ID);
+
+			repo.createConceptDescription(conceptDescription);
+		});
+	}
+	
+	@Test
+	public void createConceptDescriptionCollectionWithMissingId() {
+		assertThrows(MissingIdentifierException.class, () -> {
+			Collection<ConceptDescription> conceptDescriptions = Arrays.asList(createDummyConceptDescription(EMPTY_ID), createDummyConceptDescription(NULL_ID), createDummyConceptDescription(ConceptDescriptionRepositorySuiteHelper.CONCEPT_DESCRIPTION_ID));
+
+			getConceptDescriptionRepository(conceptDescriptions);
+		});
 	}
 
 	@Test
@@ -236,10 +251,12 @@ public abstract class ConceptDescriptionRepositorySuite {
 		}
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingConceptDescription() {
-		ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
-		repo.deleteConceptDescription("nonExisting");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			ConceptDescriptionRepository repo = getConceptDescriptionRepositoryWithDummyConceptDescriptions();
+			repo.deleteConceptDescription("nonExisting");
+		});
 	}
 	
 	@Test

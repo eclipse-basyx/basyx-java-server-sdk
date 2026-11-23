@@ -28,12 +28,13 @@ package org.eclipse.digitaltwin.basyx.submodelservice.feature.registry.integrati
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
+
 /**
  * @author Gerhard Sonnenberg (DFKI GmbH)
  */
@@ -56,7 +57,7 @@ public class SubmodelRegistrationTest {
 		Assertions.assertEquals("http://localhost:8765/submodel", href);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void testSubmodelServiceIsUnregistered() {
 		// the context ist closed after all a method run and thus after class
 		SubmodelRegistryApi api = new SubmodelRegistryApi("http://localhost:8060");

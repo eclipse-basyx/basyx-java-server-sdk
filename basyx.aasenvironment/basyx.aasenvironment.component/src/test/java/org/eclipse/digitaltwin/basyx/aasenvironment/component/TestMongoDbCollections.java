@@ -25,14 +25,12 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Tests if MongoDB collections are correctly defined after initialization
@@ -41,7 +39,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @SpringBootTest(properties = "spring.profiles.active=mongodb")
-@RunWith(SpringRunner.class)
 public class TestMongoDbCollections {
 
 	@Autowired

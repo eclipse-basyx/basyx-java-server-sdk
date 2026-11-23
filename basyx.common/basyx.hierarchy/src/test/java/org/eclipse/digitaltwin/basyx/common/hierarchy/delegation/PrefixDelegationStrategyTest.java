@@ -25,11 +25,11 @@
 
 package org.eclipse.digitaltwin.basyx.common.hierarchy.delegation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for the PrefixDelegationStrategy
@@ -42,7 +42,7 @@ public class PrefixDelegationStrategyTest {
 
 	private PrefixDelegationStrategy prefixDelegationStrategy;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		prefixDelegationStrategy = new PrefixDelegationStrategy("registry");
 	}

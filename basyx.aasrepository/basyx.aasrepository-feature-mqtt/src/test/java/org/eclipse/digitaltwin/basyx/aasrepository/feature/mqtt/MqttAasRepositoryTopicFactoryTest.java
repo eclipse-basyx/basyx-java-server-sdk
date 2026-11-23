@@ -24,10 +24,11 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MqttAasRepositoryTopicFactoryTest {
 	private static final String SUBMODEL_ID = "https://example.org/submodels/ä?x=1";

@@ -29,8 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.client.api.RegistryAndDiscoveryInterfaceApi;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -46,7 +46,7 @@ public class MultiUrlAasRepositoryRegistryLinkTest extends AasRepositoryRegistry
 	private static ConfigurableApplicationContext appContext;
 	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
 		application.setAdditionalProfiles("multiurl", "regintegration");
@@ -56,7 +56,7 @@ public class MultiUrlAasRepositoryRegistryLinkTest extends AasRepositoryRegistry
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}

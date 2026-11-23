@@ -25,8 +25,8 @@
 
 package org.eclipse.basyx.digitaltwin.aasenvironment.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,9 +55,9 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.HttpBaSyxHeader;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -81,7 +81,7 @@ public class TestAasEnvironmentHTTP {
 	private static AasRepository aasRepo;
 	private static ConceptDescriptionRepository conceptDescriptionRepo;
 
-	@BeforeClass
+	@BeforeAll
 	public static void startAasRepo() throws Exception {
 		appContext = new SpringApplication(DummyAASEnvironmentComponent.class).run(new String[] {});
 		submodelRepo = appContext.getBean(SubmodelRepository.class);
@@ -350,7 +350,7 @@ public class TestAasEnvironmentHTTP {
 		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdown() {
 		appContext.close();
 	}

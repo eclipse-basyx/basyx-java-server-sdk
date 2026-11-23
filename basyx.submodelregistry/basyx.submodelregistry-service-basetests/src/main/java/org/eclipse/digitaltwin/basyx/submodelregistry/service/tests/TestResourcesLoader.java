@@ -31,14 +31,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.events.RegistryEvent;
-import org.junit.rules.TestName;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.ObjectReader;
 
-public class TestResourcesLoader extends TestName {
+public class TestResourcesLoader implements BeforeEachCallback {
 
 	private static final String JSON_FILE_ENDING = ".json";
 
@@ -55,12 +55,18 @@ public class TestResourcesLoader extends TestName {
 		this(null, JsonMapper.builderWithJackson2Defaults().build());
 	}
 
+	private String methodName;
+
 	@Override
-	protected void starting(Description d) {
-		super.starting(d);
+	public void beforeEach(ExtensionContext context) {
+		methodName = context.getRequiredTestMethod().getName();
 		if (packageName == null) {
-			packageName = d.getTestClass().getPackageName();
+			packageName = context.getRequiredTestClass().getPackageName();
 		}
+	}
+
+	public String getMethodName() {
+		return methodName;
 	}
 
 	public <T> List<T> loadRepositoryDefinition(Class<T> cls) throws IOException {

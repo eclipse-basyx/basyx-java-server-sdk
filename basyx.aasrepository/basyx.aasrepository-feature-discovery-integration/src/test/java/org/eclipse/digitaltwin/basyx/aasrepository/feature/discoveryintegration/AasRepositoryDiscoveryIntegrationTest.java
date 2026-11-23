@@ -29,26 +29,26 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.client.ConnectedAasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryService;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class AasRepositoryDiscoveryIntegrationTest extends AasRepositoryDiscoveryIntegrationTestSuite {
     private static ConfigurableApplicationContext appContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         appContext = SpringApplication.run(DummyAasRepositoryDiscoveryIntegrationComponent.class);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         appContext.close();
     }
 
-    @After
+    @AfterEach
     public void resetRepository() {
         AssetAdministrationShell shell = getDemoAAS(false, false);
         try {

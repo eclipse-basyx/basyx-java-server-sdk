@@ -26,13 +26,13 @@
 
 package org.eclipse.digitaltwin.basyx.submodelservice.value;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Operation;
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * 

@@ -31,15 +31,15 @@ import java.util.stream.Collectors;
 
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.OperationDispatchingSubmodelServiceFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.operationdispatching.java.JavaInvokableDefinition;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(JavaInvokableDefinition.class)
 @TestPropertySource(properties = {
 		OperationDispatchingSubmodelServiceFeature.FEATURENAME + ".enabled=true",
@@ -66,9 +66,9 @@ public class JavaInvokableDefinitionTest {
 		Path classesPath = invokableDefintion.getClasses();
 		List<Path> additionalClassPath = invokableDefintion.getAdditionalClasspath();
 
-		Assert.assertEquals(SOURCES, sourcesPath.toString());
-		Assert.assertEquals(CLASSES, classesPath.toString());
-		Assert.assertEquals(List.of(LIB1, LIB2), additionalClassPath.stream().map(Path::toString).collect(Collectors.toList()));
+		Assertions.assertEquals(SOURCES, sourcesPath.toString());
+		Assertions.assertEquals(CLASSES, classesPath.toString());
+		Assertions.assertEquals(List.of(LIB1, LIB2), additionalClassPath.stream().map(Path::toString).collect(Collectors.toList()));
 	}
 
 }

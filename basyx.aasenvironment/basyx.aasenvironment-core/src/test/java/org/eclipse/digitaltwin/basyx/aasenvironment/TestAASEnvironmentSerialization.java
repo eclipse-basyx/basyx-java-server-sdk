@@ -52,19 +52,20 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepo
 import org.eclipse.digitaltwin.basyx.submodelservice.DummySubmodelFactory;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
 import org.eclipse.digitaltwin.basyx.submodelservice.SubmodelServiceHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
 
 public class TestAASEnvironmentSerialization {
 
@@ -79,7 +80,7 @@ public class TestAASEnvironmentSerialization {
 	private SubmodelRepository submodelRepository;
 	private ConceptDescriptionRepository conceptDescriptionRepository;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		submodelRepository = CrudSubmodelRepositoryFactory.builder().backend(new InMemorySubmodelBackend()).fileRepository(new InMemoryFileRepository()).create();
 		aasRepository = CrudAasRepositoryFactory.builder().backend(new InMemoryAasBackend()).fileRepository(new InMemoryFileRepository()).create();
@@ -239,18 +240,16 @@ public class TestAASEnvironmentSerialization {
 
 	private static List<String> retrieveSubmodelIds(Environment aasEnvironment) {
 		List<String> submodelIds = new ArrayList<>();
-		aasEnvironment.getSubmodels().forEach(s -> {
-			submodelIds.add(((DefaultSubmodel) s).getId());
-		});
+		aasEnvironment.getSubmodels().forEach(s ->
+			submodelIds.add(((DefaultSubmodel) s).getId()));
 		return submodelIds;
 	}
 
 	private static List<String> retrieveShellIds(Environment aasEnvironment) {
 		List<String> aasIds = new ArrayList<>();
 
-		aasEnvironment.getAssetAdministrationShells().forEach(a -> {
-			aasIds.add(((DefaultAssetAdministrationShell) a).getId());
-		});
+		aasEnvironment.getAssetAdministrationShells().forEach(a ->
+			aasIds.add(((DefaultAssetAdministrationShell) a).getId()));
 		return aasIds;
 	}
 

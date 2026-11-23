@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,7 +51,9 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescrip
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -77,7 +79,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 	
 	private static String healthEndpointUrl = "http://127.0.0.1:8081/actuator/health";
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 
@@ -88,7 +90,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		conceptDescriptionRepo = appContext.getBean(ConceptDescriptionRepository.class);
 	}
 	
-	@Before
+	@BeforeEach
 	public void reset() throws FileNotFoundException, IOException {
 		
 		configureSecurityContext();
@@ -104,12 +106,12 @@ public class TestAuthorizedAasEnvironmentUpload {
 		clearSecurityContext();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutDown(){
 		appContext.close();
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
 		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
 		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
@@ -117,7 +119,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
 	}
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void uploadWithCorrectRoleAndPermission() throws IOException {		
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER;
 
@@ -127,7 +129,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void uploadWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER_TWO;
 
@@ -137,7 +139,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void uploadWithCorrectRoleAndUnauthorizedSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER_THREE;
 
@@ -147,7 +149,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void uploadWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(TestAasEnvironmentHTTP.AASX_ENV_PATH, TestAasEnvironmentHTTP.AASX_MIMETYPE));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());

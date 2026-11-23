@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,9 +36,9 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.ApiException;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.AuthorizedConnectedSubmodelRegistry;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.api.SubmodelRegistryApi;
 import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescriptor;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -56,7 +56,7 @@ public class AuthorizedSubmodelRepositoryRegistryLinkTest extends SubmodelReposi
 	private static ConfigurableApplicationContext appContext;
 	private static SubmodelRepositoryRegistryLink submodelRepositoryRegistryLink;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummySubmodelRepositoryIntegrationComponent.class);
 		application.setAdditionalProfiles("authregistry");
@@ -66,7 +66,7 @@ public class AuthorizedSubmodelRepositoryRegistryLinkTest extends SubmodelReposi
 		submodelRepositoryRegistryLink = appContext.getBean(SubmodelRepositoryRegistryLink.class);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
@@ -82,9 +82,8 @@ public class AuthorizedSubmodelRepositoryRegistryLinkTest extends SubmodelReposi
 		SubmodelDescriptor descriptor = new SubmodelDescriptor();
 		descriptor.setIdShort("shortId");
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			registryApi.postSubmodelDescriptor(descriptor);
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			registryApi.postSubmodelDescriptor(descriptor));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}

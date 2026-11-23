@@ -39,7 +39,10 @@ import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.aasregistry.feature.authorization.AuthorizedAasRegistryStorage;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -48,6 +51,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,8 +60,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link AuthorizedAasRegistryStorage} feature
@@ -77,7 +80,7 @@ public class TestAuthorizedAasRegistry {
 	public static String aasRegistryBaseUrl = BASE_URL + "/shell-descriptors";
 	private static AasRegistryStorage storage;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		String authenticaltionServerTokenEndpoint = "http://localhost:9096/realms/BaSyx/protocol/openid-connect/token";
 		String clientId = "basyx-client-api";
@@ -89,12 +92,12 @@ public class TestAuthorizedAasRegistry {
 		storage = appContext.getBean(AasRegistryStorage.class);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void initializeRepositories() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 
@@ -103,7 +106,7 @@ public class TestAuthorizedAasRegistry {
 		clearSecurityContext();
 	}
 
-	@After
+	@AfterEach
 	public void reset() throws FileNotFoundException, IOException {
 		configureSecurityContext();
 
@@ -114,7 +117,7 @@ public class TestAuthorizedAasRegistry {
 		clearSecurityContext();
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
 		String healthEndpointUrl = BASE_URL + "/actuator/health";
 
@@ -124,7 +127,7 @@ public class TestAuthorizedAasRegistry {
 		BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAllAasDescriptorsWithCorrectRoleAndPermission() throws IOException, ParseException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_CREDENTIAL;
 
@@ -135,7 +138,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAllAasDescriptorsWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -145,13 +148,13 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAllAasDescriptorsWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = getAllElementsNoAuthorization(aasRegistryBaseUrl);
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void createAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
@@ -161,7 +164,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void createAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -169,14 +172,14 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void createAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = createAasDescriptorOnRepositoryWithNoAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void updateAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -184,7 +187,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void updateAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -192,7 +195,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void updateAasDescriptorsWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -200,7 +203,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void updateAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -208,14 +211,14 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void updateAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_1_JSON));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void deleteAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -229,7 +232,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void deleteAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -243,7 +246,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void deleteAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -253,7 +256,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void deleteAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -263,7 +266,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void deleteAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID));
 
@@ -272,7 +275,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorsWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -280,7 +283,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorsWithCorrectRoleAndSpecificAasDescriptorPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -290,7 +293,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorsWithCorrectRoleAndUnauthorizedSpecificAasDescriptor() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -300,7 +303,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorsWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -310,13 +313,13 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorsWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -324,7 +327,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -334,7 +337,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -344,7 +347,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -354,13 +357,13 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void getAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID, SPECIFIC_SUBMODEL_ID));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void addAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -368,7 +371,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void addAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -376,7 +379,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.CREATED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void addAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -384,7 +387,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void addAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -392,14 +395,14 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void addAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPostRequest(getAasDescriptorsAccessURL(SPECIFIC_SHELL_ID), getJSONStringFromFile("authorization/SingleSubmodelDescriptor.json"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void removeAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -411,7 +414,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void removeAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -423,7 +426,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void removeAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
@@ -431,7 +434,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void removeAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
@@ -439,14 +442,14 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void removeAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void replaceAasDescriptorWithCorrectRoleAndPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -458,7 +461,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void replaceAasDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		createAasDescriptorOnRegistryWithAuthorization(aasRegistryBaseUrl, getJSONStringFromFile(AAS_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -470,7 +473,7 @@ public class TestAuthorizedAasRegistry {
 		deleteElementWithAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void replaceAasDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_ASSET_UPDATER_TWO_CREDENTIAL);
 
@@ -478,7 +481,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void replaceAasDescriptorWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
@@ -486,14 +489,14 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void replaceAasDescriptorWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID_2, "specificAasId-2-SM"), getJSONStringFromFile("authorization/SingleSubmodelDescriptor_Update.json"));
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void clearAllDescriptorsWithCorrectRoleAndPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_CREDENTIAL);
 
@@ -503,7 +506,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementIsNotOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void clearAllDescriptorsWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -513,7 +516,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void clearAllDescriptorsWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -523,7 +526,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void clearAllDescriptorsWithInsufficientPermissionRole() throws IOException {
 		String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -533,7 +536,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void clearAllDescriptorsWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID));
 
@@ -542,7 +545,7 @@ public class TestAuthorizedAasRegistry {
 		assertElementExistsOnServer(getSpecificAasDescriptorAccessURL(SPECIFIC_SHELL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void searchDescriptorsWithCorrectRoleAndPermission() throws IOException, ParseException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_CREDENTIAL;
 
@@ -555,7 +558,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void searchDescriptorsCorrectRoleAndSpecificAasPermission() throws IOException, ParseException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -568,7 +571,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void searchDescriptorsWithInsufficientPermissionRole() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -579,7 +582,7 @@ public class TestAuthorizedAasRegistry {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void searchDescriptorsWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = createAasDescriptorOnRepositoryWithNoAuthorization(getSearchUrl(), getJSONStringFromFile("authorization/ShellDescriptorSearchRequest.json"));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());

@@ -30,7 +30,7 @@ import tools.jackson.databind.ObjectMapper;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.eclipse.digitaltwin.basyx.querycore.query.converter.AASQueryToElasticSearchConverter;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;

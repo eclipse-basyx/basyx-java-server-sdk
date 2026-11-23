@@ -36,7 +36,11 @@ import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.pagination.Base64UrlEncodedCursor;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.AASQuery;
 import org.eclipse.digitaltwin.basyx.querycore.query.model.QueryResponse;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -66,32 +70,32 @@ public class TestSearchAasRegistry {
 	private static SearchAasRegistryApiHTTPController searchAPI;
 
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() {
 		appContext = new SpringApplication(DummySearchAasRegistryComponent.class).run();
 		storage = appContext.getBean(SearchAasRegistryStorage.class);
 		searchAPI = appContext.getBean(SearchAasRegistryApiHTTPController.class);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void preloadData() throws FileNotFoundException, DeserializationException, InterruptedException {
 		preloadAasdf();
 		Thread.sleep(2000);
 	}
 
-	@After
+	@AfterEach
 	public void resetRepo(){
 		List<org.eclipse.digitaltwin.basyx.aasregistry.model.AssetAdministrationShellDescriptor> descriptors = storage.getAllAasDescriptors(PaginationInfo.NO_LIMIT, new DescriptorFilter(null, null)).getResult();
 
 		descriptors.forEach(descriptor -> storage.removeAasDescriptor(descriptor.getId()));
 	}
 
-	@Test
+	@org.junit.jupiter.api.Test
 	public void testRepo() throws FileNotFoundException, DeserializationException {
 		File file = new File(Objects.requireNonNull(TestSearchAasRegistry.class.getResource("/query.json")).getFile());
 		AASQuery query = queryFromFile(file);
@@ -99,7 +103,7 @@ public class TestSearchAasRegistry {
 		QueryResponse response = result.getBody();
 		assert response != null;
 		List<AssetAdministrationShellDescriptor> topHits = response.result.stream().map(o->(AssetAdministrationShellDescriptor)o).toList();
-		Assert.assertEquals(2,topHits.size());
+		Assertions.assertEquals(2,topHits.size());
 	}
 
 	private static AASQuery queryFromFile(File file) throws FileNotFoundException, DeserializationException {

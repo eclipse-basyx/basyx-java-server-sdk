@@ -26,9 +26,9 @@
 
 package org.eclipse.digitaltwin.basyx.aasservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -54,7 +54,7 @@ import org.eclipse.digitaltwin.basyx.core.exceptions.ElementDoesNotExistExceptio
 import org.eclipse.digitaltwin.basyx.core.exceptions.FileDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.core.pagination.CursorResult;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for implementations of the AasService interface
@@ -117,11 +117,13 @@ public abstract class AasServiceSuite {
 		assertEquals(0, submodelReferences.size());
 	}
 
-	@Test(expected = ElementDoesNotExistException.class)
+	@Test
 	public void removeNonExistingSubmodelReference() {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
-		aasService.removeSubmodelReference("doesNotMatter");
+		assertThrows(ElementDoesNotExistException.class, () -> {
+			AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+			AasService aasService = getAasService(shell);
+			aasService.removeSubmodelReference("doesNotMatter");
+		});
 	}
 
 	@Test
@@ -191,12 +193,14 @@ public abstract class AasServiceSuite {
 		assertTrue(IOUtils.contentEquals(expectedThumbnail, actualThumbnailIs));
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void getNonExistingThumbnail() {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
+		assertThrows(FileDoesNotExistException.class, () -> {
+			AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+			AasService aasService = getAasService(shell);
 
-		aasService.getThumbnail();
+			aasService.getThumbnail();
+		});
 	}
 
 	@Test
@@ -208,12 +212,14 @@ public abstract class AasServiceSuite {
 		assertThrows(FileDoesNotExistException.class, () -> aasServiceWithThumbnail.getThumbnail());
 	}
 
-	@Test(expected = FileDoesNotExistException.class)
+	@Test
 	public void deleteNonExistingThumbnail() throws IOException {
-		AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
-		AasService aasService = getAasService(shell);
+		assertThrows(FileDoesNotExistException.class, () -> {
+			AssetAdministrationShell shell = DummyAssetAdministrationShellFactory.create();
+			AasService aasService = getAasService(shell);
 
-		aasService.deleteThumbnail();
+			aasService.deleteThumbnail();
+		});
 	}
 
 	private AssetInformation createDummyAssetInformation() {

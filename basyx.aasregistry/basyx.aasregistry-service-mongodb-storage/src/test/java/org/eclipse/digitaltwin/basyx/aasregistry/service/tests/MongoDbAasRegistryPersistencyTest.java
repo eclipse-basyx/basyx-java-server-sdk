@@ -27,8 +27,8 @@ package org.eclipse.digitaltwin.basyx.aasregistry.service.tests;
 
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.tests.integration.PersistencyTestSuite;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -43,12 +43,12 @@ public class MongoDbAasRegistryPersistencyTest extends PersistencyTestSuite {
 
 	private static ConfigurableApplicationContext applicationContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initComponent() {
 		applicationContext = new SpringApplication(DummyMongoDbAasRegistryApplication.class).run();
 	}
 
-	@Before
+	@BeforeEach
 	public void clearTemplate() {
 		applicationContext.getBean(MongoTemplate.class).remove(new Query(), DummyMongoDbAasRegistryApplication.COLLECTION);
 	}

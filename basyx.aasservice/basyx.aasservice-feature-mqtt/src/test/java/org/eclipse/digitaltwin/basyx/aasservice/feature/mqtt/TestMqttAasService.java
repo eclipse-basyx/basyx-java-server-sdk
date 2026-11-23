@@ -51,15 +51,15 @@ import org.eclipse.digitaltwin.basyx.http.BaSyxHTTPConfiguration;
 import org.eclipse.digitaltwin.basyx.http.SerializationExtension;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestMqttAasService extends AasServiceSuite {
 
@@ -75,7 +75,7 @@ public class TestMqttAasService extends AasServiceSuite {
 	
 	private static FileRepository fileRepository;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUpClass() throws MqttException, IOException {
 		objectMapper = configureObjectMapper();
 		mqttBroker = MqttBrokerTestSupport.start();
@@ -86,7 +86,7 @@ public class TestMqttAasService extends AasServiceSuite {
 		mqttAasServiceFactory = createMqttAasServiceFactory(mqttClient);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownClass() throws MqttException {
 		mqttBroker.close();
 	}

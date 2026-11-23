@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,8 +46,8 @@ import org.eclipse.digitaltwin.basyx.authorization.jwt.PublicKeyUtils;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.ConceptDescriptionRepository;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -75,7 +75,7 @@ public class TestAuthorizedCDRepository {
 	private static ConceptDescriptionRepository cdRepo;
 	private static ConfigurableApplicationContext appContext;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException, DeserializationException {
 		tokenProvider = new AccessTokenProvider(authenticaltionServerTokenEndpoint, clientId);
 

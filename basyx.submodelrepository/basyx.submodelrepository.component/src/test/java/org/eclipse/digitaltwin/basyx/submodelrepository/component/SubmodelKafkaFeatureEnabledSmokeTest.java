@@ -36,11 +36,10 @@ import org.eclipse.digitaltwin.basyx.kafka.KafkaAdapters;
 import org.eclipse.digitaltwin.basyx.submodelrepository.feature.kafka.KafkaSubmodelRepositoryFeature;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEvent;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.SubmodelEventType;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +54,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author sonnenberg (DFKI GmbH)
@@ -65,7 +63,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @AutoConfigureTestRestTemplate
 @ComponentScan(basePackages = { "org.eclipse.digitaltwin.basyx" })
 @ContextConfiguration(classes = { SubmodelRepositoryComponent.class })
-@RunWith(SpringRunner.class)
 @TestPropertySource(properties = { "basyx.feature.kafka.enabled=true", "spring.kafka.bootstrap-servers=PLAINTEXT_HOST://localhost:9092", KafkaSubmodelRepositoryFeature.FEATURENAME + ".enabled=true",
 		KafkaSubmodelRepositoryFeature.FEATURENAME + ".topic.name=submodel-events" })
 
@@ -84,7 +81,7 @@ public class SubmodelKafkaFeatureEnabledSmokeTest {
 	private JsonSerializer serializer;
 
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		restTemplate.getRestTemplate().getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		adapter.skipMessages();
@@ -93,14 +90,14 @@ public class SubmodelKafkaFeatureEnabledSmokeTest {
 	public void testAasCreatedEvent() throws SerializationException {
 		Submodel sm = new DefaultSubmodel.Builder().id("http://sm.id/1").build();
 		HttpEntity<String> entity = createHttpEntity(sm);
-		Assert.assertTrue(restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, Void.class).getStatusCode().is2xxSuccessful());
+		Assertions.assertTrue(restTemplate.exchange(createEndpointUrl(), HttpMethod.POST, entity, Void.class).getStatusCode().is2xxSuccessful());
 		SubmodelEvent event = adapter.next();
-		Assert.assertEquals(SubmodelEventType.SM_CREATED, event.getType());
-		Assert.assertEquals(sm.getId(), event.getId());
-		Assert.assertEquals(sm, event.getSubmodel());
+		Assertions.assertEquals(SubmodelEventType.SM_CREATED, event.getType());
+		Assertions.assertEquals(sm.getId(), event.getId());
+		Assertions.assertEquals(sm, event.getSubmodel());
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		adapter.assertNoAdditionalMessages();
 

@@ -24,11 +24,12 @@
  ******************************************************************************/
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.mqtt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.eclipse.digitaltwin.basyx.common.mqttcore.encoding.Base64URLEncoder;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.mqtt.MqttSubmodelServiceTopicFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MqttSubmodelServiceTopicFactoryTest {
 	private static final String SUBMODEL_ID = "https://example.org/submodels/ä?x=1";

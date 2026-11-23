@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.feature.authorization;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,7 +41,7 @@ import org.eclipse.digitaltwin.basyx.aasenvironment.environmentloader.CompleteEn
 import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacPermissionResolver;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AuthorizedAasEnvironmentTest {
 

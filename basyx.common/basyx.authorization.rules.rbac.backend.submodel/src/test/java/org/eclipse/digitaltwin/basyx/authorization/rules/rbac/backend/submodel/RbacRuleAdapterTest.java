@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.authorization.rules.rbac.backend.submodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Property;
@@ -40,8 +40,8 @@ import org.eclipse.digitaltwin.basyx.authorization.rbac.Action;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRule;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.RbacRuleKeyGenerator;
 import org.eclipse.digitaltwin.basyx.authorization.rbac.TargetInformation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -64,7 +64,7 @@ public class RbacRuleAdapterTest {
 
     private RbacRuleAdapter rbacRuleAdapter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         rbacRuleAdapter = new RbacRuleAdapter(targetInformationAdapter);

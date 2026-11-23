@@ -25,32 +25,39 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URI;
 import java.util.Arrays;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestOperationDelegationTargetValidator {
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void rejectUnsupportedScheme() {
-		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
-		validator.validate(URI.create("ftp://example.org/operation"));
+		assertThrows(OperationDelegationException.class, () -> {
+			OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
+			validator.validate(URI.create("ftp://example.org/operation"));
+		});
 	}
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void rejectMissingHost() {
-		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
-		validator.validate(URI.create("http:///operation"));
+		assertThrows(OperationDelegationException.class, () -> {
+			OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
+			validator.validate(URI.create("http:///operation"));
+		});
 	}
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void rejectPrivateIpv4ByDefault() {
-		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
-		validator.validate(URI.create("http://10.1.2.3/operation"));
+		assertThrows(OperationDelegationException.class, () -> {
+			OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
+			validator.validate(URI.create("http://10.1.2.3/operation"));
+		});
 	}
 
 	@Test
@@ -71,20 +78,24 @@ public class TestOperationDelegationTargetValidator {
 		validator.validate(URI.create("http://localhost/operation"));
 	}
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void rejectBlockedPortWhenPortAllowlistIsConfigured() {
-		OperationDelegationSecurityProperties securityProperties = new OperationDelegationSecurityProperties();
-		securityProperties.getAllowlist().setPorts(Arrays.asList(443));
+		assertThrows(OperationDelegationException.class, () -> {
+			OperationDelegationSecurityProperties securityProperties = new OperationDelegationSecurityProperties();
+			securityProperties.getAllowlist().setPorts(Arrays.asList(443));
 
-		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(securityProperties);
-		validator.validate(URI.create("http://8.8.8.8:80/operation"));
+			OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(securityProperties);
+			validator.validate(URI.create("http://8.8.8.8:80/operation"));
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void rejectInvalidCidrConfiguration() {
-		OperationDelegationSecurityProperties securityProperties = new OperationDelegationSecurityProperties();
-		securityProperties.getAllowlist().setCidrs(Arrays.asList("10.0.0.0/not-a-prefix"));
-		new OperationDelegationTargetValidator(securityProperties);
+		assertThrows(IllegalArgumentException.class, () -> {
+			OperationDelegationSecurityProperties securityProperties = new OperationDelegationSecurityProperties();
+			securityProperties.getAllowlist().setCidrs(Arrays.asList("10.0.0.0/not-a-prefix"));
+			new OperationDelegationTargetValidator(securityProperties);
+		});
 	}
 
 	@Test

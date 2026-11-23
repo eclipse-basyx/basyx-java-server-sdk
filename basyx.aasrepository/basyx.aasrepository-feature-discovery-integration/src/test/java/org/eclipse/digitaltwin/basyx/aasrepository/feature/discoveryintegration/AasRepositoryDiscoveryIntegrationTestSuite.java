@@ -35,13 +35,14 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.core.exceptions.AssetLinkDoesNotExistException;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test suite to test the AAS Repository Integration with the AAS Discovery Service.
@@ -71,10 +72,11 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
         executeCreateTestWithProperties(true, true);
     }
 
-    @Test(expected = AssetLinkDoesNotExistException.class)
+    @Test
     public void createAASWithoutGlobalAndSpecificAssetId_expectNoDiscoveryLink() {
-        executeCreateTestWithProperties(false, false);
-    }
+			assertThrows(AssetLinkDoesNotExistException.class, () ->
+				executeCreateTestWithProperties(false, false));
+		}
 
     // -------------------- UPDATE TESTS --------------------
 
@@ -98,11 +100,13 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
         }
     }
 
-    @Test(expected = AssetLinkDoesNotExistException.class)
+    @Test
     public void updateAAS_withoutGlobalAndSpecificAssetId_expectNoDiscoveryLink() {
-        executeCreateTestWithProperties(true, false);
-        executeUpdateTestWithProperties(false, false);
-    }
+			assertThrows(AssetLinkDoesNotExistException.class, () -> {
+				executeCreateTestWithProperties(true, false);
+				executeUpdateTestWithProperties(false, false);
+			});
+		}
 
     @Test
     public void updateAAS_withGlobalAndSpecificAssetId() {
@@ -150,13 +154,15 @@ public abstract class AasRepositoryDiscoveryIntegrationTestSuite {
 
     // -------------------- DELETE TEST --------------------
 
-    @Test(expected = AssetLinkDoesNotExistException.class)
+    @Test
     public void deleteAAS_expectDiscoveryLinkRemoved() throws IOException {
-        executeCreateTestWithProperties(true, true);
-        AssetAdministrationShell aas = getDemoAAS(false, false);
-        BaSyxHttpTestUtils.executeDeleteOnURL(getAASURL(aas));
-        getDiscoveryService().getAllAssetLinksById(aas.getId());
-    }
+			assertThrows(AssetLinkDoesNotExistException.class, () -> {
+				executeCreateTestWithProperties(true, true);
+				AssetAdministrationShell aas = getDemoAAS(false, false);
+				BaSyxHttpTestUtils.executeDeleteOnURL(getAASURL(aas));
+				getDiscoveryService().getAllAssetLinksById(aas.getId());
+			});
+		}
 
     // -------------------- HELPER METHODS --------------------
 

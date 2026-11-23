@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasrepository.backend.mongodb;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.aasrepository.AasRepositoryPersistencyTestSuite;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,12 +42,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class TestMongoDBAasRepositoryPersistency extends AasRepositoryPersistencyTestSuite {
 	private static ConfigurableApplicationContext applicationContext;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initComponent() {
 		applicationContext = new SpringApplication(DummyAasRepositoryComponent.class).run();
 	}
 
-	@Before
+	@BeforeEach
 	public void clearTemplate() {
 		MongoTemplate mongoTemplate = applicationContext.getBean(MongoTemplate.class);
 		MongoDBUtilities.clearCollection(mongoTemplate, DummyAasRepositoryConfig.TEST_COLLECTION_NAME);

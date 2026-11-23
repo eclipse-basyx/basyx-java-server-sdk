@@ -31,14 +31,14 @@ import org.eclipse.digitaltwin.basyx.aasregistry.model.Endpoint;
 import org.eclipse.digitaltwin.basyx.aasregistry.model.ProtocolInformation;
 import org.eclipse.digitaltwin.basyx.aasregistry.service.storage.AasRegistryStorage;
 import org.eclipse.digitaltwin.basyx.http.Base64UrlEncodedIdentifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URL;
 
 /**
  * Persistency TestSuite for AasRegistry

@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasrepository.feature.registry.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,9 +40,9 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.AccessTokenPr
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.AccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.GrantType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -59,7 +59,7 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 	private static ConfigurableApplicationContext appContext;
 	private static AasRepositoryRegistryLink aasRepositoryRegistryLink;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws FileNotFoundException, IOException {
 		SpringApplication application = new SpringApplication(DummyAasRepositoryIntegrationComponent.class);
 		application.setAdditionalProfiles("authregistry", "regintegration");
@@ -69,7 +69,7 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 		aasRepositoryRegistryLink = appContext.getBean(AasRepositoryRegistryLink.class);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 		appContext.close();
 	}
@@ -91,9 +91,8 @@ public class AuthorizedAasRepositoryRegistryLinkTest extends AasRepositoryRegist
 		AssetAdministrationShellDescriptor descriptor = new AssetAdministrationShellDescriptor();
 		descriptor.setIdShort("shortId");
 
-		ApiException exception = assertThrows(ApiException.class, () -> {
-			registryApi.postAssetAdministrationShellDescriptor(descriptor);
-		});
+		ApiException exception = assertThrows(ApiException.class, () ->
+			registryApi.postAssetAdministrationShellDescriptor(descriptor));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), exception.getCode());
 	}
 

@@ -45,10 +45,10 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepositoryFactor
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.http.SubmodelRepositoryHTTPSerializationExtension;
 import org.eclipse.digitaltwin.basyx.submodelservice.InMemorySubmodelBackend;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.codec.json.JacksonJsonDecoder;
 import org.springframework.http.codec.json.JacksonJsonEncoder;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -62,9 +62,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests the {@link OperationDelegationSubmodelRepository} feature
@@ -78,7 +79,7 @@ public class TestOperationDelegationFeature {
 	private static WebClient webClient;
 	private JsonMapper mapper = configureObjectMapper();
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUp() throws IOException {
 		httpMockServer.start();
 
@@ -87,7 +88,7 @@ public class TestOperationDelegationFeature {
 		submodelRepository = createOperationDelegationSubmodelRepository(new HTTPOperationDelegation(webClient));
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDown() {
 
 		if (httpMockServer == null)
@@ -96,7 +97,7 @@ public class TestOperationDelegationFeature {
 		httpMockServer.stop();
 	}
 
-	@After
+	@AfterEach
 	public void reset() {
 		if (submodelRepository == null)
 			return;
@@ -125,20 +126,22 @@ public class TestOperationDelegationFeature {
 		assertArrayEquals(expectedOutputOperationVariable, actualOutputOperationVariable);
 	}
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void invokeFailOperationDelegation() throws FileNotFoundException, IOException {
+		assertThrows(OperationDelegationException.class, () -> {
 
-		createExpectationsForPost("/operationInvocationFail", getRequestBody(getInputVariable()), getExpectedOutputResponse(getInputVariable()), 400);
+			createExpectationsForPost("/operationInvocationFail", getRequestBody(getInputVariable()), getExpectedOutputResponse(getInputVariable()), 400);
 
-		String submodelId = "dummySubmodelOperationDelegation";
+			String submodelId = "dummySubmodelOperationDelegation";
 
-		createSubmodelAtRepository(submodelId);
+			createSubmodelAtRepository(submodelId);
 
-		createInvokableSMEAtRepository(submodelId, "operationDelegationSME", "http://localhost:2020/operationInvocationFail");
+			createInvokableSMEAtRepository(submodelId, "operationDelegationSME", "http://localhost:2020/operationInvocationFail");
 
-		OperationVariable[] inputOperationVariable = getInputVariable();
+			OperationVariable[] inputOperationVariable = getInputVariable();
 
-		submodelRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+			submodelRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+		});
 	}
 
 	@Test
@@ -166,7 +169,7 @@ public class TestOperationDelegationFeature {
 			strictRepository.invokeOperation(submodelId, "operationDelegationSME", getInputVariable());
 			fail("Expected OperationDelegationException for blocked loopback delegation target");
 		} catch (OperationDelegationException e) {
-			assertFalse("Blocked loopback request must not reach internal server", internalServerHit.get());
+			assertFalse(internalServerHit.get(), "Blocked loopback request must not reach internal server");
 		} finally {
 			internalServer.stop(0);
 		}
@@ -196,16 +199,18 @@ public class TestOperationDelegationFeature {
 		assertArrayEquals(expectedOutputOperationVariable, actualOutputOperationVariable);
 	}
 
-	@Test(expected = OperationDelegationException.class)
+	@Test
 	public void invokeOperationDelegationRejectsRedirectResponses() throws FileNotFoundException, IOException {
-		OperationVariable[] inputOperationVariable = getInputVariable();
-		createExpectationsForPost("/operationInvocationRedirect", getRequestBody(inputOperationVariable), "[]", 302);
+		assertThrows(OperationDelegationException.class, () -> {
+			OperationVariable[] inputOperationVariable = getInputVariable();
+			createExpectationsForPost("/operationInvocationRedirect", getRequestBody(inputOperationVariable), "[]", 302);
 
-		String submodelId = "redirectDelegationSubmodel";
-		createSubmodelAtRepository(submodelId);
-		createInvokableSMEAtRepository(submodelId, "operationDelegationSME", "http://localhost:2020/operationInvocationRedirect");
+			String submodelId = "redirectDelegationSubmodel";
+			createSubmodelAtRepository(submodelId);
+			createInvokableSMEAtRepository(submodelId, "operationDelegationSME", "http://localhost:2020/operationInvocationRedirect");
 
-		submodelRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+			submodelRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+		});
 	}
 	
 	private OperationVariable[] getInputVariable() {

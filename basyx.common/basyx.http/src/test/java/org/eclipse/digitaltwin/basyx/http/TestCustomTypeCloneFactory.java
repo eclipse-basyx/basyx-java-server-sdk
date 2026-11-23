@@ -25,7 +25,7 @@
 
 package org.eclipse.digitaltwin.basyx.http;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 import org.eclipse.digitaltwin.basyx.http.CustomTypeCloneFactory;
 import org.eclipse.digitaltwin.basyx.http.testmodels.CloneFactoryFirstTestModel;
 import org.eclipse.digitaltwin.basyx.http.testmodels.CloneFactorySecondTestModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import tools.jackson.databind.ObjectMapper;
 

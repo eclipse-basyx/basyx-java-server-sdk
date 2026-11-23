@@ -25,8 +25,8 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -59,11 +59,11 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelservice.client.ConnectedSubmodelService;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -93,7 +93,7 @@ public class TestConnectedAasManager {
 
 	protected ConnectedAasManager aasManager;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initApplication() {
 		appContext = new SpringApplication(DummyAasEnvironmentComponent.class).run(new String[] {});
 
@@ -101,12 +101,12 @@ public class TestConnectedAasManager {
 		smRepository = appContext.getBean(SubmodelRepository.class);
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void cleanUpContext() {
 		appContext.close();
 	}
 
-	@Before
+	@BeforeEach
 	public void setupRepositories() {
 		connectedAasRepository = getConnectedAasRepo();
 		connectedSmRepository = getConnectedSubmodelRepo();
@@ -120,7 +120,7 @@ public class TestConnectedAasManager {
 		populateRegistries();
 	}
 
-	@After
+	@AfterEach
 	public void cleanUpComponents() {
 		cleanUpRegistries();
 		cleanUpRepositories();

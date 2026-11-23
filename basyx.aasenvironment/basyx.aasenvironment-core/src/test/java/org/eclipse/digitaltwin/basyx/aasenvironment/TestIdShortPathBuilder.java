@@ -25,17 +25,16 @@
 
 package org.eclipse.digitaltwin.basyx.aasenvironment;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.SubmodelElement;
 import org.eclipse.digitaltwin.basyx.core.exceptions.InvalidIdShortPathElementsException;
+import org.junit.jupiter.api.Test;
 
 import static org.eclipse.digitaltwin.basyx.aasenvironment.IdShortPathTestHelper.*;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests the behaviour of {@link IdShortPathBuilder}
@@ -95,11 +94,13 @@ public class TestIdShortPathBuilder {
 		assertEquals(EXPECTED_IDSHORTPATH_SCENARIO_5, actualIdShortPath);
 	}
 	
-	@Test(expected = InvalidIdShortPathElementsException.class)
+	@Test
 	public void createIdShortPathBuilderWithInvalidArgument() {
-		List<SubmodelElement> invalidIdShortPathElements = new ArrayList<>();
-		
-		new IdShortPathBuilder(invalidIdShortPathElements);
+		assertThrows(InvalidIdShortPathElementsException.class, () -> {
+			List<SubmodelElement> invalidIdShortPathElements = new ArrayList<>();
+
+			new IdShortPathBuilder(invalidIdShortPathElements);
+		});
 	}
 
 }

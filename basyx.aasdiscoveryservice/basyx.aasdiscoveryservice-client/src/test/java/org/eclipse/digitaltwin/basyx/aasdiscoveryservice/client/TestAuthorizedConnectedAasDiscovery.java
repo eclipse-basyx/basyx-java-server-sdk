@@ -30,8 +30,8 @@ import org.eclipse.digitaltwin.basyx.aasdiscoveryservice.core.AasDiscoveryServic
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -40,14 +40,14 @@ public class TestAuthorizedConnectedAasDiscovery extends AasDiscoveryServiceSuit
     private static ConfigurableApplicationContext appContext;
     private static final String PROFILE = "authorization";
 
-    @Before
+    @BeforeEach
     public void startAasDiscoveryService() {
         SpringApplication application = new SpringApplication(DummyAasDiscoveryServiceComponent.class);
         application.setAdditionalProfiles(PROFILE);
         appContext = application.run(new String[] {});
     }
 
-    @After
+    @AfterEach
     public void stopAasDiscoveryService() {
         appContext.close();
     }

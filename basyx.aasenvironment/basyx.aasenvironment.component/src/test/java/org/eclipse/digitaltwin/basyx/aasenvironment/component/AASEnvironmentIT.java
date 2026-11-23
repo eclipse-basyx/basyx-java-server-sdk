@@ -28,8 +28,8 @@ package org.eclipse.digitaltwin.basyx.aasenvironment.component;
 import org.eclipse.digitaltwin.basyx.aasrepository.component.AASRepositoryIT;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.component.ConceptDescriptionRepositoryIT;
 import org.eclipse.digitaltwin.basyx.submodelrepository.component.SubmodelRepositoryIT;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Integration test using the Integration tests from AASRepository,
@@ -39,8 +39,8 @@ import org.junit.runners.Suite;
  *
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ AASRepositoryIT.class, SubmodelRepositoryIT.class, ConceptDescriptionRepositoryIT.class, })
+@Suite
+@SelectClasses({ AASRepositoryIT.class, SubmodelRepositoryIT.class, ConceptDescriptionRepositoryIT.class })
 public class AASEnvironmentIT {
 
 }

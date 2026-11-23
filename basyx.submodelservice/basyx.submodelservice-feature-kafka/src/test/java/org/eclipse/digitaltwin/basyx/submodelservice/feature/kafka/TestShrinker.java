@@ -39,8 +39,9 @@ import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementCollect
 import org.eclipse.digitaltwin.aas4j.v3.model.impl.DefaultSubmodelElementList;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.BlobRemovingSubmodelShrinker;
 import org.eclipse.digitaltwin.basyx.submodelservice.feature.kafka.events.model.DataPreservationLevel;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 /**
  * @author geso02 (Sonnenberg DFKI GmbH)
  */
@@ -57,7 +58,7 @@ public class TestShrinker {
 
 		BlobRemovingSubmodelShrinker shrinker = new BlobRemovingSubmodelShrinker();
 		SubmodelElement elem = shrinker.shrinkSubmodelElement(testValue);
-		Assert.assertEquals(expected, elem);
+		Assertions.assertEquals(expected, elem);
 	}
 
 	private SubmodelElement testInput() {
