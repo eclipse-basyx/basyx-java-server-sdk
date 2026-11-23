@@ -35,6 +35,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.model.SubmodelDescriptor;
 import org.eclipse.digitaltwin.basyx.submodelregistry.service.storage.SubmodelRegistryStorage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,7 +103,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         clearSecurityContext();
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
         String healthEndpointUrl = BASE_URL + "/actuator/health";
 
@@ -112,7 +113,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getAllSubmodelDescriptorsWithCorrectRoleAndPermission() throws IOException, ParseException {
         DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_CREDENTIAL;
 
@@ -123,7 +124,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getAllSubmodelDescriptorsWithInsufficientPermissionRole() throws IOException {
         DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -133,13 +134,13 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getAllAasDescriptorsWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = getAllElementsNoAuthorization(submodelRegistryBaseUrl);
         assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void createSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_CREATOR_CREDENTIAL);
 
@@ -149,7 +150,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void createSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -157,14 +158,14 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void createSubmodelDescriptorWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = createSubmodelDescriptorOnRepositoryWithNoAuthorization(submodelRegistryBaseUrl, getJSONStringFromFile(SUBMODEL_DESCRIPTOR_SIMPLE_2_JSON));
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void updateSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -172,7 +173,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void updateSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -180,7 +181,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.NO_CONTENT.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void updateSubmodelDescriptorsWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_TWO_CREDENTIAL);
 
@@ -188,7 +189,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void updateSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -196,14 +197,14 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void updateSubmodelDescriptorWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = updateElementWithNoAuthorizationPutRequest(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getJSONStringFromFile(SUBMODEL_DESCRIPTOR_SIMPLE_1_JSON));
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void deleteSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
         createElementOnRegistryWithAuthorization(submodelRegistryBaseUrl, getJSONStringFromFile(SUBMODEL_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -217,7 +218,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void deleteSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
         createElementOnRegistryWithAuthorization(submodelRegistryBaseUrl, getJSONStringFromFile(SUBMODEL_DESCRIPTOR_SIMPLE_2_JSON), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
 
@@ -231,7 +232,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         deleteElementWithAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID_2), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void deleteSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -241,7 +242,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void deleteSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -251,7 +252,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void deleteSubmodelDescriptorWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID));
 
@@ -260,7 +261,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getSubmodelDescriptorWithCorrectRoleAndPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_READER_CREDENTIAL);
 
@@ -268,7 +269,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getSubmodelDescriptorWithCorrectRoleAndSpecificAasPermission() throws IOException {
         DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -278,7 +279,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getSubmodelDescriptorWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
         DummyCredential dummyCredential = DummyCredentialStore.BASYX_READER_TWO_CREDENTIAL;
 
@@ -288,7 +289,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getSubmodelDescriptorWithInsufficientPermissionRole() throws IOException {
         DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPDATER_CREDENTIAL;
 
@@ -298,13 +299,13 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getSubmodelDescriptorWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = getElementWithNoAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID));
         assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void clearAllDescriptorsWithCorrectRoleAndPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_CREDENTIAL);
 
@@ -314,7 +315,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementIsNotOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void clearAllDescriptorsWithCorrectRoleAndSpecificAasPermission() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -324,7 +325,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void clearAllDescriptorsWithCorrectRoleAndUnauthorizedSpecificAas() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_DELETER_TWO_CREDENTIAL);
 
@@ -334,7 +335,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void clearAllDescriptorsWithInsufficientPermissionRole() throws IOException {
         String accessToken = getAccessToken(DummyCredentialStore.BASYX_UPDATER_CREDENTIAL);
 
@@ -344,7 +345,7 @@ public abstract class AuthorizedSubmodelRegistryTestSuite {
         assertElementExistsOnServer(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID), getAccessToken(DummyCredentialStore.ADMIN_CREDENTIAL));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void clearAllDescriptorsWithNoAuthorization() throws IOException {
         CloseableHttpResponse retrievalResponse = deleteElementWithNoAuthorization(getSpecificSubmodelDescriptorAccessURL(SPECIFIC_SUBMODEL_ID));
 

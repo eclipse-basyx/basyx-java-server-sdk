@@ -54,6 +54,7 @@ import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -111,7 +112,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		appContext.close();
 	}
 
-	@org.junit.jupiter.api.Test
+	@Test
 	public void healthEndpointWithoutAuthorization() throws IOException, ParseException {
 		CloseableHttpResponse healthCheckResponse = BaSyxHttpTestUtils.executeGetOnURL(healthEndpointUrl);
 		assertEquals(HttpStatus.OK.value(), healthCheckResponse.getCode());
@@ -119,7 +120,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		BaSyxHttpTestUtils.assertJSONValueEquals(BaSyxHttpTestUtils.getResponseAsString(healthCheckResponse), "/status", "UP");
 	}
 	
-	@org.junit.jupiter.api.Test
+	@Test
 	public void uploadWithCorrectRoleAndPermission() throws IOException {		
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER;
 
@@ -129,7 +130,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
-	@org.junit.jupiter.api.Test
+	@Test
 	public void uploadWithCorrectRoleAndSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER_TWO;
 
@@ -139,7 +140,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.OK.value(), retrievalResponse.getCode());
 	}
 	
-	@org.junit.jupiter.api.Test
+	@Test
 	public void uploadWithCorrectRoleAndUnauthorizedSpecificAasPermission() throws IOException {
 		DummyCredential dummyCredential = DummyCredentialStore.BASYX_UPLOADER_THREE;
 
@@ -149,7 +150,7 @@ public class TestAuthorizedAasEnvironmentUpload {
 		assertEquals(HttpStatus.FORBIDDEN.value(), retrievalResponse.getCode());
 	}
 	
-	@org.junit.jupiter.api.Test
+	@Test
 	public void uploadWithNoAuthorization() throws IOException {
 		CloseableHttpResponse retrievalResponse = BaSyxHttpTestUtils.executePostRequest(HttpClients.createDefault(), createPostRequestWithFile(TestAasEnvironmentHTTP.AASX_ENV_PATH, TestAasEnvironmentHTTP.AASX_MIMETYPE));
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), retrievalResponse.getCode());

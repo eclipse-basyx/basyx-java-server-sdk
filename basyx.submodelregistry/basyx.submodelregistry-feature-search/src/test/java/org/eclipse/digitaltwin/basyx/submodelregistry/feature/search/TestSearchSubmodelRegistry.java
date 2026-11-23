@@ -41,6 +41,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +99,7 @@ public class TestSearchSubmodelRegistry {
 		descriptors.forEach(descriptor -> storage.removeSubmodelDescriptor(descriptor.getId()));
 	}
 
-	@org.junit.jupiter.api.Test
+	@Test
 	public void testRepo() throws FileNotFoundException, DeserializationException {
 		File file = new File(Objects.requireNonNull(TestSearchSubmodelRegistry.class.getResource("/query.json")).getFile());
 		AASQuery query = queryFromFile(file);
