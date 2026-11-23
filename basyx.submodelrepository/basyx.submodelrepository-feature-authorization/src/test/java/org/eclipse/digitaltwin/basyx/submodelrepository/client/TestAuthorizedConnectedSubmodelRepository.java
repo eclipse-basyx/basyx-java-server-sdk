@@ -38,7 +38,6 @@ import org.eclipse.digitaltwin.basyx.client.internal.authorization.TokenManager;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.credential.ClientCredential;
 import org.eclipse.digitaltwin.basyx.client.internal.authorization.grant.ClientCredentialAccessTokenProvider;
 import org.eclipse.digitaltwin.basyx.core.exceptions.MissingIdentifierException;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -134,10 +133,9 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 	@Override
 	@Test
 	public void updateExistingSubmodelWithMismatchId() {
-		assertThrows(MissingIdentifierException.class, () ->
-			// TODO There should be a way to differentiate between both exceptions through
-			// the Http response
-			super.updateExistingSubmodelWithMismatchId());
+		// TODO There should be a way to differentiate between both exceptions through
+		// the Http response
+		assertThrows(MissingIdentifierException.class, this::updateExistingSubmodelUsingMismatchingId);
 	}
 
 	@Override
@@ -157,7 +155,6 @@ public class TestAuthorizedConnectedSubmodelRepository extends SubmodelRepositor
 	@Test
 	public void invokeNonOperation() {
 		// TODO
-		throw new NotInvokableException();
 	}
 
 	@Override

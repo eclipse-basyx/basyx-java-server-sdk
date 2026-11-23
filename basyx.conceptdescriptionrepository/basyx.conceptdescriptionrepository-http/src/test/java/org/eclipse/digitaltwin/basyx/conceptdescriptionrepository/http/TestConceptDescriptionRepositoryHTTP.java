@@ -34,6 +34,7 @@ import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConc
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -53,6 +54,7 @@ public class TestConceptDescriptionRepositoryHTTP extends ConceptDescriptionRepo
 		appContext = new SpringApplicationBuilder(DummyConceptDescriptionRepositoryComponent.class).profiles("httptests").run(new String[] {});
 	}
 
+	@BeforeEach
 	@AfterEach
 	@Override
 	public void resetRepository() {

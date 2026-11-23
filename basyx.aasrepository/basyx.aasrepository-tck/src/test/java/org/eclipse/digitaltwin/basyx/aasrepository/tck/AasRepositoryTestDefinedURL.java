@@ -38,6 +38,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.AssetAdministrationShell;
 import org.eclipse.digitaltwin.basyx.aasrepository.http.AasRepositoryHTTPSuite;
 import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.google.gson.Gson;
 
@@ -59,6 +60,7 @@ public class AasRepositoryTestDefinedURL extends AasRepositoryHTTPSuite {
 		return url;
 	}
 
+	@BeforeEach
 	@AfterEach
 	@Override
 	public void resetRepository() {

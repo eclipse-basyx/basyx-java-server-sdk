@@ -46,7 +46,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class TestAuthorizedConnectedAasEnvironment extends TestConnectedAasEnvironment  {
+public class TestAuthorizedConnectedAasEnvironment extends ConnectedAasEnvironmentTestSuite  {
 	
 	private static final String PROFILE = "authorization";
 	

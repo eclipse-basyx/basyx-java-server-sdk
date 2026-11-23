@@ -54,6 +54,7 @@ import org.eclipse.digitaltwin.basyx.http.serialization.BaSyxHttpTestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -78,6 +79,12 @@ public class TestAuthorizedConnectedAasService extends AasServiceSuite {
 	@BeforeAll
 	public static void startAASRepo() throws Exception {
 		appContext = new SpringApplicationBuilder(DummyAuthorizedAasRepositoryComponent.class).profiles("authorization").run(new String[] {});
+	}
+
+	@BeforeEach
+	public void authenticateTestThread() throws FileNotFoundException, IOException {
+		// The tests access the secured repository bean directly, which requires an authenticated security context
+		configureSecurityContext(getTokenProvider());
 	}
 
 	@AfterEach

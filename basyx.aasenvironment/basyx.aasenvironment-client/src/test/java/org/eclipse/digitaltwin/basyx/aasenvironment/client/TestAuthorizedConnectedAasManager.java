@@ -47,6 +47,7 @@ import org.eclipse.digitaltwin.basyx.submodelregistry.client.model.SubmodelDescr
 import org.eclipse.digitaltwin.basyx.submodelrepository.SubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.AuthorizedConnectedSubmodelRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.client.ConnectedSubmodelRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.SpringApplication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,7 +58,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author danish
  *
  */
-public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
+public class TestAuthorizedConnectedAasManager extends ConnectedAasManagerTestSuite {
 	
 	private static final String PROFILE = "authorization";
 	protected final static String AAS_REGISTRY_BASE_PATH = "http://localhost:8051";
@@ -82,6 +83,11 @@ public class TestAuthorizedConnectedAasManager extends TestConnectedAasManager {
 
 		aasRepository = appContext.getBean(AasRepository.class);
 		smRepository = appContext.getBean(SubmodelRepository.class);
+	}
+
+	@AfterAll
+	public static void cleanUpContext() {
+		appContext.close();
 	}
 	
 	@Override

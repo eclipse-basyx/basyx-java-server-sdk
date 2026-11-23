@@ -156,13 +156,15 @@ public abstract class SubmodelRepositorySuite extends SubmodelServiceSuite {
 
 	@Test
 	public void updateExistingSubmodelWithMismatchId() {
-		assertThrows(IdentificationMismatchException.class, () -> {
-			String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
-			Submodel newSm = buildDummySubmodel("mismatchId");
+		assertThrows(IdentificationMismatchException.class, this::updateExistingSubmodelUsingMismatchingId);
+	}
 
-			SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
-			repo.updateSubmodel(id, newSm);
-		});
+	protected void updateExistingSubmodelUsingMismatchingId() {
+		String id = DummySubmodelFactory.SUBMODEL_OPERATIONAL_DATA_ID;
+		Submodel newSm = buildDummySubmodel("mismatchId");
+
+		SubmodelRepository repo = getSubmodelRepositoryWithDummySubmodels();
+		repo.updateSubmodel(id, newSm);
 	}
 
 	@Test

@@ -26,7 +26,6 @@ package org.eclipse.digitaltwin.basyx.submodelrepository;
 
 import org.eclipse.digitaltwin.aas4j.v3.model.Submodel;
 import org.eclipse.digitaltwin.basyx.common.mongocore.MongoDBUtilities;
-import org.eclipse.digitaltwin.basyx.core.exceptions.NotInvokableException;
 import org.eclipse.digitaltwin.basyx.core.filerepository.FileRepository;
 import org.eclipse.digitaltwin.basyx.submodelrepository.backend.CrudSubmodelRepositoryFactory;
 import org.eclipse.digitaltwin.basyx.submodelrepository.core.SubmodelRepositorySuite;
@@ -43,7 +42,6 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
@@ -91,11 +89,5 @@ public class TestMongoDBSubmodelRepository extends SubmodelRepositorySuite {
 		// TODO Ignored due to MongoDB doesn't provide invocation
 	}
 
-	@Test
-	@Override
-	public void invokeNonOperation() {
-		assertThrows(NotInvokableException.class, () ->
-			super.invokeNonOperation());
-	}
 
 }

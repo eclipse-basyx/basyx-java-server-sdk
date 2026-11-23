@@ -39,6 +39,7 @@ import org.eclipse.digitaltwin.aas4j.v3.model.ConceptDescription;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.core.DummyConceptDescriptionFactory;
 import org.eclipse.digitaltwin.basyx.conceptdescriptionrepository.http.ConceptDescriptionRepositoryHTTPSuite;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.google.gson.Gson;
 
@@ -60,6 +61,7 @@ public class ConceptDescriptionRepositoryTestDefinedURL extends ConceptDescripti
 		return url;
 	}
 
+	@BeforeEach
 	@AfterEach
 	@Override
 	public void resetRepository() {

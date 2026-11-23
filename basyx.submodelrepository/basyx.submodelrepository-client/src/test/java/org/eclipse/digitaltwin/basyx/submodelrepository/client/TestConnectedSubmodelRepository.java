@@ -93,10 +93,9 @@ public class TestConnectedSubmodelRepository extends SubmodelRepositorySuite {
 	@Override
 	@Test
 	public void updateExistingSubmodelWithMismatchId() {
-		assertThrows(MissingIdentifierException.class, () ->
-			// TODO There should be a way to differentiate between both exceptions through
-			// the Http response
-			super.updateExistingSubmodelWithMismatchId());
+		// TODO There should be a way to differentiate between both exceptions through
+		// the Http response
+		assertThrows(MissingIdentifierException.class, this::updateExistingSubmodelUsingMismatchingId);
 	}
 
 	@Override

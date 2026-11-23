@@ -29,6 +29,7 @@ import org.eclipse.digitaltwin.basyx.aasrepository.AasRepository;
 import org.eclipse.digitaltwin.basyx.core.pagination.PaginationInfo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -57,6 +58,7 @@ public class TestAasRepositoryHTTPError extends AasRepositoryHTTPErrorSuite {
         return "http://localhost:8080/shells";
     }
 
+	@BeforeEach
 	@AfterEach
 	@Override
 	public void resetRepository() {
