@@ -31,6 +31,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -47,11 +48,25 @@ public class OperationDelegationTargetValidator {
 	private static final String HTTPS = "https";
 
 	private final OperationDelegationSecurityProperties securityProperties;
+	private final HostResolver hostResolver;
 	private final List<CidrBlock> allowlistedCidrs;
 	private final List<String> allowlistedHosts;
 
+	/**
+	 * Resolves a host name to its IP addresses.
+	 */
+	@FunctionalInterface
+	public interface HostResolver {
+		InetAddress[] resolve(String host) throws UnknownHostException;
+	}
+
 	public OperationDelegationTargetValidator(OperationDelegationSecurityProperties securityProperties) {
+		this(securityProperties, InetAddress::getAllByName);
+	}
+
+	public OperationDelegationTargetValidator(OperationDelegationSecurityProperties securityProperties, HostResolver hostResolver) {
 		this.securityProperties = Objects.requireNonNull(securityProperties, "securityProperties must not be null");
+		this.hostResolver = Objects.requireNonNull(hostResolver, "hostResolver must not be null");
 		this.allowlistedHosts = sanitizeHostPatterns(securityProperties.getAllowlist().getHosts());
 		this.allowlistedCidrs = parseAllowlistedCidrs(securityProperties.getAllowlist().getCidrs());
 	}
@@ -68,22 +83,57 @@ public class OperationDelegationTargetValidator {
 			throw new OperationDelegationException(String.format("Delegation URI scheme '%s' is not supported", targetUri.getScheme()));
 		}
 
-		String host = normalize(targetUri.getHost());
+		String requestedHost = trim(targetUri.getHost());
+		String host = normalize(requestedHost);
 		if (host.isEmpty())
 			throw new OperationDelegationException("Delegation URI must contain a host");
 
 		int targetPort = resolveTargetPort(targetUri, scheme);
 		validatePort(targetPort, targetUri);
 
+		InetAddress[] resolvedAddresses = resolveHost(requestedHost, targetUri.toString());
+		validateResolvedAddresses(host, resolvedAddresses, targetUri.toString());
+	}
+
+	/**
+	 * Resolves the given host exactly once and validates every resolved address.
+	 * The returned addresses are the ones that must be used for the outbound
+	 * connection, so the validated address and the connected address cannot
+	 * diverge (e.g. through DNS rebinding).
+	 * <p>
+	 * The host is resolved as given (an absolute name keeps its trailing dot);
+	 * the normalized form is only used for allowlist matching.
+	 *
+	 * @param host
+	 *            the host name or IP literal to resolve
+	 * @return the validated addresses
+	 * @throws OperationDelegationException
+	 *             if the host cannot be resolved or any resolved address is
+	 *             blocked
+	 */
+	public List<InetAddress> resolveAndValidate(String host) {
+		String requestedHost = trim(host);
+		String normalizedHost = normalize(requestedHost);
+		if (normalizedHost.isEmpty())
+			throw new OperationDelegationException("Delegation target host must not be empty");
+
+		InetAddress[] resolvedAddresses = resolveHost(requestedHost, requestedHost);
+
+		if (securityProperties.isEnabled())
+			validateResolvedAddresses(normalizedHost, resolvedAddresses, requestedHost);
+
+		return Collections.unmodifiableList(Arrays.asList(resolvedAddresses));
+	}
+
+	private void validateResolvedAddresses(String host, InetAddress[] resolvedAddresses, String target) {
 		boolean hostAllowlisted = isHostAllowlisted(host);
-		InetAddress[] resolvedAddresses = resolveHost(host, targetUri);
 
 		for (InetAddress resolvedAddress : resolvedAddresses) {
 			if (hostAllowlisted || isAddressAllowlisted(resolvedAddress))
 				continue;
 
 			if (isBlocked(resolvedAddress)) {
-				throw new OperationDelegationException(String.format("Delegation target '%s' resolves to blocked address '%s'", targetUri, resolvedAddress.getHostAddress()));
+				throw new OperationDelegationException(String.format("Delegation target '%s' resolves to blocked address '%s'", target, resolvedAddress.getHostAddress()));
 			}
 		}
 	}
@@ -105,15 +155,15 @@ public class OperationDelegationTargetValidator {
 		}
 	}
 
-	private InetAddress[] resolveHost(String host, URI targetUri) {
+	private InetAddress[] resolveHost(String host, String target) {
 		try {
-			InetAddress[] resolvedAddresses = InetAddress.getAllByName(host);
-			if (resolvedAddresses.length == 0)
-				throw new OperationDelegationException(String.format("Delegation target '%s' could not be resolved", targetUri));
+			InetAddress[] resolvedAddresses = hostResolver.resolve(host);
+			if (resolvedAddresses == null || resolvedAddresses.length == 0)
+				throw new OperationDelegationException(String.format("Delegation target '%s' could not be resolved", target));
 
 			return resolvedAddresses;
 		} catch (UnknownHostException e) {
-			throw new OperationDelegationException(String.format("Delegation target '%s' could not be resolved", targetUri));
+			throw new OperationDelegationException(String.format("Delegation target '%s' could not be resolved", target));
 		}
 	}
 
@@ -236,6 +286,10 @@ public class OperationDelegationTargetValidator {
 		}
 
 		return parsedCidrs;
+	}
+
+	private String trim(String value) {
+		return value == null ? "" : value.trim();
 	}
 
 	private String normalize(String value) {

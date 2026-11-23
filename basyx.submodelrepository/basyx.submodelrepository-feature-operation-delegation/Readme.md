@@ -37,6 +37,7 @@ Operation delegation now validates each outbound delegation URI before dispatch.
 
 - Only `http` and `https` URIs are allowed.
 - Loopback, private, link-local, and metadata addresses are blocked by default.
+- The target host is resolved once at connection time, and the outbound connection is only opened to addresses that passed validation (protection against DNS rebinding).
 - Redirect responses are rejected.
 - Explicit allowlists can be configured for approved hybrid deployments.
 

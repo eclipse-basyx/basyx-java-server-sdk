@@ -25,11 +25,15 @@
 
 package org.eclipse.digitaltwin.basyx.submodelrepository.feature.operation.delegation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.net.InetAddress;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.digitaltwin.basyx.core.exceptions.OperationDelegationException;
 import org.junit.jupiter.api.Test;
@@ -103,5 +107,18 @@ public class TestOperationDelegationTargetValidator {
 		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties());
 		validator.validate(URI.create("http://93.184.216.34/operation"));
 		assertNotNull(validator);
+	}
+
+	@Test
+	public void resolveAbsoluteHostNameAsGiven() {
+		List<String> requestedHosts = new ArrayList<>();
+		OperationDelegationTargetValidator validator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties(), host -> {
+			requestedHosts.add(host);
+			return new InetAddress[] { InetAddress.getByAddress(new byte[] { (byte) 93, (byte) 184, (byte) 216, 34 }) };
+		});
+
+		validator.validate(URI.create("http://delegation.example./operation"));
+
+		assertEquals(Arrays.asList("delegation.example."), requestedHosts);
 	}
 }

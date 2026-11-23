@@ -49,18 +49,18 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.codec.json.JacksonJsonDecoder;
-import org.springframework.http.codec.json.JacksonJsonEncoder;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -200,6 +200,69 @@ public class TestOperationDelegationFeature {
 	}
 
 	@Test
+	public void invokeOperationDelegationConnectsToValidatedAddress() throws Exception {
+		OperationDelegationSecurityProperties allowlistedSecurityProperties = new OperationDelegationSecurityProperties();
+		allowlistedSecurityProperties.getAllowlist().setCidrs(Arrays.asList("127.0.0.0/8"));
+		allowlistedSecurityProperties.getAllowlist().setPorts(Arrays.asList(2020));
+
+		// The synthetic host name is only known to the injected resolver, so the
+		// request can only succeed if the HTTP client connects to the address
+		// returned by the validator instead of performing its own DNS lookup.
+		InetAddress loopbackAddress = InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 });
+		OperationDelegationTargetValidator.HostResolver syntheticResolver = host -> {
+			if ("delegation-target.invalid".equals(host))
+				return new InetAddress[] { loopbackAddress };
+
+			throw new UnknownHostException(host);
+		};
+
+		OperationDelegationTargetValidator targetValidator = new OperationDelegationTargetValidator(allowlistedSecurityProperties, syntheticResolver);
+		SubmodelRepository allowlistedRepository = createOperationDelegationSubmodelRepository(new HTTPOperationDelegation(createWebClient(targetValidator)));
+
+		String submodelId = "validatedAddressDelegationSubmodel";
+		OperationVariable[] inputOperationVariable = getInputVariable();
+		String path = "/operationInvocationValidatedAddress";
+
+		createExpectationsForPost(path, getRequestBody(inputOperationVariable), getExpectedOutputResponse(getInputVariable()), 200);
+		createSubmodelAtRepository(allowlistedRepository, submodelId);
+		createInvokableSMEAtRepository(allowlistedRepository, submodelId, "operationDelegationSME", "http://delegation-target.invalid:2020" + path);
+
+		OperationVariable[] actualOutputOperationVariable = allowlistedRepository.invokeOperation(submodelId, "operationDelegationSME", inputOperationVariable);
+
+		assertArrayEquals(getOutputVariable(getInputVariable()), actualOutputOperationVariable);
+	}
+
+	@Test
+	public void invokeOperationDelegationBlocksDnsRebindingToLoopback() throws Exception {
+		AtomicBoolean internalServerHit = new AtomicBoolean(false);
+		HttpServer internalServer = HttpServer.create(new InetSocketAddress(9091), 0);
+		internalServer.createContext("/internal", exchange -> {
+			internalServerHit.set(true);
+			byte[] response = "[]".getBytes(StandardCharsets.UTF_8);
+			exchange.sendResponseHeaders(200, response.length);
+			exchange.getResponseBody().write(response);
+			exchange.close();
+		});
+		internalServer.start();
+
+		try {
+			OperationDelegationTargetValidator rebindingValidator = new OperationDelegationTargetValidator(new OperationDelegationSecurityProperties(), createRebindingHostResolver());
+			SubmodelRepository strictRepository = createOperationDelegationSubmodelRepository(new HTTPOperationDelegation(createWebClient(rebindingValidator)));
+
+			String submodelId = "dnsRebindingDelegationSubmodel";
+			createSubmodelAtRepository(strictRepository, submodelId);
+			createInvokableSMEAtRepository(strictRepository, submodelId, "operationDelegationSME", "http://localhost:9091/internal");
+
+			strictRepository.invokeOperation(submodelId, "operationDelegationSME", getInputVariable());
+			fail("Expected OperationDelegationException for delegation target rebound to loopback");
+		} catch (OperationDelegationException e) {
+			assertFalse(internalServerHit.get(), "Rebound loopback request must not reach internal server");
+		} finally {
+			internalServer.stop(0);
+		}
+	}
+
+	@Test
 	public void invokeOperationDelegationRejectsRedirectResponses() throws FileNotFoundException, IOException {
 		assertThrows(OperationDelegationException.class, () -> {
 			OperationVariable[] inputOperationVariable = getInputVariable();
@@ -246,16 +309,23 @@ public class TestOperationDelegationFeature {
 	}
 
 	private static WebClient createWebClient(OperationDelegationSecurityProperties securityProperties) {
-		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
-			configurer.defaultCodecs().jacksonJsonEncoder(new JacksonJsonEncoder(configureObjectMapper()));
-			configurer.defaultCodecs().jacksonJsonDecoder(new JacksonJsonDecoder(configureObjectMapper()));
-		}).build();
+		return createWebClient(new OperationDelegationTargetValidator(securityProperties));
+	}
 
-		OperationDelegationTargetValidator targetValidator = new OperationDelegationTargetValidator(securityProperties);
-		return WebClient.builder().exchangeStrategies(strategies).filter((request, next) -> {
-			targetValidator.validate(request.url());
-			return next.exchange(request);
-		}).build();
+	private static WebClient createWebClient(OperationDelegationTargetValidator targetValidator) {
+		return OperationDelegationWebClientFactory.create(configureObjectMapper(), targetValidator);
+	}
+
+	/**
+	 * Simulates DNS rebinding: the first lookup returns a public address, every
+	 * subsequent lookup returns the loopback address.
+	 */
+	private static OperationDelegationTargetValidator.HostResolver createRebindingHostResolver() throws UnknownHostException {
+		InetAddress publicAddress = InetAddress.getByAddress(new byte[] { (byte) 93, (byte) 184, (byte) 216, (byte) 34 });
+		InetAddress loopbackAddress = InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 });
+		AtomicInteger lookups = new AtomicInteger();
+
+		return host -> lookups.getAndIncrement() == 0 ? new InetAddress[] { publicAddress } : new InetAddress[] { loopbackAddress };
 	}
 
 	private static OperationDelegationSecurityProperties createSecurityPropertiesWithLocalhostAllowlist() {

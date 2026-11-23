@@ -31,11 +31,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.codec.json.JacksonJsonDecoder;
-import org.springframework.http.codec.json.JacksonJsonEncoder;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -59,23 +54,7 @@ public class OperationDelegationSubmodelRepositoryConfiguration {
 	@ConditionalOnMissingBean
 	public OperationDelegation getOperationDelegation(JsonMapper mapper, OperationDelegationTargetValidator targetValidator) {
 
-		return new HTTPOperationDelegation(createWebClient(mapper, targetValidator));
-	}
-
-	private WebClient createWebClient(JsonMapper mapper, OperationDelegationTargetValidator targetValidator) {
-		ExchangeStrategies strategies = ExchangeStrategies.builder().codecs(configurer -> {
-			configurer.defaultCodecs().jacksonJsonEncoder(new JacksonJsonEncoder(mapper));
-			configurer.defaultCodecs().jacksonJsonDecoder(new JacksonJsonDecoder(mapper));
-		}).build();
-
-		return WebClient.builder().exchangeStrategies(strategies).filter(validateTargetFilter(targetValidator)).build();
-	}
-
-	private ExchangeFilterFunction validateTargetFilter(OperationDelegationTargetValidator targetValidator) {
-		return (request, next) -> {
-			targetValidator.validate(request.url());
-			return next.exchange(request);
-		};
+		return new HTTPOperationDelegation(OperationDelegationWebClientFactory.create(mapper, targetValidator));
 	}
 
 }
